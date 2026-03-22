@@ -36,6 +36,11 @@ dependencies {
     // Core Common Dependency
     implementation(project(":core:common"))
 
+    // Firebase Dependency
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.crashlytics.ktx)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
