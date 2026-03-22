@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "TaxiMeter"
 include(":app")
 include(":domain")
+include(":data")
