@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -46,6 +48,9 @@ dependencies {
     implementation(project(":core:logging"))
     implementation(project(":data"))
     implementation(project(":domain"))
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
