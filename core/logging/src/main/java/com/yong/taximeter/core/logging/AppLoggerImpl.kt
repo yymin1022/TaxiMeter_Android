@@ -6,13 +6,14 @@ import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.yong.taximeter.core.common.AppLogger
+import javax.inject.Inject
 
 /**
  * App Logger
  * - Logging, Exception recording is supported
  * - Logging Analytics event is supported
  */
-class AppLoggerImpl(
+class AppLoggerImpl @Inject constructor(
     context: Context,
 ): AppLogger {
     private val crashlytics = FirebaseCrashlytics.getInstance()
