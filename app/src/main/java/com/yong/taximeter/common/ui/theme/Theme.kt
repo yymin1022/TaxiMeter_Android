@@ -1,6 +1,5 @@
-package com.yong.taximeter.ui.theme
+package com.yong.taximeter.common.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

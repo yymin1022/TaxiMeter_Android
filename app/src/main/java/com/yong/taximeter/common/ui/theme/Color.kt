@@ -1,4 +1,4 @@
-package com.yong.taximeter.ui.theme
+package com.yong.taximeter.common.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
