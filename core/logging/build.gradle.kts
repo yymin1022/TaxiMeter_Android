@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // JavaX Dependency
+    implementation(libs.javax.inject)
+
     // Project Dependency
     implementation(project(":core:common"))
 
