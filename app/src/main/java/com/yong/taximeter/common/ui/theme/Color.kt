@@ -20,8 +20,14 @@ val MeterTextSecondaryDark = Color(0xFFCCCCCC)
 val MeterTextSecondaryLight = Color(0xFF444444)
 
 // Meter Colors
-val MeterBlue = Color(0xFF87CEEB)
-val MeterGreen = Color(0xFF99EE90)
+val MeterButtonTextDark = MeterBackgroundDark
+val MeterButtonTextLight = MeterBackgroundLight
+val MeterBlueDark = Color(0xFF87CEEB)
+val MeterBlueLight = Color(0xFF4F88D1)
+val MeterGreenDark = Color(0xFF99EE90)
+val MeterGreenLight = Color(0xFF66AA6A)
 val MeterMint = Color(0xFF61D0BB)
-val MeterRed = Color(0xFFDB7093)
-val MeterYellow = Color(0xFFFFED83)
+val MeterRedDark = Color(0xFFDB7093)
+val MeterRedLight = Color(0xFFD81B60)
+val MeterYellowDark = Color(0xFFFFED83)
+val MeterYellowLight = Color(0xFFFBA02D)

@@ -8,14 +8,18 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+// Dark Color Scheme
 private val DarkColorScheme = darkColorScheme(
     primary = Blue80,
     surface = Grey10,
     onSurface = Grey90,
 )
 
+// Light Color Scheme
 private val LightColorScheme = lightColorScheme(
     primary = Blue40,
     surface = White,
@@ -43,5 +47,49 @@ fun TaxiMeterTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
+    )
+}
+
+/**
+ * Color presets for Meter UI
+ */
+@Immutable
+data class MeterColors(
+    val buttonText: Color,
+    val blue: Color,
+    val green: Color,
+    val mint: Color,
+    val red: Color,
+    val yellow: Color,
+    val background: Color,
+    val onBackground: Color,
+)
+
+/**
+ * Get [MeterColors] instance with [isDark] flag
+ */
+private fun getMeterColors(
+    isDark: Boolean,
+): MeterColors = if(isDark) {
+    MeterColors(
+        buttonText = MeterButtonTextDark,
+        blue = MeterBlueDark,
+        green = MeterGreenDark,
+        mint = MeterMint,
+        red = MeterRedDark,
+        yellow = MeterYellowDark,
+        background = MeterBackgroundDark,
+        onBackground = MeterTextPrimaryDark,
+    )
+} else {
+    MeterColors(
+        buttonText = MeterButtonTextLight,
+        blue = MeterBlueDark,
+        green = MeterGreenDark,
+        mint = MeterMint,
+        red = MeterRedDark,
+        yellow = MeterYellowDark,
+        background = MeterBackgroundLight,
+        onBackground = MeterTextPrimaryLight,
     )
 }
