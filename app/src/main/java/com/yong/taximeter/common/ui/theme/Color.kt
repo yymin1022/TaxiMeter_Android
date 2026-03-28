@@ -4,8 +4,8 @@ package com.yong.taximeter.common.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // App UI Colors
-val Black = Color(0xFF000000)
-val White = Color(0xFFFFFFFF)
+val Black = Color.Black
+val White = Color.White
 val Blue80 = Color(0xFFD1E4FF)
 val Blue40 = Color(0xFF0061A4)
 val Grey10 = Color(0xFF1A1C1E)
