@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TaxiMeter</string>
+
+    <string name="main_tab_home">Home</string>
+    <string name="main_tab_setting">Setting</string>
+    <string name="main_tab_store">Store</string>
 </resources>
