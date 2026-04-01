@@ -16,7 +16,7 @@ class PreferenceRepositoryImpl @Inject constructor(
 ): PreferenceRepository {
     companion object {
         // Default preference name
-        private const val DEFAULT_PREF_NAME = "default_pref"
+        private const val DEFAULT_PREF_NAME = "com.yong.taximeter.default_pref"
     }
 
     // Shared Preferences Instance from Android Context
