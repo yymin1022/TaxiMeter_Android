@@ -21,7 +21,7 @@ class PreferenceRepositoryImpl @Inject constructor(
 
     // Shared Preferences Instance from Android Context
     private val pref by lazy {
-        context.getSharedPreferences(DEFAULT_PREF_NAME, Context.MODE_PRIVATE)
+        context.applicationContext.getSharedPreferences(DEFAULT_PREF_NAME, Context.MODE_PRIVATE)
     }
 
     /**
