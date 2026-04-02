@@ -14,7 +14,7 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
-object DatasourceProvider {
+object DataSourceProvider {
     @Provides
     @Singleton
     fun providePreferenceDataSource(
