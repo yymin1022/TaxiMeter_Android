@@ -1,8 +1,7 @@
 package com.yong.taximeter.di
 
 import android.content.Context
-import com.yong.taximeter.data.repository.PreferenceRepositoryImpl
-import com.yong.taximeter.domain.repository.PreferenceRepository
+import com.yong.taximeter.data.datasource.PreferenceDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,10 +14,10 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryProvider {
+object DatasourceProvider {
     @Provides
     @Singleton
-    fun providePreferenceRepository(
+    fun providePreferenceDataSource(
         @ApplicationContext context: Context,
-    ): PreferenceRepository = PreferenceRepositoryImpl(context)
+    ): PreferenceDataSource = PreferenceDataSource(context)
 }
