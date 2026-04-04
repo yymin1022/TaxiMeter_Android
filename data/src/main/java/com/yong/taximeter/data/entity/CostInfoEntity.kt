@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Cost Version Entity
+ * Cost Info Entity
  * - Room DB -> Entity
  */
 @Entity(tableName = "cost_info")

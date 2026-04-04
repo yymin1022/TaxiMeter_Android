@@ -8,7 +8,7 @@ import androidx.room.Transaction
 import com.yong.taximeter.data.entity.CostInfoEntity
 
 /**
- * Cost Version DAO
+ * Cost Info DAO
  */
 @Dao
 interface CostInfoDao {
