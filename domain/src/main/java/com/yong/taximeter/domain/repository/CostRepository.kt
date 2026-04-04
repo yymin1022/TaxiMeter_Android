@@ -13,7 +13,7 @@ interface CostRepository {
     suspend fun getRemoteVersion(): String
 
     // Update local cost info to latest version
-    fun updateToLatest(): Boolean
+    suspend fun updateToLatest(): Boolean
 
     // Get cost info for specific region
     fun getCostInfo(regionKey: String): CostInfo?
