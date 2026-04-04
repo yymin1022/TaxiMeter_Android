@@ -1,6 +1,6 @@
 package com.yong.taximeter.data.datasource
 
-import android.content.Context
+import android.content.SharedPreferences
 import javax.inject.Inject
 import androidx.core.content.edit
 
@@ -10,19 +10,9 @@ import androidx.core.content.edit
  * - Boolean, Float, Int, String types are supported
  */
 class PreferenceDataSource @Inject constructor(
-    // Inject Android Context
-    private val context: Context,
+    // Inject Shared Preferences Instance
+    private val pref: SharedPreferences,
 ) {
-    companion object {
-        // Default preference name
-        private const val DEFAULT_PREF_NAME = "com.yong.taximeter.default_pref"
-    }
-
-    // Shared Preferences Instance from Android Context
-    private val pref by lazy {
-        context.applicationContext.getSharedPreferences(DEFAULT_PREF_NAME, Context.MODE_PRIVATE)
-    }
-
     /**
      * Getter / Setter for Boolean value
      */

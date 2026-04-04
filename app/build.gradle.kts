@@ -69,6 +69,10 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
 
+    // Firebase Dependency
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+
     // Hilt Dependency
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
