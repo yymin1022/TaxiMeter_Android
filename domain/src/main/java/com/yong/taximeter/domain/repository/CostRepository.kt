@@ -10,7 +10,7 @@ import com.yong.taximeter.domain.model.CostInfo
 interface CostRepository {
     // Get Local / Remote cost version
     fun getLocalVersion(): String
-    fun getRemoteVersion(): String
+    suspend fun getRemoteVersion(): String
 
     // Update local cost info to latest version
     fun updateToLatest(): Boolean
