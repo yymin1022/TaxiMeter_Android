@@ -16,6 +16,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceProvider {
+    // Shared Preferences Key
+    private const val SHARED_PREF_DEFAULT_KEY = "com.yong.taximeter.pref"
+
     @Provides
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -24,5 +27,5 @@ object DataSourceProvider {
     @Singleton
     fun provideSharedPreference(
         @ApplicationContext context: Context,
-    ): SharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+    ): SharedPreferences = context.getSharedPreferences(SHARED_PREF_DEFAULT_KEY, Context.MODE_PRIVATE)
 }
