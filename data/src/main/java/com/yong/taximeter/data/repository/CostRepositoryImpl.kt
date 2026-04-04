@@ -1,6 +1,7 @@
 package com.yong.taximeter.data.repository
 
 import com.yong.taximeter.data.datasource.FirestoreDataSource
+import com.yong.taximeter.data.datasource.PreferenceDataSource
 import com.yong.taximeter.data.dto.CostVersionDto
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.repository.CostRepository
@@ -10,17 +11,27 @@ import kotlin.jvm.java
 class CostRepositoryImpl @Inject constructor(
     // Inject Firestore DataSource
     private val firestoreDataSource: FirestoreDataSource,
+    // Inject Preference DataSource
+    private val preferenceDataSource: PreferenceDataSource,
 ): CostRepository {
     companion object {
         private const val FIRESTORE_COLLECTION_KEY_COST = "cost"
         private const val FIRESTORE_DOCUMENT_KEY_VERSION = "version"
 
+        private const val PREF_KEY_COST_VERSION = "PREF_KEY_COST_VERSION"
+
         private const val COST_VERSION_FALLBACK = "20001022"
     }
 
+    /**
+     * Get local cost version from Preference
+     * - If null or error, return [COST_VERSION_FALLBACK]
+     */
     override fun getLocalVersion(): String {
-        // TODO: Implement logic
-        return "LOCAL_VERSION"
+        return preferenceDataSource.getString(
+            key = PREF_KEY_COST_VERSION,
+            defaultValue = COST_VERSION_FALLBACK,
+        )
     }
 
     /**
