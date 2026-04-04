@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -50,6 +51,11 @@ dependencies {
     // Firebase Dependency
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
+
+    // Room Dependency
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 
     // Test Dependency
     testImplementation(libs.junit)
