@@ -3,8 +3,6 @@ package com.yong.taximeter.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.firebase.firestore.FirebaseFirestore
-import com.yong.taximeter.data.datasource.FirestoreDataSource
-import com.yong.taximeter.data.datasource.PreferenceDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
