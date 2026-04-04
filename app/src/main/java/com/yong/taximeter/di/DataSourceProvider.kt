@@ -1,6 +1,8 @@
 package com.yong.taximeter.di
 
 import android.content.Context
+import android.content.SharedPreferences
+import com.google.firebase.firestore.FirebaseFirestore
 import com.yong.taximeter.data.datasource.FirestoreDataSource
 import com.yong.taximeter.data.datasource.PreferenceDataSource
 import dagger.Module
@@ -11,18 +13,18 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 /**
- * Hilt DI Provider for Repositories of Domain module
+ * Hilt DI Provider for Data Source of Data module
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceProvider {
     @Provides
     @Singleton
-    fun provideFirestoreDataSource(): FirestoreDataSource = FirestoreDataSource()
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     @Provides
     @Singleton
-    fun providePreferenceDataSource(
+    fun provideSharedPreference(
         @ApplicationContext context: Context,
-    ): PreferenceDataSource = PreferenceDataSource(context)
+    ): SharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 }

@@ -8,10 +8,10 @@ import javax.inject.Inject
  * Firestore Data Source
  * - Get document from firestore, and convert it as object
  */
-class FirestoreDataSource @Inject constructor() {
-    // Firebase Firestore Instance
-    private val firestore = FirebaseFirestore.getInstance()
-
+class FirestoreDataSource @Inject constructor(
+    // Inject Firebase Firestore Instance
+    private val firestore: FirebaseFirestore,
+) {
     /**
      * Get a single Firestore Document, and convert as object [T]
      */
