@@ -60,6 +60,14 @@ class CostRepositoryImpl @Inject constructor(
      * @return true if update is successful, false otherwise
      */
     override suspend fun updateToLatest(): Boolean {
+        // Get local / remote version info
+        val localVersion = getLocalVersion()
+        val remoteVersion = getRemoteVersion()
+
+        // If local version is same or newer than remote version, return false
+        if(localVersion >= remoteVersion) return false
+
+        // Get cost info from remote
         val costListDto = firestoreDataSource.getDocumentObject(
             collection = FIRESTORE_COLLECTION_KEY_COST,
             document = FIRESTORE_DOCUMENT_KEY_INFO,
@@ -72,9 +80,6 @@ class CostRepositoryImpl @Inject constructor(
         // Convert to entity, and update DAO
         val costEntityList = costListDto.data.map { it.toEntity() }
         costDao.updateRemoteCost(costEntityList)
-
-        // Get remote version info
-        val remoteVersion = getRemoteVersion()
 
         // Update local version info
         preferenceDataSource.setString(PREF_KEY_COST_VERSION, remoteVersion)
