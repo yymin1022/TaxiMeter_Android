@@ -13,7 +13,7 @@ import com.yong.taximeter.data.entity.CostInfoEntity
 @Dao
 interface CostInfoDao {
     @Query("SELECT * FROM cost_info WHERE region = :regionKey")
-    fun getByRegion(regionKey: String): CostInfoEntity?
+    suspend fun getByRegion(regionKey: String): CostInfoEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(costs: List<CostInfoEntity>)
