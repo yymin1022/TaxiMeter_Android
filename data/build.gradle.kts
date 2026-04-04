@@ -47,6 +47,10 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":domain"))
 
+    // Firebase Dependency
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+
     // Test Dependency
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
