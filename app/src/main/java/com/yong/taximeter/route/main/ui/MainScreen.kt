@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
+    navigateToMeter: () -> Unit,
 ) {
     // UI State
     val uiState = viewModel.uiState.collectAsState().value
@@ -56,6 +57,7 @@ fun MainScreen(
             modifier = Modifier
                 .padding(innerPadding),
             selectedTabIdx = selectedTabIdx,
+            navigateToMeter = navigateToMeter,
         )
     }
 }
@@ -67,15 +69,30 @@ fun MainScreen(
 private fun MainSubscreen(
     modifier: Modifier = Modifier,
     selectedTabIdx: Int?,
+    navigateToMeter: () -> Unit,
 ) {
     Box(
         modifier = modifier,
     ) {
         // Set subscreen ui for each tab
         when(selectedTabIdx) {
-            0 -> SettingScreen()
-            1 -> HomeScreen()
-            2 -> StoreScreen()
+            // 0. Setting UI
+            0 -> SettingScreen(
+                modifier = Modifier,
+            )
+
+            // 1. Home UI
+            1 -> HomeScreen(
+                modifier = Modifier,
+                navigateToMeter = navigateToMeter,
+            )
+
+            // 2. Store UI
+            2 -> StoreScreen(
+                modifier = Modifier,
+            )
+
+            // Not must be happened
             else -> {}
         }
     }

@@ -14,6 +14,7 @@ import com.yong.taximeter.route.main.subscreen.home.viewmodel.HomeViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    navigateToMeter: () -> Unit,
 ) {
     Box(
         modifier = modifier,
