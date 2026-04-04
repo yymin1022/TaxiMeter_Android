@@ -4,4 +4,8 @@
     <string name="main_tab_home">Home</string>
     <string name="main_tab_setting">Setting</string>
     <string name="main_tab_store">Store</string>
+
+    <string name="home_desc_text">Touch to start</string>
+    <string name="home_logo_text_meter">Meter</string>
+    <string name="home_logo_text_taxi">Taxi</string>
 </resources>
