@@ -94,7 +94,7 @@ class CostRepositoryImpl @Inject constructor(
      * @return [CostInfo] instance
      * - If null, there is no such region
      */
-    override fun getCostInfo(
+    override suspend fun getCostInfo(
         regionKey: String
     ): CostInfo? {
         // Get entity from DAO, and convert to model

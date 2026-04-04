@@ -16,5 +16,5 @@ interface CostRepository {
     suspend fun updateToLatest(): Boolean
 
     // Get cost info for specific region
-    fun getCostInfo(regionKey: String): CostInfo?
+    suspend fun getCostInfo(regionKey: String): CostInfo?
 }
