@@ -1,6 +1,8 @@
 package com.yong.taximeter.route.main.subscreen.home.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +19,9 @@ fun HomeScreen(
     navigateToMeter: () -> Unit,
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .clickable(onClick = navigateToMeter),
     ) {
         Text("Home Screen")
     }
