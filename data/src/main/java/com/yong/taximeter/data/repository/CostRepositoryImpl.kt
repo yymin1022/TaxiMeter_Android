@@ -5,6 +5,7 @@ import com.yong.taximeter.data.datasource.FirestoreDataSource
 import com.yong.taximeter.data.datasource.PreferenceDataSource
 import com.yong.taximeter.data.dto.CostInfoDto
 import com.yong.taximeter.data.dto.CostVersionDto
+import com.yong.taximeter.data.mapper.CostInfoMapper.toDomain
 import com.yong.taximeter.data.mapper.CostInfoMapper.toEntity
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.repository.CostRepository
@@ -82,10 +83,17 @@ class CostRepositoryImpl @Inject constructor(
         return true
     }
 
+    /**
+     * Get cost info of [regionKey]
+     *
+     * @return [CostInfo] instance
+     * - If null, there is no such region
+     */
     override fun getCostInfo(
         regionKey: String
     ): CostInfo? {
-        // TODO: Implement logic
-        return CostInfo()
+        // Get entity from DAO, and convert to model
+        return costDao.getByRegion(regionKey)
+            ?.toDomain()
     }
 }
