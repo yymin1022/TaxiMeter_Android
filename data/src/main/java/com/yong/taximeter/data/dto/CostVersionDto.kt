@@ -5,5 +5,5 @@ package com.yong.taximeter.data.dto
  * - Firebase Firestore -> DTO
  */
 data class CostVersionDto(
-    val version: String,
+    val version: String = "",
 )
