@@ -1,6 +1,7 @@
 package com.yong.taximeter.di
 
 import android.content.Context
+import com.yong.taximeter.data.datasource.FirestoreDataSource
 import com.yong.taximeter.data.datasource.PreferenceDataSource
 import dagger.Module
 import dagger.Provides
@@ -15,6 +16,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceProvider {
+    @Provides
+    @Singleton
+    fun provideFirestoreDataSource(): FirestoreDataSource = FirestoreDataSource()
+
     @Provides
     @Singleton
     fun providePreferenceDataSource(
