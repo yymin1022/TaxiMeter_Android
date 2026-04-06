@@ -1,5 +1,7 @@
 package com.yong.taximeter.domain.usecase.cost
 
+import com.yong.taximeter.core.common.AppLogger
+import com.yong.taximeter.domain.repository.CostRepository
 import javax.inject.Inject
 
 /**
@@ -8,10 +10,36 @@ import javax.inject.Inject
  * - Returns [UpdateCostInfoResult] as result
  */
 class UpdateCostInfoUseCase @Inject constructor(
-    // Inject dependency
+    // Inject App Logger
+    private val appLogger: AppLogger,
+    // Inject Cost Repository
+    private val costRepository: CostRepository
 ) {
     suspend operator fun invoke(): UpdateCostInfoResult {
-        // TODO: Implement update cost logic
-        return UpdateCostInfoResult.SUCCESS
+        return try {
+            // Get local / remote version info
+            val localVersion = costRepository.getLocalVersion()
+            val remoteVersion = costRepository.getRemoteVersion()
+
+            // Check if update needed
+            if(localVersion >= remoteVersion) {
+                // If not needed, return up-to-date
+                return UpdateCostInfoResult.UP_TO_DATE
+            }
+
+            // Update to latest cost info
+            val updateResult = costRepository.updateToLatest()
+
+            // Return update result
+            if(updateResult) {
+                UpdateCostInfoResult.SUCCESS
+            } else {
+                UpdateCostInfoResult.FAILURE
+            }
+        } catch(e: Exception) {
+            // Log exception
+            appLogger.recordException(e)
+            UpdateCostInfoResult.FAILURE
+        }
     }
 }
