@@ -17,4 +17,7 @@ kotlin {
 dependencies {
     // JavaX Dependency
     implementation(libs.javax.inject)
+
+    // Project Dependency
+    implementation(project(":core:common"))
 }
