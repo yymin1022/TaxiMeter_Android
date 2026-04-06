@@ -13,3 +13,8 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
+
+dependencies {
+    // JavaX Dependency
+    implementation(libs.javax.inject)
+}
