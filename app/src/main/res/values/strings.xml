@@ -8,4 +8,7 @@
     <string name="home_desc_text">Touch to start</string>
     <string name="home_logo_text_meter">Meter</string>
     <string name="home_logo_text_taxi">Taxi</string>
+
+    <string name="home_snack_bar_update_failure">Cost info update failed. Please check network state.</string>
+    <string name="home_snack_bar_update_success">Cost info is updated.</string>
 </resources>
