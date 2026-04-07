@@ -59,6 +59,11 @@ fun HomeScreen(
         }
     }
 
+    // Cost Info Update Effect
+    LaunchedEffect(Unit) {
+        viewModel.updateCostInfo()
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
     ) { innerPadding ->
