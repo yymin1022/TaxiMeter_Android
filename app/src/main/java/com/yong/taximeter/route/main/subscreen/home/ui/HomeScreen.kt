@@ -17,6 +17,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yong.taximeter.R
 import com.yong.taximeter.common.ui.theme.Typography
 import com.yong.taximeter.route.main.subscreen.home.viewmodel.HomeViewModel
@@ -40,8 +43,21 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToMeter: () -> Unit,
 ) {
-    // SnackBar State
+    // UI State
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // SnackBar State / Effect
     val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarMessageRes = uiState.snackBarMessageRes
+    snackBarMessageRes?.let {
+        val message = stringResource(it)
+        LaunchedEffect(message) {
+            // Show Snack Bar
+            snackBarHostState.showSnackbar(message)
+            // Clear Snack Bar Message
+            viewModel.clearSnackBar()
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
