@@ -43,6 +43,7 @@ class HomeViewModel @Inject constructor(
 
             // Get result message
             val messageRes = when(updateResult) {
+                UpdateCostInfoResult.CANCELED,
                 UpdateCostInfoResult.UP_TO_DATE -> null
                 UpdateCostInfoResult.SUCCESS -> R.string.home_snack_bar_update_success
                 UpdateCostInfoResult.FAILURE -> R.string.home_snack_bar_update_failure

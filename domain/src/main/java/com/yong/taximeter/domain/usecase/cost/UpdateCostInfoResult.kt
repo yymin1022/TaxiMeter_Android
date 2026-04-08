@@ -8,4 +8,5 @@ enum class UpdateCostInfoResult {
     UP_TO_DATE,
     SUCCESS,
     FAILURE,
+    CANCELED,
 }

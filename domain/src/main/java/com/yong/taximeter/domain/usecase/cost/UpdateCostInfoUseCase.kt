@@ -3,6 +3,7 @@ package com.yong.taximeter.domain.usecase.cost
 import com.yong.taximeter.core.common.AppLogger
 import com.yong.taximeter.domain.repository.CostRepository
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Update Cost Info UseCase
@@ -36,6 +37,9 @@ class UpdateCostInfoUseCase @Inject constructor(
             } else {
                 UpdateCostInfoResult.FAILURE
             }
+        } catch(_: CancellationException) {
+            // If canceled, just return without exception
+            UpdateCostInfoResult.CANCELED
         } catch(e: Exception) {
             // Log exception
             appLogger.recordException(e)
