@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,13 +40,13 @@ private val HOME_APP_LOGO_ICON_SIZE = 96.dp
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    snackBarHostState: SnackbarHostState,
     navigateToMeter: () -> Unit,
 ) {
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // SnackBar State / Effect
-    val snackBarHostState = remember { SnackbarHostState() }
+    // SnackBar Effect
     val snackBarMessageRes = uiState.snackBarMessageRes
     snackBarMessageRes?.let {
         val message = stringResource(it)
@@ -64,27 +63,22 @@ fun HomeScreen(
         viewModel.updateCostInfo()
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-    ) { innerPadding ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .clickable(onClick = navigateToMeter)
-                .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            // App Logo
-            AppLogo(
-                modifier = Modifier,
-            )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .clickable(onClick = navigateToMeter),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        // App Logo
+        AppLogo(
+            modifier = Modifier,
+        )
 
-            // Description Text
-            DescriptionText(
-                modifier = Modifier,
-            )
-        }
+        // Description Text
+        DescriptionText(
+            modifier = Modifier,
+        )
     }
 }
 
