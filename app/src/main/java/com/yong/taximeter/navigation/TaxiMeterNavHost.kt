@@ -26,7 +26,11 @@ fun TaxiMeterNavHost(
     ) {
         // Main
         composable<TaxiMeterNavRoute.Main> {
-            val navigateToMeter = { navController.navigate(TaxiMeterNavRoute.Meter) }
+            val navigateToMeter = {
+                navController.navigate(TaxiMeterNavRoute.Meter) {
+                    launchSingleTop = true
+                }
+            }
 
             MainScreenNav(
                 modifier = Modifier
