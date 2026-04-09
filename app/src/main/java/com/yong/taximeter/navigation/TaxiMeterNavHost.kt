@@ -1,5 +1,7 @@
 package com.yong.taximeter.navigation
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,14 +28,26 @@ fun TaxiMeterNavHost(
     ) {
         // Main
         composable<TaxiMeterNavRoute.Main> {
+            val navigateToMeter = {
+                navController.navigate(TaxiMeterNavRoute.Meter) {
+                    launchSingleTop = true
+                }
+            }
+
             MainScreenNav(
                 modifier = Modifier
                     .fillMaxSize(),
+                navigateToMeter = navigateToMeter,
             )
         }
 
         // Meter
-        composable<TaxiMeterNavRoute.Meter> {
+        composable<TaxiMeterNavRoute.Meter>(
+            enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
+        ) {
             MeterScreenNav(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -46,9 +60,11 @@ fun TaxiMeterNavHost(
 @Composable
 private fun MainScreenNav(
     modifier: Modifier = Modifier,
+    navigateToMeter: () -> Unit,
 ) {
     MainScreen(
         modifier = modifier,
+        navigateToMeter = navigateToMeter,
     )
 }
 

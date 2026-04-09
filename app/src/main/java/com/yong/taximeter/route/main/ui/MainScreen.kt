@@ -7,6 +7,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +20,7 @@ import com.yong.taximeter.route.main.subscreen.setting.ui.SettingScreen
 import com.yong.taximeter.route.main.subscreen.store.ui.StoreScreen
 import com.yong.taximeter.route.main.viewmodel.MainViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 
 /**
@@ -27,11 +30,15 @@ import androidx.compose.ui.res.stringResource
 fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
+    navigateToMeter: () -> Unit,
 ) {
     // UI State
     val uiState = viewModel.uiState.collectAsState().value
     val selectedTabIdx = uiState.selectedTabIdx
     val tabList = uiState.tabList
+
+    // SnackBar State
+    val snackBarHostState = remember { SnackbarHostState() }
 
     // Initialize Tab Info
     LaunchedEffect(Unit) {
@@ -41,6 +48,7 @@ fun MainScreen(
     Scaffold(
         modifier = modifier
             .fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         bottomBar = {
             // Bottom Tab UI
             MainBottomTab(
@@ -56,6 +64,8 @@ fun MainScreen(
             modifier = Modifier
                 .padding(innerPadding),
             selectedTabIdx = selectedTabIdx,
+            snackBarHostState = snackBarHostState,
+            navigateToMeter = navigateToMeter,
         )
     }
 }
@@ -67,15 +77,32 @@ fun MainScreen(
 private fun MainSubscreen(
     modifier: Modifier = Modifier,
     selectedTabIdx: Int?,
+    snackBarHostState: SnackbarHostState,
+    navigateToMeter: () -> Unit,
 ) {
     Box(
         modifier = modifier,
     ) {
         // Set subscreen ui for each tab
         when(selectedTabIdx) {
-            0 -> SettingScreen()
-            1 -> HomeScreen()
-            2 -> StoreScreen()
+            // 0. Setting UI
+            0 -> SettingScreen(
+                modifier = Modifier,
+            )
+
+            // 1. Home UI
+            1 -> HomeScreen(
+                modifier = Modifier,
+                snackBarHostState = snackBarHostState,
+                navigateToMeter = navigateToMeter,
+            )
+
+            // 2. Store UI
+            2 -> StoreScreen(
+                modifier = Modifier,
+            )
+
+            // Not must be happened
             else -> {}
         }
     }
