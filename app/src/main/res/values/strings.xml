@@ -11,4 +11,22 @@
 
     <string name="home_snack_bar_update_failure">Cost info update failed. Please check network state.</string>
     <string name="home_snack_bar_update_success">Cost info is updated.</string>
+
+    <string name="setting_group_title_meter">Meter Setting</string>
+    <string name="setting_item_title_meter_region">Region</string>
+    <string name="setting_item_title_meter_theme">Theme</string>
+
+    <string name="setting_group_title_cost_info">Cost Info</string>
+    <string name="setting_item_title_cost_info">Cost Info</string>
+    <string name="setting_item_subtitle_cost_info_night_1step">Base: KRW %d (First %.1fkm)\nDistance cost: KRW 100 per %d meters\nTime cost: KRW 100 per %d seconds\nOut city extra: %d%%\nNight extra\n- %d%% (%02d:00 ~ %02d:00)</string>
+    <string name="setting_item_subtitle_cost_info_night_2step">Base: KRW %d (First %.1fkm)\nDistance cost: KRW 100 per %d meters\nTime cost: KRW 100 per %d seconds\nOut city extra: %d%%\nNight extra\n- %d%% (%02d:00 ~ %02d:00)\n- %d%% (%02d:00 ~ %02d:00)</string>
+    <string name="setting_item_title_cost_version">Cost DB Version</string>
+
+    <string name="setting_group_title_developer_info">Developer Info</string>
+    <string name="setting_item_title_developer_name">Useful</string>
+    <string name="setting_item_subtitle_developer_name">Chung-Ang University Dept. Software (2019 ~ 2025)</string>
+    <string name="setting_item_title_developer_blog">Developer\'s Blog</string>
+    <string name="setting_item_title_developer_github">Developer\'s GitHub</string>
+    <string name="setting_item_title_developer_instagram">Developer\'s Instagram</string>
+    <string name="setting_item_title_privacy_policy">Privacy Policy</string>
 </resources>
