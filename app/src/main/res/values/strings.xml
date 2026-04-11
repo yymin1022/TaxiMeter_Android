@@ -27,6 +27,27 @@
     <string name="setting_item_subtitle_developer_name">Chung-Ang University Dept. Software (2019 ~ 2025)</string>
     <string name="setting_item_title_developer_blog">Developer\'s Blog</string>
     <string name="setting_item_title_developer_github">Developer\'s GitHub</string>
-    <string name="setting_item_title_developer_instagram">Developer\'s Instagram</string>
+    <string name="setting_item_title_developer_linkedin">Developer\'s LinkedIn</string>
     <string name="setting_item_title_privacy_policy">Privacy Policy</string>
+
+    <string name="region_seoul">Seoul</string>
+    <string name="region_gangwon">Gangwon</string>
+    <string name="region_gyeonggi">Gyeonggi</string>
+    <string name="region_gyeongbuk">Gyeongbuk</string>
+    <string name="region_gyeongnam">Gyeongnam</string>
+    <string name="region_gwangju">Gwangju</string>
+    <string name="region_daegu">Daegu</string>
+    <string name="region_daejeon">Daejeon</string>
+    <string name="region_busan">Busan</string>
+    <string name="region_ulsan">Ulsan</string>
+    <string name="region_incheon">Incheon</string>
+    <string name="region_jeonbuk">Jeonbuk</string>
+    <string name="region_jeonnam">Jeonnam</string>
+    <string name="region_jeju">Jeju</string>
+    <string name="region_chungbuk">Chungbuk</string>
+    <string name="region_chungnam">Chungnam</string>
+    <string name="region_custom">Custom</string>
+
+    <string name="theme_circle">Circle</string>
+    <string name="theme_horse">Horse</string>
 </resources>
