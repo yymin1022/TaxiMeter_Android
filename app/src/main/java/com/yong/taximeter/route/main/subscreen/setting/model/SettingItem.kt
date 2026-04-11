@@ -1,4 +1,4 @@
-package com.yong.taximeter.route.main.subscreen.store.model
+package com.yong.taximeter.route.main.subscreen.setting.model
 
 import androidx.annotation.StringRes
 
@@ -20,6 +20,7 @@ data class SettingItem(
     val titleRes: Int? = null,
     @StringRes
     val subtitleRes: Int? = null,
+    val subtitle: String? = null,
     val isEnabled: Boolean = true,
     val onClick: (() -> Unit)? = null,
 )

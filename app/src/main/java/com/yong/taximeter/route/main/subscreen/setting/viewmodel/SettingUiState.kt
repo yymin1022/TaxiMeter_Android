@@ -1,6 +1,6 @@
 package com.yong.taximeter.route.main.subscreen.setting.viewmodel
 
-import com.yong.taximeter.route.main.subscreen.store.model.SettingItemGroup
+import com.yong.taximeter.route.main.subscreen.setting.model.SettingItemGroup
 
 /**
  * UI State for [SettingViewModel]
