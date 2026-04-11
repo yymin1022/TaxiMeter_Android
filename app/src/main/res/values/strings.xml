@@ -14,6 +14,9 @@
 
     <string name="setting_group_title_meter">Meter Setting</string>
     <string name="setting_item_title_meter_region">Region</string>
+    <string name="setting_item_title_meter_set_custom_cost">Set custom cost parameter</string>
+    <string name="setting_item_subtitle_meter_set_custom_cost_disabled">To use, set region as custom</string>
+    <string name="setting_item_subtitle_meter_set_custom_cost_enabled">Setup your own cost values</string>
     <string name="setting_item_title_meter_theme">Theme</string>
 
     <string name="setting_group_title_cost_info">Cost Info</string>
