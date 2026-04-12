@@ -64,6 +64,17 @@ class SettingViewModel @Inject constructor(
     }
 
     /**
+     * Dismiss any dialog
+     */
+    fun dismissDialog() {
+        _uiState.update {
+            it.copy(
+                showDialog = ShowDialog.Nothing,
+            )
+        }
+    }
+
+    /**
      * Load cost info setting group
      */
     private fun loadCostInfoSettingGroup(): SettingItemGroup {
@@ -168,6 +179,7 @@ class SettingViewModel @Inject constructor(
                     SettingItem(
                         titleRes = R.string.setting_item_title_meter_region,
                         subtitleRes = curRegionTextRes,
+                        onClick = this@SettingViewModel::onClickRegionSettingItem,
                     )
                 )
 
@@ -178,10 +190,89 @@ class SettingViewModel @Inject constructor(
                     SettingItem(
                         titleRes = R.string.setting_item_title_meter_theme,
                         subtitleRes = curThemeTextRes,
+                        onClick = this@SettingViewModel::onClickThemeSettingItem,
                     )
                 )
             }
         )
+    }
+
+    /**
+     * Click Region Setting Item
+     */
+    private fun onClickRegionSettingItem() {
+        // Region Select Dialog State
+        val showRegionSelectDialog = ShowDialog.RadioSelectDialog(
+            titleRes = R.string.setting_dialog_region_setting_title,
+            itemTextResources = RegionSetting.entries.map { it.toStringRes() },
+            onComplete = this::onCompleteRegionSetting,
+        )
+
+        // Show Region Setting Dialog
+        _uiState.update {
+            it.copy(
+                showDialog = showRegionSelectDialog,
+            )
+        }
+    }
+
+    /**
+     * Selected Region Setting
+     */
+    private fun onCompleteRegionSetting(idx: Int) {
+        // Get selected theme
+        val selectedTheme = RegionSetting.entries.get(idx)
+        // Update setting
+        settingRepository.setRegion(selectedTheme)
+
+        // Reload Setting Items
+        loadSettingGroups()
+
+        // Close Dialog
+        _uiState.update {
+            it.copy(
+                showDialog = ShowDialog.Nothing,
+            )
+        }
+    }
+
+    /**
+     * Click Theme Setting Item
+     */
+    private fun onClickThemeSettingItem() {
+        // Theme Select Dialog State
+        val showThemeSelectDialog = ShowDialog.RadioSelectDialog(
+            titleRes = R.string.setting_dialog_theme_setting_title,
+            itemTextResources = ThemeSetting.entries.map { it.toStringRes() },
+            onComplete = this::onCompleteThemeSetting,
+        )
+
+        // Show Region Setting Dialog
+        _uiState.update {
+            it.copy(
+                showDialog = showThemeSelectDialog,
+            )
+        }
+    }
+
+    /**
+     * Selected Theme Setting
+     */
+    private fun onCompleteThemeSetting(idx: Int) {
+        // Get selected theme
+        val selectedTheme = ThemeSetting.entries.get(idx)
+        // Update setting
+        settingRepository.setTheme(selectedTheme)
+
+        // Reload Setting Items
+        loadSettingGroups()
+
+        // Close Dialog
+        _uiState.update {
+            it.copy(
+                showDialog = ShowDialog.Nothing,
+            )
+        }
     }
 
     /**
