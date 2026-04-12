@@ -3,6 +3,7 @@ package com.yong.taximeter.route.main.subscreen.setting.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yong.taximeter.R
+import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
 import com.yong.taximeter.domain.model.ThemeSetting
 import com.yong.taximeter.domain.repository.CostRepository
@@ -99,6 +100,7 @@ class SettingViewModel @Inject constructor(
                             if(isCustomCost) R.string.setting_item_subtitle_meter_set_custom_cost_enabled
                             else R.string.setting_item_subtitle_meter_set_custom_cost_disabled,
                         isEnabled = isCustomCost,
+                        onClick = this@SettingViewModel::onClickCustomCostSettingItem,
                     )
                 )
 
@@ -195,6 +197,41 @@ class SettingViewModel @Inject constructor(
                 )
             }
         )
+    }
+
+    /**
+     * Click CustomCost Setting Item
+     */
+    private fun onClickCustomCostSettingItem() {
+        // CustomCost Dialog State
+        val showCustomCostDialog = ShowDialog.CustomCostDialog(
+            titleRes = R.string.setting_dialog_custom_cost_title,
+            onComplete = this::onCompleteCustomCostSetting,
+        )
+
+        // Show Region Setting Dialog
+        _uiState.update {
+            it.copy(
+                showDialog = showCustomCostDialog,
+            )
+        }
+    }
+
+    /**
+     * Complete CustomCost Setting
+     */
+    private fun onCompleteCustomCostSetting(costInfo: CostInfo) {
+        // TODO: Set Cost Info
+
+        // Reload Setting Items
+        loadSettingGroups()
+
+        // Close Dialog
+        _uiState.update {
+            it.copy(
+                showDialog = ShowDialog.Nothing,
+            )
+        }
     }
 
     /**
