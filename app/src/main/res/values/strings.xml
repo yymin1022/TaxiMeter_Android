@@ -33,6 +33,7 @@
     <string name="setting_item_title_developer_linkedin">Developer\'s LinkedIn</string>
     <string name="setting_item_title_privacy_policy">Privacy Policy</string>
 
+    <string name="setting_dialog_custom_cost_title">Set custom cost</string>
     <string name="setting_dialog_region_setting_title">Select region</string>
     <string name="setting_dialog_theme_setting_title">Select theme</string>
     <string name="dialog_cancel">Cancel</string>
