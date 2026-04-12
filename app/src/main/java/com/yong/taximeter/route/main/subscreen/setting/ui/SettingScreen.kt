@@ -17,9 +17,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yong.taximeter.common.ui.dialog.RadioSelectDialog
 import com.yong.taximeter.common.ui.theme.Typography
 import com.yong.taximeter.route.main.subscreen.setting.model.SettingItemGroup
 import com.yong.taximeter.route.main.subscreen.setting.viewmodel.SettingViewModel
+import com.yong.taximeter.route.main.subscreen.setting.viewmodel.ShowDialog
 
 /**
  * Setting Screen
@@ -32,10 +34,32 @@ fun SettingScreen(
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val settingGroups = uiState.settingGroups
+    val showDialog = uiState.showDialog
 
     // Setting Groups Load Effect
     LaunchedEffect(Unit) {
         viewModel.loadSettingGroups()
+    }
+
+    // Show Dialog if enabled
+    when(showDialog) {
+        // Custom Cost Input Dialog
+        is ShowDialog.CustomCostDialog -> {
+            // TODO: Implement dialog
+        }
+
+        // Radio Selection Dialog
+        is ShowDialog.RadioSelectDialog -> {
+            RadioSelectDialog(
+                titleRes = showDialog.titleRes,
+                radioItemTextResources = showDialog.itemTextResources,
+                onComplete = showDialog.onComplete,
+                onDismiss = viewModel::dismissDialog,
+            )
+        }
+
+        // Nothing
+        is ShowDialog.Nothing -> {}
     }
 
     // Setting Groups List UI
