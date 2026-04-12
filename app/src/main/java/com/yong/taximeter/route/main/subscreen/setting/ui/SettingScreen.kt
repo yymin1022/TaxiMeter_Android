@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yong.taximeter.common.ui.dialog.CustomCostInputDialog
 import com.yong.taximeter.common.ui.dialog.RadioSelectDialog
 import com.yong.taximeter.common.ui.theme.Typography
 import com.yong.taximeter.route.main.subscreen.setting.model.SettingItemGroup
@@ -45,7 +46,11 @@ fun SettingScreen(
     when(showDialog) {
         // Custom Cost Input Dialog
         is ShowDialog.CustomCostDialog -> {
-            // TODO: Implement dialog
+            CustomCostInputDialog(
+                titleRes = showDialog.titleRes,
+                onConfirm = showDialog.onComplete,
+                onDismiss = viewModel::dismissDialog,
+            )
         }
 
         // Radio Selection Dialog
