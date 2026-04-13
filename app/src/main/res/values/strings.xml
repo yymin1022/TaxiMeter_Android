@@ -38,6 +38,27 @@
     <string name="setting_dialog_theme_setting_title">Select theme</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_complete">Complete</string>
+    
+    <string name="dialog_cost_input_error_cost">Check valid input</string>
+    <string name="dialog_cost_input_error_time">Time must be between 0 to 23</string>
+
+    <string name="dialog_cost_input_section_base_cost">Base Cost</string>
+    <string name="dialog_cost_input_label_cost_base">Base Cost (KRW)</string>
+    <string name="dialog_cost_input_label_dist_base">Base Cost Distance (m)</string>
+
+    <string name="dialog_cost_input_section_cost_per">Cost per Run / Time</string>
+    <string name="dialog_cost_input_label_run_per">Cost per Run (m)</string>
+    <string name="dialog_cost_input_label_time_per">Cost per Time (s)</string>
+
+    <string name="dialog_cost_input_section_extra_rate">Extra Rate (%)</string>
+    <string name="dialog_cost_input_label_night_1">Night step 1</string>
+    <string name="dialog_cost_input_label_night_2">Night step 2</string>
+    <string name="dialog_cost_input_label_out_city">Out city</string>
+
+    <string name="dialog_cost_input_section_night_time_1">Night Extra Times - Step 1</string>
+    <string name="dialog_cost_input_section_night_time_2">Night Extra Times - Step 2</string>
+    <string name="dialog_cost_input_label_night_time_start">Start time (Hour)</string>
+    <string name="dialog_cost_input_label_night_time_end">End time (Hour)</string>
 
     <string name="region_seoul">Seoul</string>
     <string name="region_gangwon">Gangwon</string>
