@@ -1,6 +1,7 @@
 package com.yong.taximeter.data.repository
 
 import com.yong.taximeter.data.datasource.PreferenceDataSource
+import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
 import com.yong.taximeter.domain.model.ThemeSetting
 import com.yong.taximeter.domain.repository.SettingRepository
@@ -16,6 +17,10 @@ class SettingRepositoryImpl @Inject constructor(
 
         private val DEFAULT_REGION = RegionSetting.SEOUL
         private val DEFAULT_THEME = ThemeSetting.HORSE
+    }
+
+    override fun setCustomCostInfo(value: CostInfo) {
+        // TODO: Implement
     }
 
     override fun getCurrentRegion(): RegionSetting {
