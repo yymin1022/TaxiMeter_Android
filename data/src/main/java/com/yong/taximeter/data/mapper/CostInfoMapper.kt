@@ -45,4 +45,23 @@ object CostInfoMapper {
         nightEndHour1 = nightEndHour1,
         nightEndHour2 = nightEndHour2,
     )
+
+    /**
+     * Map Model -> Entity
+     */
+    fun CostInfo.toEntity() = CostInfoEntity(
+        region = region,
+        costBase = costBase,
+        distBase = distBase,
+        costRunPer = costRunPer,
+        costTimePer = costTimePer,
+        extraRateCity = extraRateCity,
+        extraRateNight1 = extraRateNight1,
+        extraRateNight2 = extraRateNight2,
+        nightStartHour1 = nightStartHour1,
+        nightStartHour2 = nightStartHour2,
+        nightEndHour1 = nightEndHour1,
+        nightEndHour2 = nightEndHour2,
+        isCustom = true,
+    )
 }
