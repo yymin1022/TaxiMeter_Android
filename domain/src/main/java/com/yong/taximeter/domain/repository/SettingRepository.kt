@@ -12,7 +12,7 @@ import com.yong.taximeter.domain.model.ThemeSetting
  */
 interface SettingRepository {
     // Custom Cost
-    fun setCustomCostInfo(value: CostInfo)
+    suspend fun setCustomCostInfo(value: CostInfo)
 
     // Region
     fun getCurrentRegion(): RegionSetting

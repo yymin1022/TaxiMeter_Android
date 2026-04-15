@@ -1,6 +1,9 @@
 package com.yong.taximeter.data.repository
 
+import com.yong.taximeter.data.dao.CostInfoDao
 import com.yong.taximeter.data.datasource.PreferenceDataSource
+import com.yong.taximeter.data.entity.CostInfoEntity
+import com.yong.taximeter.data.mapper.CostInfoMapper.toEntity
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
 import com.yong.taximeter.domain.model.ThemeSetting
@@ -8,6 +11,8 @@ import com.yong.taximeter.domain.repository.SettingRepository
 import javax.inject.Inject
 
 class SettingRepositoryImpl @Inject constructor(
+    // Inject Cost DB DAO
+    private val costDao: CostInfoDao,
     // Inject Preference DataSource
     private val preferenceDataSource: PreferenceDataSource,
 ): SettingRepository {
@@ -19,8 +24,9 @@ class SettingRepositoryImpl @Inject constructor(
         private val DEFAULT_THEME = ThemeSetting.HORSE
     }
 
-    override fun setCustomCostInfo(value: CostInfo) {
-        // TODO: Implement
+    override suspend fun setCustomCostInfo(value: CostInfo) {
+        val costEntity = value.toEntity()
+        costDao.insertCustomCost(costEntity)
     }
 
     override fun getCurrentRegion(): RegionSetting {

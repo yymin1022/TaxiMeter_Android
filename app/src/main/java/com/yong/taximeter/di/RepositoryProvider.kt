@@ -36,9 +36,11 @@ object RepositoryProvider {
     @Provides
     @Singleton
     fun provideSettingRepository(
+        costDao: CostInfoDao,
         preferenceDataSource: PreferenceDataSource,
     ): SettingRepository {
         return SettingRepositoryImpl(
+            costDao,
             preferenceDataSource,
         )
     }
