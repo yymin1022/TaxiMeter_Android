@@ -221,16 +221,19 @@ class SettingViewModel @Inject constructor(
      * Complete CustomCost Setting
      */
     private fun onCompleteCustomCostSetting(costInfo: CostInfo) {
-        // TODO: Set Cost Info
+        viewModelScope.launch {
+            // Set Cost Info
+            settingRepository.setCustomCostInfo(costInfo)
 
-        // Reload Setting Items
-        loadSettingGroups()
+            // Reload Setting Items
+            loadSettingGroups()
 
-        // Close Dialog
-        _uiState.update {
-            it.copy(
-                showDialog = ShowDialog.Nothing,
-            )
+            // Close Dialog
+            _uiState.update {
+                it.copy(
+                    showDialog = ShowDialog.Nothing,
+                )
+            }
         }
     }
 
