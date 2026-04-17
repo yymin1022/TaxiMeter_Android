@@ -20,6 +20,7 @@ data class SettingItem(
     val titleRes: Int? = null,
     @StringRes
     val subtitleRes: Int? = null,
+    val subtitleFormatArgs: List<Any>? = null,
     val subtitle: String? = null,
     val isEnabled: Boolean = true,
     val onClick: (() -> Unit)? = null,
