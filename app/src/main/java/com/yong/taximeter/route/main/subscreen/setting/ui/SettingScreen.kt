@@ -116,9 +116,14 @@ private fun SettingGroup(
             // Title / Subtitle Text
             val itemTitleText = item.titleRes
                 ?.let { stringResource(it) }
-            val itemSubtitleText = item.subtitleRes
-                ?.let { stringResource(it) }
-                ?: item.subtitle
+            val itemSubtitleText = when {
+                item.subtitleRes != null && item.subtitleFormatArgs.isNullOrEmpty().not() ->
+                    stringResource(item.subtitleRes, *item.subtitleFormatArgs.toTypedArray())
+                item.subtitleRes != null ->
+                    stringResource(item.subtitleRes)
+                else ->
+                    item.subtitle
+            }
             // Enabled flag
             val isEnabled = item.isEnabled
 
