@@ -23,4 +23,9 @@ data class CostInfo(
     val nightStartHour2: Int = 0,
     val nightEndHour1: Int = 0,
     val nightEndHour2: Int = 0,
-)
+) {
+    // is night extra rate is 2-step
+    val isNightExtra2step: Boolean
+        get() = (nightStartHour1 != nightStartHour2)
+                || (nightEndHour1 != nightEndHour2)
+}
