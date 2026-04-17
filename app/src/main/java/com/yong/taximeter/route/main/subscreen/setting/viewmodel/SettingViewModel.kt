@@ -78,17 +78,37 @@ class SettingViewModel @Inject constructor(
     /**
      * Load cost info setting group
      */
-    private fun loadCostInfoSettingGroup(): SettingItemGroup {
+    private suspend fun loadCostInfoSettingGroup(): SettingItemGroup {
         return SettingItemGroup(
             titleRes = R.string.setting_group_title_cost_info,
             items = buildList {
-                // Cost Info item
-                add(
-                    SettingItem(
-                        titleRes = R.string.setting_item_title_cost_info,
-                        subtitleRes = R.string.setting_item_subtitle_cost_info_night_1step,
+                // Current cost info
+                val currentRegion = settingRepository.getCurrentRegion()
+                costRepository.getCostInfo(currentRegion.key)?.let { costInfo ->
+                    val isNightExtra2step = costInfo.isNightExtra2step
+                    // Cost Info item
+                    add(
+                        SettingItem(
+                            titleRes = R.string.setting_item_title_cost_info,
+                            subtitleRes =
+                                if(isNightExtra2step) R.string.setting_item_subtitle_cost_info_night_2step
+                                else R.string.setting_item_subtitle_cost_info_night_1step,
+                            subtitleFormatArgs = listOf(
+                                costInfo.costBase,
+                                costInfo.distBase.toFloat() / 1000,
+                                costInfo.costRunPer,
+                                costInfo.costTimePer,
+                                costInfo.extraRateCity,
+                                costInfo.extraRateNight1,
+                                costInfo.nightStartHour1,
+                                costInfo.nightEndHour1,
+                                costInfo.extraRateNight2,
+                                costInfo.nightStartHour2,
+                                costInfo.nightEndHour2,
+                            ),
+                        )
                     )
-                )
+                }
 
                 // Custom cost flag
                 val isCustomCost = (settingRepository.getCurrentRegion()== RegionSetting.CUSTOM)
