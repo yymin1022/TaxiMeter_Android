@@ -179,6 +179,7 @@ class SettingViewModel @Inject constructor(
                     SettingItem(
                         titleRes = R.string.setting_item_title_developer_blog,
                         subtitle = URL_DEVELOPER_BLOG,
+                        onClick = { sendOpenUrlRequest(URL_DEVELOPER_BLOG) },
                     )
                 )
 
@@ -187,6 +188,7 @@ class SettingViewModel @Inject constructor(
                     SettingItem(
                         titleRes = R.string.setting_item_title_developer_github,
                         subtitle = URL_DEVELOPER_GITHUB,
+                        onClick = { sendOpenUrlRequest(URL_DEVELOPER_GITHUB) },
                     )
                 )
 
@@ -195,6 +197,7 @@ class SettingViewModel @Inject constructor(
                     SettingItem(
                         titleRes = R.string.setting_item_title_developer_linkedin,
                         subtitle = URL_DEVELOPER_LINKEDIN,
+                        onClick = { sendOpenUrlRequest(URL_DEVELOPER_LINKEDIN) },
                     )
                 )
 
@@ -203,6 +206,7 @@ class SettingViewModel @Inject constructor(
                     SettingItem(
                         titleRes = R.string.setting_item_title_privacy_policy,
                         subtitle = URL_PRIVACY_POLICY,
+                        onClick = { sendOpenUrlRequest(URL_PRIVACY_POLICY) },
                     )
                 )
             }
