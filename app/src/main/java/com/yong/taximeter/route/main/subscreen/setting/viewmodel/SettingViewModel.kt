@@ -133,7 +133,7 @@ class SettingViewModel @Inject constructor(
                 }
 
                 // Custom cost flag
-                val isCustomCost = (settingRepository.getCurrentRegion()== RegionSetting.CUSTOM)
+                val isCustomCost = (currentRegion == RegionSetting.CUSTOM)
                 // Set custom cost item
                 add(
                     SettingItem(
@@ -220,7 +220,7 @@ class SettingViewModel @Inject constructor(
         return SettingItemGroup(
             titleRes = R.string.setting_group_title_meter,
             items = buildList {
-                // Regin value
+                // Region value
                 val curRegionTextRes = settingRepository.getCurrentRegion().toStringRes()
                 // Region item
                 add(
@@ -306,10 +306,10 @@ class SettingViewModel @Inject constructor(
      * Selected Region Setting
      */
     private fun onCompleteRegionSetting(idx: Int) {
-        // Get selected theme
-        val selectedTheme = RegionSetting.entries.get(idx)
+        // Get selected region
+        val selectedRegion = RegionSetting.entries[idx]
         // Update setting
-        settingRepository.setRegion(selectedTheme)
+        settingRepository.setRegion(selectedRegion)
 
         // Reload Setting Items
         loadSettingGroups()
@@ -333,7 +333,7 @@ class SettingViewModel @Inject constructor(
             onComplete = this::onCompleteThemeSetting,
         )
 
-        // Show Region Setting Dialog
+        // Show Theme Setting Dialog
         _uiState.update {
             it.copy(
                 showDialog = showThemeSelectDialog,
@@ -346,7 +346,7 @@ class SettingViewModel @Inject constructor(
      */
     private fun onCompleteThemeSetting(idx: Int) {
         // Get selected theme
-        val selectedTheme = ThemeSetting.entries.get(idx)
+        val selectedTheme = ThemeSetting.entries[idx]
         // Update setting
         settingRepository.setTheme(selectedTheme)
 
