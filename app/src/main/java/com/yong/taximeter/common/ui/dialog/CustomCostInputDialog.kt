@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.R
+import com.yong.taximeter.domain.model.RegionSetting
 
 /**
  * A dialog, which shows custom cost input form
@@ -278,7 +279,7 @@ fun CustomCostInputDialog(
                     if(validate(context)) {
                         onConfirm(
                             CostInfo(
-                                region = "custom",
+                                region = RegionSetting.CUSTOM.key,
                                 costBase = costBase.toIntOrNull() ?: 0,
                                 distBase = distBase.toIntOrNull() ?: 0,
                                 costRunPer = costRunPer.toIntOrNull() ?: 0,
