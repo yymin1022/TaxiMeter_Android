@@ -2,7 +2,6 @@ package com.yong.taximeter.data.repository
 
 import com.yong.taximeter.data.dao.CostInfoDao
 import com.yong.taximeter.data.datasource.PreferenceDataSource
-import com.yong.taximeter.data.entity.CostInfoEntity
 import com.yong.taximeter.data.mapper.CostInfoMapper.toEntity
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
