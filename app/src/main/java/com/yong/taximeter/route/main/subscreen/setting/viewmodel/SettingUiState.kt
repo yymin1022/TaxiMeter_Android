@@ -11,6 +11,9 @@ data class SettingUiState(
     // Setting item groups
     val settingGroups: List<SettingItemGroup>? = null,
 
+    // Request for Open URL:
+    val openUrlRequest: String? = null,
+
     // Show Dialog
     val showDialog: ShowDialog = ShowDialog.Nothing,
 )

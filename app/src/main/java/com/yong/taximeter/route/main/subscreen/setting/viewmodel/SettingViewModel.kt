@@ -76,6 +76,28 @@ class SettingViewModel @Inject constructor(
     }
 
     /**
+     * Clear Open URL Request
+     */
+    fun clearOpenUrlRequest() {
+        _uiState.update {
+            it.copy(
+                openUrlRequest = null,
+            )
+        }
+    }
+
+    /**
+     * Send Open URL Request
+     */
+    private fun sendOpenUrlRequest(url: String) {
+        _uiState.update {
+            it.copy(
+                openUrlRequest = url,
+            )
+        }
+    }
+
+    /**
      * Load cost info setting group
      */
     private suspend fun loadCostInfoSettingGroup(): SettingItemGroup {
