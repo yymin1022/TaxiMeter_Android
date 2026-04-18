@@ -83,6 +83,9 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
+    // In-app browser Dependency
+    implementation(libs.androidx.browser)
+
     // Test Dependency
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
