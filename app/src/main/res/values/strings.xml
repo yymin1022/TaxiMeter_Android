@@ -11,4 +11,73 @@
 
     <string name="home_snack_bar_update_failure">Cost info update failed. Please check network state.</string>
     <string name="home_snack_bar_update_success">Cost info is updated.</string>
+
+    <string name="setting_group_title_meter">Meter Setting</string>
+    <string name="setting_item_title_meter_region">Region</string>
+    <string name="setting_item_title_meter_set_custom_cost">Set custom cost parameter</string>
+    <string name="setting_item_subtitle_meter_set_custom_cost_disabled">To use, set region as custom</string>
+    <string name="setting_item_subtitle_meter_set_custom_cost_enabled">Setup your own cost values</string>
+    <string name="setting_item_title_meter_theme">Theme</string>
+
+    <string name="setting_group_title_cost_info">Cost Info</string>
+    <string name="setting_item_title_cost_info">Cost Info</string>
+    <string name="setting_item_subtitle_cost_info_night_1step">Base: KRW %d (First %.1fkm)\nDistance cost: KRW 100 per %d meters\nTime cost: KRW 100 per %d seconds\nOut city extra: %d%%\nNight extra\n- %d%% (%02d:00 ~ %02d:00)</string>
+    <string name="setting_item_subtitle_cost_info_night_2step">Base: KRW %d (First %.1fkm)\nDistance cost: KRW 100 per %d meters\nTime cost: KRW 100 per %d seconds\nOut city extra: %d%%\nNight extra\n- %d%% (%02d:00 ~ %02d:00)\n- %d%% (%02d:00 ~ %02d:00)</string>
+    <string name="setting_item_title_cost_version">Cost DB Version</string>
+
+    <string name="setting_group_title_developer_info">Developer Info</string>
+    <string name="setting_item_title_developer_name">Useful</string>
+    <string name="setting_item_subtitle_developer_name">Chung-Ang University Dept. Software (2019 ~ 2025)</string>
+    <string name="setting_item_title_developer_blog">Developer\'s Blog</string>
+    <string name="setting_item_title_developer_github">Developer\'s GitHub</string>
+    <string name="setting_item_title_developer_linkedin">Developer\'s LinkedIn</string>
+    <string name="setting_item_title_privacy_policy">Privacy Policy</string>
+
+    <string name="setting_dialog_custom_cost_title">Set custom cost</string>
+    <string name="setting_dialog_region_setting_title">Select region</string>
+    <string name="setting_dialog_theme_setting_title">Select theme</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_complete">Complete</string>
+    
+    <string name="dialog_cost_input_error_cost">Check valid input</string>
+    <string name="dialog_cost_input_error_time">Time must be between 0 to 23</string>
+
+    <string name="dialog_cost_input_section_base_cost">Base Cost</string>
+    <string name="dialog_cost_input_label_cost_base">Base Cost (KRW)</string>
+    <string name="dialog_cost_input_label_dist_base">Base Cost Distance (m)</string>
+
+    <string name="dialog_cost_input_section_cost_per">Cost per Run / Time</string>
+    <string name="dialog_cost_input_label_run_per">Cost per Run (m)</string>
+    <string name="dialog_cost_input_label_time_per">Cost per Time (s)</string>
+
+    <string name="dialog_cost_input_section_extra_rate">Extra Rate (%)</string>
+    <string name="dialog_cost_input_label_night_1">Night step 1</string>
+    <string name="dialog_cost_input_label_night_2">Night step 2</string>
+    <string name="dialog_cost_input_label_out_city">Out city</string>
+
+    <string name="dialog_cost_input_section_night_time_1">Night Extra Times - Step 1</string>
+    <string name="dialog_cost_input_section_night_time_2">Night Extra Times - Step 2</string>
+    <string name="dialog_cost_input_label_night_time_start">Start time (Hour)</string>
+    <string name="dialog_cost_input_label_night_time_end">End time (Hour)</string>
+
+    <string name="region_seoul">Seoul</string>
+    <string name="region_gangwon">Gangwon</string>
+    <string name="region_gyeonggi">Gyeonggi</string>
+    <string name="region_gyeongbuk">Gyeongbuk</string>
+    <string name="region_gyeongnam">Gyeongnam</string>
+    <string name="region_gwangju">Gwangju</string>
+    <string name="region_daegu">Daegu</string>
+    <string name="region_daejeon">Daejeon</string>
+    <string name="region_busan">Busan</string>
+    <string name="region_ulsan">Ulsan</string>
+    <string name="region_incheon">Incheon</string>
+    <string name="region_jeonbuk">Jeonbuk</string>
+    <string name="region_jeonnam">Jeonnam</string>
+    <string name="region_jeju">Jeju</string>
+    <string name="region_chungbuk">Chungbuk</string>
+    <string name="region_chungnam">Chungnam</string>
+    <string name="region_custom">Custom</string>
+
+    <string name="theme_circle">Circle</string>
+    <string name="theme_horse">Horse</string>
 </resources>
