@@ -1,5 +1,6 @@
 package com.yong.taximeter.route.main.subscreen.setting.ui
 
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +14,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yong.taximeter.common.ui.dialog.CustomCostInputDialog
@@ -34,12 +37,25 @@ fun SettingScreen(
 ) {
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val openUrlRequest = uiState.openUrlRequest
     val settingGroups = uiState.settingGroups
     val showDialog = uiState.showDialog
 
     // Setting Groups Load Effect
     LaunchedEffect(Unit) {
         viewModel.loadSettingGroups()
+    }
+
+    // Open URL Request Effect
+    val context = LocalContext.current
+    LaunchedEffect(openUrlRequest) {
+        openUrlRequest?.let { url ->
+            val browserIntent = CustomTabsIntent.Builder()
+                .setShowTitle(true)
+                .build()
+            browserIntent.launchUrl(context, url.toUri())
+            viewModel.clearOpenUrlRequest()
+        }
     }
 
     // Show Dialog if enabled
