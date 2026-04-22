@@ -15,6 +15,9 @@ kotlin {
 }
 
 dependencies {
+    // Kotlin Dependency
+    implementation(libs.kotlinx.coroutines.core)
+
     // JavaX Dependency
     implementation(libs.javax.inject)
 
