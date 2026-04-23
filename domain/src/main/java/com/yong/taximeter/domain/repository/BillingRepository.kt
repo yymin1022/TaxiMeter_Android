@@ -4,6 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import com.yong.taximeter.domain.model.BillingProduct
 import com.yong.taximeter.domain.model.BillingPurchase
 
+/**
+ * Billing Repository Interface
+ * - Get product information
+ * - Get purchased information
+ * - Launch purchase processing
+ */
 interface BillingRepository {
     // Connect / Disconnect Billing Service
     fun connect(): Result<Unit>
