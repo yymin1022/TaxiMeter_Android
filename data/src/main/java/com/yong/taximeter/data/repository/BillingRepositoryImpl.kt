@@ -170,20 +170,19 @@ class BillingRepositoryImpl @Inject constructor(
             .setPurchaseToken(purchaseToken)
             .build()
 
-        var consumeResult: Result<Unit> = Result.failure(Exception("Loading purchase"))
-        billingClient.consumeAsync(params) { billingResult, _ ->
-            consumeResult = if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                logger.logEvent(LOG_TAG, mapOf(Pair("Consumed product", billingResult.debugMessage)))
-                Result.success(Unit)
-            } else {
-                // Log exception
-                val exception = Exception("Failed to consume purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
-                logger.recordException(exception)
-                Result.failure(exception)
+        return suspendCancellableCoroutine { continuation ->
+            billingClient.consumeAsync(params) { billingResult, _ ->
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    logger.logEvent(LOG_TAG, mapOf(Pair("Consumed product", billingResult.debugMessage)))
+                    continuation.resume(Result.success(Unit))
+                } else {
+                    // Log exception
+                    val exception = Exception("Failed to consume purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                    logger.recordException(exception)
+                    continuation.resume(Result.failure(exception))
+                }
             }
         }
-
-        return consumeResult
     }
 
     /**
