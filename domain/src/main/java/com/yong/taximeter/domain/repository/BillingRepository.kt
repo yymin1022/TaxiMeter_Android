@@ -12,7 +12,7 @@ import com.yong.taximeter.domain.model.BillingPurchase
  */
 interface BillingRepository {
     // Connect / Disconnect Billing Service
-    fun connect(): Result<Unit>
+    suspend fun connect(): Result<Unit>
     fun disconnect()
 
     // Observe for Billing
