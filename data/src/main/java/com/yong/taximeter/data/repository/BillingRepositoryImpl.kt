@@ -141,20 +141,19 @@ class BillingRepositoryImpl @Inject constructor(
             .setPurchaseToken(purchaseToken)
             .build()
 
-        var ackResult: Result<Unit> = Result.failure(Exception("Loading"))
-        billingClient.acknowledgePurchase(params) { billingResult ->
-            ackResult = if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                logger.logEvent(LOG_TAG, mapOf(Pair("Acknowledged product", billingResult.debugMessage)))
-                Result.success(Unit)
-            } else {
-                // Log exception
-                val exception = Exception("Failed to acknowledge purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
-                logger.recordException(exception)
-                Result.failure(exception)
+        return suspendCancellableCoroutine { continuation ->
+            billingClient.acknowledgePurchase(params) { billingResult ->
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    logger.logEvent(LOG_TAG, mapOf(Pair("Acknowledged product", billingResult.debugMessage)))
+                    continuation.resume(Result.success(Unit))
+                } else {
+                    // Log exception
+                    val exception = Exception("Failed to acknowledge purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                    logger.recordException(exception)
+                    continuation.resume(Result.failure(exception))
+                }
             }
         }
-
-        return ackResult
     }
 
     /**
