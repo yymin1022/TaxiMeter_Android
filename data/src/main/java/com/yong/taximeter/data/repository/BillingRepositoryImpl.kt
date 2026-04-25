@@ -236,21 +236,19 @@ class BillingRepositoryImpl @Inject constructor(
             .setProductList(productList)
             .build()
 
-        // Query Product information from Billing Client
-        var queryResult: Result<List<BillingProduct>> = Result.failure(Exception("Loading products"))
-        billingClient.queryProductDetailsAsync(params) { billingResult, detailsList ->
-            queryResult =
+        return suspendCancellableCoroutine { continuation ->
+            // Query Product information from Billing Client
+            billingClient.queryProductDetailsAsync(params) { billingResult, detailsList ->
                 if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     detailsList.productDetailsList.forEach { productDetailsCache[it.productId] = it }
-                    Result.success(detailsList.productDetailsList.map { it.toBillingProduct() })
+                    continuation.resume(Result.success(detailsList.productDetailsList.map { it.toBillingProduct() }))
                 } else {
                     // Log exception
                     val exception = Exception("Failed to load products(${billingResult.responseCode}): ${billingResult.debugMessage}")
                     logger.recordException(exception)
-                    Result.failure(exception)
+                    continuation.resume(Result.failure(exception))
                 }
+            }
         }
-
-        return queryResult
     }
 }
