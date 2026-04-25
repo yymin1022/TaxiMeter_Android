@@ -200,20 +200,19 @@ class BillingRepositoryImpl @Inject constructor(
             .setProductType(BillingClient.ProductType.INAPP)
             .build()
 
-        var queryResult: Result<List<BillingPurchase>> = Result.failure(Exception("Loading purchases"))
-        billingClient.queryPurchasesAsync(params) { billingResult, purchasesList ->
-            queryResult =
+        return suspendCancellableCoroutine { continuation ->
+            // Query Purchases from Billing Client
+            billingClient.queryPurchasesAsync(params) { billingResult, purchasesList ->
                 if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    Result.success(purchasesList.map { it.toBillingPurchase() })
+                    continuation.resume(Result.success(purchasesList.map { it.toBillingPurchase() }))
                 } else {
                     // Log exception
                     val exception = Exception("Failed to load purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
                     logger.recordException(exception)
-                    Result.failure(exception)
+                    continuation.resume(Result.failure(exception))
                 }
+            }
         }
-
-        return queryResult
     }
 
     /**
