@@ -20,7 +20,9 @@ import com.yong.taximeter.domain.repository.BillingRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class BillingRepositoryImpl @Inject constructor(
     // Inject Android Context
@@ -63,28 +65,26 @@ class BillingRepositoryImpl @Inject constructor(
             return Result.success(Unit)
         }
 
-        // Try to connect Billing Client
-        var connectResult: Result<Unit> = Result.failure(Exception("Billing loading"))
-        billingClient.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(result: BillingResult) {
-                connectResult =
+        return suspendCancellableCoroutine { continuation ->
+            // Try to connect Billing Client
+            billingClient.startConnection(object : BillingClientStateListener {
+                override fun onBillingSetupFinished(result: BillingResult) {
                     if(result.responseCode == BillingClient.BillingResponseCode.OK) {
                         logger.log("Billing connected")
-                        Result.success(Unit)
+                        continuation.resume(Result.success(Unit))
                     } else {
                         // Log exception
                         val exception = Exception("Failed to connect(${result.responseCode}): ${result.debugMessage}")
                         logger.recordException(exception)
-                        Result.failure(exception)
+                        continuation.resume(Result.failure(exception))
                     }
-            }
+                }
 
-            override fun onBillingServiceDisconnected() {
-                logger.log("Billing disconnected")
-            }
-        })
-
-        return connectResult
+                override fun onBillingServiceDisconnected() {
+                    logger.log("Billing disconnected")
+                }
+            })
+        }
     }
 
     /**
