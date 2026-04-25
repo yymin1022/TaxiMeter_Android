@@ -5,8 +5,11 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.PendingPurchasesParams
+import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.QueryProductDetailsParams
 import com.yong.taximeter.core.common.AppLogger
+import com.yong.taximeter.data.mapper.BillingMapper.toBillingProduct
 import com.yong.taximeter.data.mapper.BillingMapper.toBillingPurchase
 import com.yong.taximeter.domain.model.BillingProduct
 import com.yong.taximeter.domain.model.BillingPurchase
@@ -15,7 +18,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
-import kotlin.math.log
 
 class BillingRepositoryImpl @Inject constructor(
     // Inject Android Context
@@ -30,6 +32,11 @@ class BillingRepositoryImpl @Inject constructor(
     // Purchase event channel
     // - All successful purchased event is buffered
     private val _purchaseChannel = Channel<Result<List<BillingPurchase>>>(Channel.BUFFERED)
+
+    // Product detail information cache
+    // - Key: Product ID
+    // - Value: ProductDetails from Billing Client
+    private val productDetailsCache = mutableMapOf<String, ProductDetails>()
 
     // Google Play Billing Client
     // - Process result with handlePurchasesUpdated method
@@ -143,7 +150,38 @@ class BillingRepositoryImpl @Inject constructor(
     /**
      * Get currently available products
      */
-    override fun queryProducts(productIds: List<String>): Result<List<BillingProduct>> {
-        TODO("Not yet implemented")
+    override suspend fun queryProducts(productIds: List<String>): Result<List<BillingProduct>> {
+        // Check if client is ready
+        if(billingClient.isReady.not()) {
+            connect()
+        }
+
+        // Get product list from Billing Client
+        val productList = productIds.map { id ->
+            QueryProductDetailsParams.Product.newBuilder()
+                .setProductId(id)
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        }
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(productList)
+            .build()
+
+        // Query Product information from Billing Client
+        var queryResult: Result<List<BillingProduct>> = Result.failure(Exception("Loading products"))
+        billingClient.queryProductDetailsAsync(params) { billingResult, detailsList ->
+            queryResult =
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    detailsList.productDetailsList.forEach { productDetailsCache[it.productId] = it }
+                    Result.success(detailsList.productDetailsList.map { it.toBillingProduct() })
+                } else {
+                    // Log exception
+                    val exception = Exception("Failed to load products(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                    logger.recordException(exception)
+                    Result.failure(exception)
+                }
+        }
+
+        return queryResult
     }
 }

@@ -22,5 +22,5 @@ interface BillingRepository {
     fun acknowledgePurchase(purchaseToken: String): Result<Unit>
     fun consumePurchase(purchaseToken: String): Result<Unit>
     fun queryExistingPurchases(): Result<List<BillingPurchase>>
-    fun queryProducts(productIds: List<String>): Result<List<BillingProduct>>
+    suspend fun queryProducts(productIds: List<String>): Result<List<BillingProduct>>
 }
