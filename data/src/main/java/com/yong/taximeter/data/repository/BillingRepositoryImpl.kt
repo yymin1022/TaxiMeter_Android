@@ -1,6 +1,7 @@
 package com.yong.taximeter.data.repository
 
 import android.content.Context
+import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
@@ -130,8 +131,30 @@ class BillingRepositoryImpl @Inject constructor(
      * Acknowledge purchase item
      * - ex) Remove Advertisement
      */
-    override fun acknowledgePurchase(purchaseToken: String): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun acknowledgePurchase(purchaseToken: String): Result<Unit> {
+        // Check if client is ready
+        if(billingClient.isReady.not()) {
+            connect()
+        }
+
+        val params = AcknowledgePurchaseParams.newBuilder()
+            .setPurchaseToken(purchaseToken)
+            .build()
+
+        var ackResult: Result<Unit> = Result.failure(Exception("Loading"))
+        billingClient.acknowledgePurchase(params) { billingResult ->
+            ackResult = if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                logger.logEvent(LOG_TAG, mapOf(Pair("Acknowledged product", billingResult.debugMessage)))
+                Result.success(Unit)
+            } else {
+                // Log exception
+                val exception = Exception("Failed to acknowledge purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                logger.recordException(exception)
+                Result.failure(exception)
+            }
+        }
+
+        return ackResult
     }
 
     /**

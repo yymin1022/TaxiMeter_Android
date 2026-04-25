@@ -19,7 +19,7 @@ interface BillingRepository {
     fun observePurchases(): Flow<Result<List<BillingPurchase>>>
 
     // Manage Purchase
-    fun acknowledgePurchase(purchaseToken: String): Result<Unit>
+    suspend fun acknowledgePurchase(purchaseToken: String): Result<Unit>
     suspend fun consumePurchase(purchaseToken: String): Result<Unit>
     suspend fun queryExistingPurchases(): Result<List<BillingPurchase>>
     suspend fun queryProducts(productIds: List<String>): Result<List<BillingProduct>>
