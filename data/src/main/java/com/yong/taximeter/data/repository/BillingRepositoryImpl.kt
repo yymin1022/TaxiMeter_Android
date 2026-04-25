@@ -4,6 +4,7 @@ import android.content.Context
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.ConsumeParams
 import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
@@ -137,8 +138,30 @@ class BillingRepositoryImpl @Inject constructor(
      * Consume purchase item
      * - ex) Donation
      */
-    override fun consumePurchase(purchaseToken: String): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun consumePurchase(purchaseToken: String): Result<Unit> {
+        // Check if client is ready
+        if(billingClient.isReady.not()) {
+            connect()
+        }
+
+        val params = ConsumeParams.newBuilder()
+            .setPurchaseToken(purchaseToken)
+            .build()
+
+        var consumeResult: Result<Unit> = Result.failure(Exception("Loading purchase"))
+        billingClient.consumeAsync(params) { billingResult, _ ->
+            consumeResult = if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                logger.logEvent(LOG_TAG, mapOf(Pair("Consumed product", billingResult.debugMessage)))
+                Result.success(Unit)
+            } else {
+                // Log exception
+                val exception = Exception("Failed to consume purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                logger.recordException(exception)
+                Result.failure(exception)
+            }
+        }
+
+        return consumeResult
     }
 
     /**
