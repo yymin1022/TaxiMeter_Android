@@ -8,6 +8,7 @@ import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.QueryPurchasesParams
 import com.yong.taximeter.core.common.AppLogger
 import com.yong.taximeter.data.mapper.BillingMapper.toBillingProduct
 import com.yong.taximeter.data.mapper.BillingMapper.toBillingPurchase
@@ -143,8 +144,30 @@ class BillingRepositoryImpl @Inject constructor(
     /**
      * Get currently purchased items
      */
-    override fun queryExistingPurchases(): Result<List<BillingPurchase>> {
-        TODO("Not yet implemented")
+    override suspend fun queryExistingPurchases(): Result<List<BillingPurchase>> {
+        // Check if client is ready
+        if(billingClient.isReady.not()) {
+            connect()
+        }
+
+        val params = QueryPurchasesParams.newBuilder()
+            .setProductType(BillingClient.ProductType.INAPP)
+            .build()
+
+        var queryResult: Result<List<BillingPurchase>> = Result.failure(Exception("Loading purchases"))
+        billingClient.queryPurchasesAsync(params) { billingResult, purchasesList ->
+            queryResult =
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Result.success(purchasesList.map { it.toBillingPurchase() })
+                } else {
+                    // Log exception
+                    val exception = Exception("Failed to load purchases(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                    logger.recordException(exception)
+                    Result.failure(exception)
+                }
+        }
+
+        return queryResult
     }
 
     /**
