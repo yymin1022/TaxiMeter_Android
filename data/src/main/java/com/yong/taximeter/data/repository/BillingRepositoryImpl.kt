@@ -1,9 +1,11 @@
 package com.yong.taximeter.data.repository
 
+import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.ConsumeParams
 import com.android.billingclient.api.PendingPurchasesParams
@@ -245,6 +247,43 @@ class BillingRepositoryImpl @Inject constructor(
                     logger.recordException(exception)
                     continuation.resume(Result.failure(exception))
                 }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    fun launchPurchase(activity: Activity, productID: String): Result<Unit> {
+        // Get product detail
+        val details = productDetailsCache[productID]
+            ?: run {
+                // Log exception
+                val exception = Exception("Product not found: $productID")
+                logger.recordException(exception)
+                return Result.failure(exception)
+            }
+
+        // Generate product params
+        val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
+            .setProductDetails(details)
+            .build()
+        val flowParams = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(listOf(productDetailsParams))
+            .build()
+
+        // Launch Billing flow
+        val result = billingClient.launchBillingFlow(activity, flowParams)
+
+        return when(result.responseCode) {
+            // OK
+            BillingClient.BillingResponseCode.OK -> Result.success(Unit)
+
+            // Some error occurred
+            else -> {
+                val exception = Exception("Failed to launch purchase(${result.responseCode}): ${result.debugMessage}")
+                logger.recordException(exception)
+                Result.failure(exception)
             }
         }
     }
