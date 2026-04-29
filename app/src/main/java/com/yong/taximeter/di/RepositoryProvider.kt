@@ -1,15 +1,20 @@
 package com.yong.taximeter.di
 
+import android.content.Context
+import com.yong.taximeter.core.common.AppLogger
 import com.yong.taximeter.data.dao.CostInfoDao
 import com.yong.taximeter.data.datasource.FirestoreDataSource
 import com.yong.taximeter.data.datasource.PreferenceDataSource
+import com.yong.taximeter.data.repository.BillingRepositoryImpl
 import com.yong.taximeter.data.repository.CostRepositoryImpl
 import com.yong.taximeter.data.repository.SettingRepositoryImpl
+import com.yong.taximeter.domain.repository.BillingRepository
 import com.yong.taximeter.domain.repository.CostRepository
 import com.yong.taximeter.domain.repository.SettingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,6 +24,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryProvider {
+    @Provides
+    @Singleton
+    fun provideBillingRepository(
+        @ApplicationContext context: Context,
+        logger: AppLogger,
+    ): BillingRepository {
+        return BillingRepositoryImpl(
+            context = context,
+            logger = logger,
+        )
+    }
+
     @Provides
     @Singleton
     fun provideCostRepository(
