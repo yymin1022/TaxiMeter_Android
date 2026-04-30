@@ -12,6 +12,6 @@ class StoreViewModel @Inject constructor(
     // Inject Dependencies
 ): ViewModel() {
     // UI State
-    private val _uiState: MutableStateFlow<StoreUiState> = MutableStateFlow(StoreUiState)
+    private val _uiState: MutableStateFlow<StoreUiState> = MutableStateFlow(StoreUiState())
     val uiState: StateFlow<StoreUiState> = _uiState.asStateFlow()
 }
