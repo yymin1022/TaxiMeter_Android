@@ -73,12 +73,34 @@ class StoreViewModel @Inject constructor(
     }
 
     /**
+     * Clear Snack Bar Message
+     */
+    fun clearSnackBar() {
+        _uiState.update {
+            it.copy(
+                snackBarMessageRes = null,
+            )
+        }
+    }
+
+    /**
      * Set loading ui state as [isLoading]
      */
     private fun setLoading(isLoading: Boolean) {
         _uiState.update {
             it.copy(
                 isLoading = isLoading,
+            )
+        }
+    }
+
+    /**
+     * Show snack bar message
+     */
+    private fun showSnackBar(@StringRes msgRes: Int) {
+        _uiState.update {
+            it.copy(
+                snackBarMessageRes = msgRes,
             )
         }
     }
