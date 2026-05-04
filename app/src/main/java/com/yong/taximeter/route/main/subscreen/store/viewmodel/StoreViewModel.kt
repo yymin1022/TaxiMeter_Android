@@ -84,6 +84,17 @@ class StoreViewModel @Inject constructor(
     }
 
     /**
+     * Show snack bar message
+     */
+    private fun showSnackBar(@StringRes msgRes: Int) {
+        _uiState.update {
+            it.copy(
+                snackBarMessageRes = msgRes,
+            )
+        }
+    }
+
+    /**
      * Map [BillingProduct] to [ProductItem]
      */
     private fun BillingProduct.asProductItem(
