@@ -51,6 +51,7 @@ class StoreViewModel @Inject constructor(
     val uiState: StateFlow<StoreUiState> = _uiState.asStateFlow()
 
     // Product IDs
+    private var currentSelectedProductID: String? = null
     private var productIDs: List<String> = emptyList()
 
     /**
@@ -106,6 +107,26 @@ class StoreViewModel @Inject constructor(
 
             // Set loading false
             setLoading(false)
+        }
+    }
+
+    /**
+     * On click product item
+     */
+    fun onClickProduct(idx: Int) {
+        // Check index range
+        if(productIDs.indices.contains(idx).not()) {
+            this.currentSelectedProductID = null
+            return
+        }
+
+        // Update selected product
+        this.currentSelectedProductID = productIDs[idx]
+        // Update UI State
+        _uiState.update {
+            it.copy(
+                selectedProductIdx = idx,
+            )
         }
     }
 
