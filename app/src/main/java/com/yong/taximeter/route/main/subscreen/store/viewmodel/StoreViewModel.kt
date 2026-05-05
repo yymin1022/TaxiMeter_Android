@@ -9,9 +9,12 @@ import com.yong.taximeter.domain.model.PurchaseState
 import com.yong.taximeter.domain.repository.BillingRepository
 import com.yong.taximeter.route.main.subscreen.store.model.ProductItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,6 +52,10 @@ class StoreViewModel @Inject constructor(
     // UI State
     private val _uiState: MutableStateFlow<StoreUiState> = MutableStateFlow(StoreUiState())
     val uiState: StateFlow<StoreUiState> = _uiState.asStateFlow()
+
+    // UI Effect
+    private val _uiEffect: Channel<StoreUiEffect> = Channel(Channel.BUFFERED)
+    val uiEffect: Flow<StoreUiEffect> = _uiEffect.receiveAsFlow()
 
     // Product IDs
     private var currentSelectedProductID: String? = null
