@@ -1,9 +1,11 @@
 package com.yong.taximeter.route.main.subscreen.store.viewmodel
 
+import android.app.Activity
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yong.taximeter.R
+import com.yong.taximeter.data.repository.BillingRepositoryImpl
 import com.yong.taximeter.domain.model.BillingProduct
 import com.yong.taximeter.domain.model.PurchaseState
 import com.yong.taximeter.domain.repository.BillingRepository
@@ -152,6 +154,29 @@ class StoreViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    /**
+     * Launch billing flow with [BillingRepositoryImpl]
+     */
+    fun launchBillingFlow(activity: Activity, productID: String) {
+        val repo = billingRepository as BillingRepositoryImpl
+        repo.launchPurchase(activity, productID)
+            .onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isPurchasing = true,
+                    )
+                }
+            }
+            .onFailure {
+                showSnackBar(R.string.store_snack_bar_purchase_failed)
+                _uiState.update {
+                    it.copy(
+                        isPurchasing = false,
+                    )
+                }
+            }
     }
 
     /**
