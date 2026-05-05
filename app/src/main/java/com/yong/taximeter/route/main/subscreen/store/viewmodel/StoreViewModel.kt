@@ -1,8 +1,11 @@
 package com.yong.taximeter.route.main.subscreen.store.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yong.taximeter.R
 import com.yong.taximeter.domain.model.BillingProduct
+import com.yong.taximeter.domain.model.PurchaseState
 import com.yong.taximeter.domain.repository.BillingRepository
 import com.yong.taximeter.route.main.subscreen.store.model.ProductItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,10 +64,44 @@ class StoreViewModel @Inject constructor(
             // Load products via repository
             billingRepository.queryProducts(PRODUCTS_ALL)
                 .onFailure {
-                    // TODO: Implement failure logic
+                    // Show error message to snack bar
+                    showSnackBar(R.string.store_snack_bar_load_product_fail)
                 }
-                .onSuccess {
-                    // TODO: Implement success logic
+                .onSuccess { products ->
+                    // Update cached product id info
+                    this@StoreViewModel.productIDs = products.map { it.id }
+
+                    // Get purchased products
+                    var purchasedProductIDs = emptyList<String>()
+                    billingRepository.queryExistingPurchases()
+                        .onFailure {
+                            // Show error message to snack bar
+                            showSnackBar(R.string.store_snack_bar_load_purchase_fail)
+                        }
+                        .onSuccess { purchases ->
+                            // Update purchased products info
+                            // - Filter already purchased, and NOT re-purchasable products only
+                            purchasedProductIDs = purchases
+                                .filter { it.state == PurchaseState.PURCHASED }
+                                .flatMap { it.productIDs }
+                                .filter { PRODUCTS_ACKNOWLEDGEABLE.contains(it) }
+                        }
+
+                    // Generate product items
+                    val productItems = products.map { product ->
+                        // Purchased flag
+                        val isPurchased = purchasedProductIDs.contains(product.id)
+
+                        // Convert to item
+                        product.asProductItem(isPurchased)
+                    }
+
+                    // Update UI State
+                    _uiState.update {
+                        it.copy(
+                            productItems = productItems,
+                        )
+                    }
                 }
 
             // Set loading false
