@@ -138,6 +138,23 @@ class StoreViewModel @Inject constructor(
     }
 
     /**
+     * On click purchase button
+     */
+    fun onClickPurchase() {
+        viewModelScope.launch {
+            // Launch only selected product is effective
+            val productID = this@StoreViewModel.currentSelectedProductID ?: return@launch
+
+            // Send UI Effect
+            _uiEffect.send(
+                StoreUiEffect.LaunchPurchase(
+                    productID = productID,
+                )
+            )
+        }
+    }
+
+    /**
      * Set loading ui state as [isLoading]
      */
     private fun setLoading(isLoading: Boolean) {
