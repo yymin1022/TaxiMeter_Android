@@ -15,6 +15,8 @@ data class StoreUiState(
 
     // Product UI Items
     val productItems: List<ProductItem> = emptyList(),
+    // Current selected product index
+    val selectedProductIdx: Int? = null,
 
     // Message resource for SnackBar
     @get:StringRes
