@@ -35,7 +35,10 @@
 
     <string name="store_snack_bar_load_product_fail">Failed to load store data.</string>
     <string name="store_snack_bar_load_purchase_fail">Failed to load purchase history.</string>
+    <string name="store_snack_bar_purchase_canceled">Purchase is canceled.</string>
     <string name="store_snack_bar_purchase_failed">Failed to process purchasing.</string>
+    <string name="store_snack_bar_purchase_pending">Purchase is currently pending.</string>
+    <string name="store_snack_bar_purchase_success">Failed to process purchasing.</string>
 
     <string name="setting_dialog_custom_cost_title">Set custom cost</string>
     <string name="setting_dialog_region_setting_title">Select region</string>
