@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.yong.taximeter.R
 import com.yong.taximeter.data.repository.BillingRepositoryImpl
 import com.yong.taximeter.domain.model.BillingProduct
+import com.yong.taximeter.domain.model.BillingPurchase
 import com.yong.taximeter.domain.model.PurchaseState
 import com.yong.taximeter.domain.repository.BillingRepository
 import com.yong.taximeter.route.main.subscreen.store.model.ProductItem
@@ -62,6 +63,10 @@ class StoreViewModel @Inject constructor(
     // Product IDs
     private var currentSelectedProductID: String? = null
     private var productIDs: List<String> = emptyList()
+
+    init {
+        observePurchaseResult()
+    }
 
     /**
      * Load product items and convert to UI Item
@@ -163,6 +168,7 @@ class StoreViewModel @Inject constructor(
         val repo = billingRepository as BillingRepositoryImpl
         repo.launchPurchase(activity, productID)
             .onSuccess {
+                // Update UI State
                 _uiState.update {
                     it.copy(
                         isPurchasing = true,
@@ -170,13 +176,86 @@ class StoreViewModel @Inject constructor(
                 }
             }
             .onFailure {
+                // Show snack bar message
                 showSnackBar(R.string.store_snack_bar_purchase_failed)
+                // Update UI State
                 _uiState.update {
                     it.copy(
                         isPurchasing = false,
                     )
                 }
             }
+    }
+
+    /**
+     * Observe purchase result, and handle it.
+     */
+    private fun observePurchaseResult() {
+        viewModelScope.launch {
+            billingRepository.observePurchases().collect { result ->
+                // Update UI State
+                _uiState.update {
+                    it.copy(
+                        isPurchasing = false,
+                    )
+                }
+
+                // Handle result
+                result
+                    .onSuccess { purchases ->
+                        // Handle completed purchases
+                        purchases.forEach { handleCompletedPurchase(it) }
+                        // Reload products
+                        loadProducts()
+                    }
+                    .onFailure { _ ->
+                        // Show snack bar message
+                        showSnackBar(R.string.store_snack_bar_purchase_failed)
+                    }
+            }
+        }
+    }
+
+    /**
+     * Handle completed purchase
+     *
+     * @see observePurchaseResult
+     */
+    private suspend fun handleCompletedPurchase(purchase: BillingPurchase) {
+        when(purchase.state) {
+            PurchaseState.PURCHASED -> {
+                // Skip already acknowledged purchase
+                if(purchase.isAcknowledged) return
+
+                val productID = purchase.productIDs.firstOrNull()
+                val isConsumable = PRODUCTS_CONSUMABLE.contains(productID)
+
+                // Consume / Acknowledge purchase
+                val processResult = if(isConsumable) {
+                    billingRepository.consumePurchase(purchase.purchaseToken)
+                } else {
+                    billingRepository.acknowledgePurchase(purchase.purchaseToken)
+                }
+
+                // Handle result
+                processResult
+                    .onSuccess {
+                        // Show snack bar message
+                        showSnackBar(R.string.store_snack_bar_purchase_success)
+                    }
+                    .onFailure {
+                        // Show snack bar message
+                        showSnackBar(R.string.store_snack_bar_purchase_failed)
+                    }
+            }
+
+            PurchaseState.PENDING -> {
+                // Show snack bar message
+                showSnackBar(R.string.store_snack_bar_purchase_pending)
+            }
+
+            PurchaseState.UNSPECIFIED -> Unit
+        }
     }
 
     /**
