@@ -115,18 +115,26 @@ class BillingRepositoryImpl @Inject constructor(
         billingResult: BillingResult,
         purchases: List<Purchase>?
     ) {
-        // Process with response
-        val result = if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-            Result.success(purchases?.map { it.toBillingPurchase() } ?: emptyList())
-        } else {
-            // Log exception
-            val exception = Exception("Failed to purchase(${billingResult.responseCode}): ${billingResult.debugMessage}")
-            logger.recordException(exception)
-            Result.failure(exception)
-        }
+        when(billingResult.responseCode) {
+            // Purchase Done
+            BillingClient.BillingResponseCode.OK -> {
+                val result = Result.success(purchases?.map { it.toBillingPurchase() } ?: emptyList())
+                _purchaseChannel.trySend(result)
+            }
 
-        // Send to Channel
-        _purchaseChannel.trySend(result)
+            // Purchase Canceled
+            // - Do nothing
+            BillingClient.BillingResponseCode.USER_CANCELED -> {
+                logger.log("Purchase canceled by user")
+            }
+
+            // Purchase failed with Error
+            else -> {
+                val exception = Exception("Failed to purchase(${billingResult.responseCode}): ${billingResult.debugMessage}")
+                logger.recordException(exception)
+                _purchaseChannel.trySend(Result.failure(exception))
+            }
+        }
     }
 
     /**
