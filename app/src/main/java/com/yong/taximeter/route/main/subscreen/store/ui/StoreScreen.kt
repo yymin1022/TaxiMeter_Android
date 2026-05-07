@@ -55,6 +55,11 @@ fun StoreScreen(
         }
     }
 
+    // Store Products Load Effect
+    LaunchedEffect(Unit) {
+        viewModel.loadProducts()
+    }
+
     Box(
         modifier = modifier,
     ) {
