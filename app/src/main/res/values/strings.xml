@@ -33,6 +33,13 @@
     <string name="setting_item_title_developer_linkedin">Developer\'s LinkedIn</string>
     <string name="setting_item_title_privacy_policy">Privacy Policy</string>
 
+    <string name="store_snack_bar_load_product_fail">Failed to load store data.</string>
+    <string name="store_snack_bar_load_purchase_fail">Failed to load purchase history.</string>
+    <string name="store_snack_bar_purchase_canceled">Purchase is canceled.</string>
+    <string name="store_snack_bar_purchase_failed">Failed to process purchasing.</string>
+    <string name="store_snack_bar_purchase_pending">Purchase is currently pending.</string>
+    <string name="store_snack_bar_purchase_success">Purchase completed successfully.</string>
+
     <string name="setting_dialog_custom_cost_title">Set custom cost</string>
     <string name="setting_dialog_region_setting_title">Select region</string>
     <string name="setting_dialog_theme_setting_title">Select theme</string>

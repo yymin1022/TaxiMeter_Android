@@ -52,6 +52,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
 
+    // In-app Billing Dependency
+    implementation(libs.billing.ktx)
+
     // Room Dependency
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
