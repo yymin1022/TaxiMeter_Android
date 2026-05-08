@@ -5,7 +5,9 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yong.taximeter.R
+import com.yong.taximeter.data.datasource.PreferenceDataSource
 import com.yong.taximeter.data.repository.BillingRepositoryImpl
+import com.yong.taximeter.domain.defs.PreferenceDefs
 import com.yong.taximeter.domain.defs.ProductDefs
 import com.yong.taximeter.domain.model.BillingProduct
 import com.yong.taximeter.domain.model.BillingPurchase
@@ -27,6 +29,8 @@ import javax.inject.Inject
 class StoreViewModel @Inject constructor(
     // Inject Billing Repository
     private val billingRepository: BillingRepository,
+    // Inject Preference DataSource
+    private val preferenceDataSource: PreferenceDataSource,
 ): ViewModel() {
     // UI State
     private val _uiState: MutableStateFlow<StoreUiState> = MutableStateFlow(StoreUiState())
@@ -216,6 +220,11 @@ class StoreViewModel @Inject constructor(
                 // Handle result
                 processResult
                     .onSuccess {
+                        // If product is Update Advertisement Removal, set value as true
+                        if(productID.equals(ProductDefs.SKU_REMOVE_ADVERTISEMENT)) {
+                            preferenceDataSource.setBoolean(PreferenceDefs.PREF_KEY_AD_REMOVE, true)
+                        }
+
                         // Show snack bar message
                         showSnackBar(R.string.store_snack_bar_purchase_success)
                     }
