@@ -7,6 +7,7 @@ import com.yong.taximeter.data.dto.CostInfoDto
 import com.yong.taximeter.data.dto.CostVersionDto
 import com.yong.taximeter.data.mapper.CostInfoMapper.toDomain
 import com.yong.taximeter.data.mapper.CostInfoMapper.toEntity
+import com.yong.taximeter.domain.defs.PreferenceDefs
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.repository.CostRepository
 import javax.inject.Inject
@@ -25,8 +26,6 @@ class CostRepositoryImpl @Inject constructor(
         private const val FIRESTORE_DOCUMENT_KEY_INFO = "info"
         private const val FIRESTORE_DOCUMENT_KEY_VERSION = "version"
 
-        private const val PREF_KEY_COST_VERSION = "PREF_KEY_COST_VERSION"
-
         private const val COST_VERSION_FALLBACK = "20001022"
     }
 
@@ -36,7 +35,7 @@ class CostRepositoryImpl @Inject constructor(
      */
     override fun getLocalVersion(): String {
         return preferenceDataSource.getString(
-            key = PREF_KEY_COST_VERSION,
+            key = PreferenceDefs.PREF_KEY_COST_VERSION,
             defaultValue = COST_VERSION_FALLBACK,
         )
     }
@@ -82,7 +81,7 @@ class CostRepositoryImpl @Inject constructor(
         costDao.updateRemoteCost(costEntityList)
 
         // Update local version info
-        preferenceDataSource.setString(PREF_KEY_COST_VERSION, remoteVersion)
+        preferenceDataSource.setString(PreferenceDefs.PREF_KEY_COST_VERSION, remoteVersion)
 
         // Update succeed. return true
         return true

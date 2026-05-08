@@ -33,6 +33,10 @@
     <string name="setting_item_title_developer_linkedin">Developer\'s LinkedIn</string>
     <string name="setting_item_title_privacy_policy">Privacy Policy</string>
 
+    <string name="store_already_purchased">Already Purchased</string>
+    <string name="store_coming_soon">Currently empty. Coming soon..!</string>
+    <string name="store_purchase">Purchase</string>
+
     <string name="store_snack_bar_load_product_fail">Failed to load store data.</string>
     <string name="store_snack_bar_load_purchase_fail">Failed to load purchase history.</string>
     <string name="store_snack_bar_purchase_canceled">Purchase is canceled.</string>

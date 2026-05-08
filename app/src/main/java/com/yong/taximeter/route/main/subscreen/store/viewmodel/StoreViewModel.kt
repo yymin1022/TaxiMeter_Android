@@ -5,7 +5,10 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yong.taximeter.R
+import com.yong.taximeter.data.datasource.PreferenceDataSource
 import com.yong.taximeter.data.repository.BillingRepositoryImpl
+import com.yong.taximeter.domain.defs.PreferenceDefs
+import com.yong.taximeter.domain.defs.ProductDefs
 import com.yong.taximeter.domain.model.BillingProduct
 import com.yong.taximeter.domain.model.BillingPurchase
 import com.yong.taximeter.domain.model.PurchaseState
@@ -26,32 +29,9 @@ import javax.inject.Inject
 class StoreViewModel @Inject constructor(
     // Inject Billing Repository
     private val billingRepository: BillingRepository,
+    // Inject Preference DataSource
+    private val preferenceDataSource: PreferenceDataSource,
 ): ViewModel() {
-    companion object {
-        // Product SKU IDs
-        private const val SKU_REMOVE_ADVERTISEMENT = "ad_remove"
-        private const val SKU_DONATE_1000 = "donate_1000"
-        private const val SKU_DONATE_5000 = "donate_5000"
-        private const val SKU_DONATE_10000 = "donate_10000"
-        private const val SKU_DONATE_50000 = "donate_50000"
-
-        // Acknowledgeable Products (One-time purchasable)
-        private val PRODUCTS_ACKNOWLEDGEABLE = listOf(
-            SKU_REMOVE_ADVERTISEMENT
-        )
-
-        // Consumable Products (Re-purchasable)
-        private val PRODUCTS_CONSUMABLE = listOf(
-            SKU_DONATE_1000,
-            SKU_DONATE_5000,
-            SKU_DONATE_10000,
-            SKU_DONATE_50000,
-        )
-
-        // All Products
-        private val PRODUCTS_ALL = PRODUCTS_ACKNOWLEDGEABLE + PRODUCTS_CONSUMABLE
-    }
-
     // UI State
     private val _uiState: MutableStateFlow<StoreUiState> = MutableStateFlow(StoreUiState())
     val uiState: StateFlow<StoreUiState> = _uiState.asStateFlow()
@@ -77,7 +57,7 @@ class StoreViewModel @Inject constructor(
             setLoading(true)
 
             // Load products via repository
-            billingRepository.queryProducts(PRODUCTS_ALL)
+            billingRepository.queryProducts(ProductDefs.PRODUCTS_ALL)
                 .onFailure {
                     // Show error message to snack bar
                     showSnackBar(R.string.store_snack_bar_load_product_fail)
@@ -99,7 +79,7 @@ class StoreViewModel @Inject constructor(
                             purchasedProductIDs = purchases
                                 .filter { it.state == PurchaseState.PURCHASED }
                                 .flatMap { it.productIDs }
-                                .filter { PRODUCTS_ACKNOWLEDGEABLE.contains(it) }
+                                .filter { ProductDefs.PRODUCTS_ACKNOWLEDGEABLE.contains(it) }
                         }
 
                     // Generate product items
@@ -205,6 +185,8 @@ class StoreViewModel @Inject constructor(
                     .onSuccess { purchases ->
                         // Handle completed purchases
                         purchases.forEach { handleCompletedPurchase(it) }
+                        // Reload products
+                        loadProducts()
                     }
                     .onFailure { _ ->
                         // Show snack bar message
@@ -226,7 +208,7 @@ class StoreViewModel @Inject constructor(
                 if(purchase.isAcknowledged) return
 
                 val productID = purchase.productIDs.firstOrNull()
-                val isConsumable = PRODUCTS_CONSUMABLE.contains(productID)
+                val isConsumable = ProductDefs.PRODUCTS_CONSUMABLE.contains(productID)
 
                 // Consume / Acknowledge purchase
                 val processResult = if(isConsumable) {
@@ -238,8 +220,10 @@ class StoreViewModel @Inject constructor(
                 // Handle result
                 processResult
                     .onSuccess {
-                        // Reload products
-                        loadProducts()
+                        // If product is Update Advertisement Removal, set value as true
+                        if(productID.equals(ProductDefs.SKU_REMOVE_ADVERTISEMENT)) {
+                            preferenceDataSource.setBoolean(PreferenceDefs.PREF_KEY_AD_REMOVE, true)
+                        }
 
                         // Show snack bar message
                         showSnackBar(R.string.store_snack_bar_purchase_success)
@@ -256,6 +240,17 @@ class StoreViewModel @Inject constructor(
             }
 
             PurchaseState.UNSPECIFIED -> Unit
+        }
+    }
+
+    /**
+     * Clear Snack Bar Message
+     */
+    fun clearSnackBar() {
+        _uiState.update {
+            it.copy(
+                snackBarMessageRes = null,
+            )
         }
     }
 

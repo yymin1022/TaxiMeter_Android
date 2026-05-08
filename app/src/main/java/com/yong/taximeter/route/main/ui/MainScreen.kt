@@ -100,6 +100,7 @@ private fun MainSubscreen(
             // 2. Store UI
             2 -> StoreScreen(
                 modifier = Modifier,
+                snackBarHostState = snackBarHostState,
             )
 
             // Not must be happened
