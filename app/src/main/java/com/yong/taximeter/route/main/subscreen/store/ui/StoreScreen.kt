@@ -86,7 +86,8 @@ fun StoreScreen(
     // Store Screen Content
     Box(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(8.dp),
     ) {
         when {
             // Loading State
