@@ -21,20 +21,14 @@ class MainActivity: ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaxiMeterTheme {
-                Scaffold(
+                val navController = rememberNavController()
+
+                // TaxiMeter Nav Host
+                TaxiMeterNavHost(
                     modifier = Modifier
                         .fillMaxSize(),
-                ) { innerPadding ->
-                    val navController = rememberNavController()
-
-                    // TaxiMeter Nav Host
-                    TaxiMeterNavHost(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues = innerPadding),
-                        navController = navController,
-                    )
-                }
+                    navController = navController,
+                )
             }
         }
     }
