@@ -85,7 +85,8 @@ fun SettingScreen(
 
     // Setting Groups List UI
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier
+            .padding(8.dp),
     ) {
         settingGroups?.let {
             items(it.size) { idx ->
