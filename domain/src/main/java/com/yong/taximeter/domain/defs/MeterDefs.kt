@@ -7,6 +7,9 @@ object MeterDefs {
     // Cost increasing unit
     const val COST_UNIT = 100
 
+    // GPS accuracy permit threshold
+    const val GPS_ACCURACY_THRESHOLD = 20f
+
     // Meter update interval (ms)
     const val METER_UPDATE_INTERVAL_MS = 500L
 
