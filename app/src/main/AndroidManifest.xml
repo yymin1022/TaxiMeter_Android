@@ -23,6 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.MeterService"
+            android:foregroundServiceType="location"
+            android:exported="false" />
     </application>
 
 </manifest>
