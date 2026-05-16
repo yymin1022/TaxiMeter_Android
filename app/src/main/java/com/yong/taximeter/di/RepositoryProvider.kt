@@ -64,7 +64,7 @@ object RepositoryProvider {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            MeterDefs.METER_UPDATE_MINIMUM_INTERVAL_MS,
+            MeterDefs.METER_UPDATE_INTERVAL_MS,
         ).build()
 
         return LocationRepositoryImpl(
