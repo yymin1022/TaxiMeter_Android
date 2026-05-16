@@ -23,6 +23,7 @@ ksp = "2.3.6"
 lifecycleRuntimeKtx = "2.10.0"
 material = "1.13.0"
 navigationCompose = "2.9.7"
+playServicesLocation = "21.3.0"
 room = "2.8.4"
 
 [libraries]
@@ -56,6 +57,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
