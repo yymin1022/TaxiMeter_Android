@@ -6,7 +6,7 @@ import com.yong.taximeter.domain.model.MeterStatus
  * Speed Data Class
  * - Calculated from two consecutive LocationData
  */
-internal data class SpeedData(
+data class SpeedData(
     // Delta distance (m)
     val distanceDeltaMeters: Double = 0.0,
     // Delta elapsed time (s)
