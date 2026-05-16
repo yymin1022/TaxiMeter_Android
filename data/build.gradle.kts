@@ -48,6 +48,9 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":domain"))
 
+    // GMS Location Dependency
+    implementation(libs.play.services.location)
+
     // Firebase Dependency
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)

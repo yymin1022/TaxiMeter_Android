@@ -74,6 +74,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
+    // GMS Location Dependency
+    implementation(libs.play.services.location)
+
     // Firebase Dependency
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
