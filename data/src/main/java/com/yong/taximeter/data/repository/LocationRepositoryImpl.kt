@@ -1,6 +1,8 @@
 package com.yong.taximeter.data.repository
 
+import android.Manifest
 import android.os.Looper
+import androidx.annotation.RequiresPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -21,7 +23,14 @@ class LocationRepositoryImpl @Inject constructor(
     /**
      * Observe location updates from [FusedLocationProviderClient]
      * - Emits [LocationData] on each location update
+     * - Requires Location permissions
      */
+    @RequiresPermission(
+        anyOf = [
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        ]
+    )
     override fun observeUpdate(): Flow<LocationData> = callbackFlow {
         // Generate callback for GMS Location Provider
         val callback = object: LocationCallback() {
