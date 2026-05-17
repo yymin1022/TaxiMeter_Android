@@ -44,6 +44,10 @@
     <string name="store_snack_bar_purchase_pending">Purchase is currently pending.</string>
     <string name="store_snack_bar_purchase_success">Purchase completed successfully.</string>
 
+    <string name="meter_noti_channel_title">Taxi Meter</string>
+    <string name="meter_noti_content">Driving now..</string>
+    <string name="meter_noti_title">Taxi Meter</string>
+
     <string name="setting_dialog_custom_cost_title">Set custom cost</string>
     <string name="setting_dialog_region_setting_title">Select region</string>
     <string name="setting_dialog_theme_setting_title">Select theme</string>
