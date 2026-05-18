@@ -81,6 +81,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
 
+    // Permission Dependency
+    implementation(libs.accompanist.permissions)
+
     // Room Dependency
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
