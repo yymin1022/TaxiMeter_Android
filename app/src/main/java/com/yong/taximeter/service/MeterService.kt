@@ -55,6 +55,8 @@ class MeterService : Service() {
 
     // City rate state
     private val _isCityRate = MutableStateFlow(false)
+    // Night rate state
+    private val _isNightRate = MutableStateFlow(false)
 
     // Meter state instance
     private val _meterState = MutableStateFlow<MeterState?>(null)
@@ -73,11 +75,8 @@ class MeterService : Service() {
             Manifest.permission.ACCESS_COARSE_LOCATION,
         ]
     )
-    fun startMeter(isCityRate: Boolean) {
+    fun startMeter() {
         if(meterJob?.isActive == true) return
-
-        // Set initial city rate
-        _isCityRate.value = isCityRate
 
         // Run as foreground
         startForeground(NOTIFICATION_ID, createNotification())
@@ -123,6 +122,15 @@ class MeterService : Service() {
      */
     fun setCityRate(enabled: Boolean) {
         _isCityRate.value = enabled
+    }
+
+    /**
+     * Update night rate during meter running
+     *
+     * @param enabled Whether to apply night surcharge
+     */
+    fun setNightRate(enabled: Boolean) {
+        _isNightRate.value = enabled
     }
 
     /**

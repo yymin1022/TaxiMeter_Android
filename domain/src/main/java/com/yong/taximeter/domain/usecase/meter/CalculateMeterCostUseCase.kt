@@ -23,7 +23,10 @@ class CalculateMeterCostUseCase @Inject constructor(
      * @param costInfo Cost info for current region
      * @param isCityRate Whether to apply city surcharge
      */
-    operator fun invoke(costInfo: CostInfo, isCityRate: Flow<Boolean>, ): Flow<MeterState> {
+    operator fun invoke(
+        costInfo: CostInfo,
+        isCityRate: Flow<Boolean>,
+    ): Flow<MeterState> {
         return observeSpeedUseCase()
             .combine(isCityRate) { speedData, isCityRate ->
                 speedData to isCityRate
