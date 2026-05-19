@@ -26,6 +26,8 @@ data class MeterCostCalculator(
     val currentSpeedKph: Double,
     // Meter status
     val status: MeterStatus,
+    // Whether night rate is applied
+    val isNightRate: Boolean,
 ) {
     companion object {
         /**
@@ -39,6 +41,7 @@ data class MeterCostCalculator(
             totalElapsedSeconds = 0.0,
             currentSpeedKph = 0.0,
             status = MeterStatus.NOT_RUNNING,
+            isNightRate = false,
         )
     }
 
@@ -51,6 +54,7 @@ data class MeterCostCalculator(
         totalElapsedSeconds = totalElapsedSeconds,
         currentSpeedKph = currentSpeedKph,
         status = status,
+        isNightRate = isNightRate,
     )
 
     /**
@@ -68,20 +72,23 @@ data class MeterCostCalculator(
         // Drain counter by distance
         val distanceDrain = speedData.distanceDeltaMeters.toInt()
         // Drain counter by time when speed is below threshold
-        val timeDrain = if(speedData.speedKph < MeterDefs.SPEED_THRESHOLD_KPH) {
+        val timeDrain = if (speedData.speedKph < MeterDefs.SPEED_THRESHOLD_KPH) {
             (costInfo.costRunPer.toDouble() / costInfo.costTimePer * speedData.elapsedDeltaSeconds).toInt()
         } else 0
 
         var newCost = cost
         var newCounter = costCounter - distanceDrain - timeDrain
+        var newIsNightRate = false
 
         // Increase cost by unit when counter reaches 0
-        while(newCounter <= 0) {
+        while (newCounter <= 0) {
             newCost += MeterDefs.COST_UNIT
-            newCost += calculateSurcharge(isCityRate)
+            val surcharge = calculateSurcharge(isCityRate)
+            newCost += surcharge.amount
+            newIsNightRate = surcharge.isNightRate
             newCounter += costInfo.costRunPer
 
-            if(newCounter < 0) newCounter = 0
+            if (newCounter < 0) newCounter = 0
         }
 
         return copy(
@@ -91,39 +98,46 @@ data class MeterCostCalculator(
             totalElapsedSeconds = newElapsed,
             currentSpeedKph = speedData.speedKph,
             status = speedData.status,
+            isNightRate = newIsNightRate,
         )
     }
 
     /**
      * Calculate surcharge per [MeterDefs.COST_UNIT] increase
-     * - Apply night surcharge based on current hour
+     * - Apply night surcharge based on current hour automatically
      * - Apply city surcharge if [isCityRate] is true
      *
-     * @param isCityRate Whether to apply city extra rate
+     * @param isCityRate Whether to apply city surcharge
+     * @return [SurchargeResult] with surcharge amount and night rate flag
      */
-    private fun calculateSurcharge(isCityRate: Boolean): Int {
+    private fun calculateSurcharge(isCityRate: Boolean): SurchargeResult {
         var surcharge = 0
+        var isNightRate = false
 
-        // Apply night surcharge
+        // Apply night surcharge based on current hour
         val hour = LocalTime.now().hour
-        if(costInfo.isNightExtra2step) {
-            surcharge += when {
-                isInNightRange(hour, costInfo.nightStartHour2, costInfo.nightEndHour2) ->
-                    costInfo.extraRateNight2
-                isInNightRange(hour, costInfo.nightStartHour1, costInfo.nightEndHour1) ->
-                    costInfo.extraRateNight1
-                else -> 0
+        if (costInfo.isNightExtra2step) {
+            when {
+                isInNightRange(hour, costInfo.nightStartHour2, costInfo.nightEndHour2) -> {
+                    surcharge += costInfo.extraRateNight2
+                    isNightRate = true
+                }
+                isInNightRange(hour, costInfo.nightStartHour1, costInfo.nightEndHour1) -> {
+                    surcharge += costInfo.extraRateNight1
+                    isNightRate = true
+                }
             }
         } else {
             if (isInNightRange(hour, costInfo.nightStartHour1, costInfo.nightEndHour1)) {
                 surcharge += costInfo.extraRateNight1
+                isNightRate = true
             }
         }
 
         // Apply city surcharge
-        if(isCityRate) surcharge += costInfo.extraRateCity
+        if (isCityRate) surcharge += costInfo.extraRateCity
 
-        return surcharge
+        return SurchargeResult(amount = surcharge, isNightRate = isNightRate)
     }
 
     /**
@@ -131,7 +145,17 @@ data class MeterCostCalculator(
      * - Handle midnight crossing (e.g. 23 ~ 02)
      */
     private fun isInNightRange(hour: Int, start: Int, end: Int): Boolean {
-        return if(start > end) hour !in end until start
+        return if (start > end) hour !in end until start
         else hour in start until end
     }
+
+    /**
+     * Surcharge calculation result
+     */
+    private data class SurchargeResult(
+        // Surcharge amount
+        val amount: Int,
+        // Whether night rate is applied
+        val isNightRate: Boolean,
+    )
 }

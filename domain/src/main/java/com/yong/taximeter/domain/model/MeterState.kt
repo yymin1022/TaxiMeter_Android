@@ -14,4 +14,6 @@ data class MeterState(
     val currentSpeedKph: Double = 0.0,
     // Meter status
     val status: MeterStatus = MeterStatus.NOT_RUNNING,
+    // Whether night rate is applied
+    val isNightRate: Boolean = false,
 )
