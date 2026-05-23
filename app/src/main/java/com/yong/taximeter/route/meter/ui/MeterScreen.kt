@@ -1,9 +1,16 @@
 package com.yong.taximeter.route.meter.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -26,6 +33,20 @@ fun MeterScreen(
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // SnackBar State
+    val snackBarHostState = remember { SnackbarHostState() }
+    // SnackBar Effect
+    val snackBarMessageRes = uiState.snackBarMessageRes
+    snackBarMessageRes?.let {
+        val message = stringResource(it)
+        LaunchedEffect(message) {
+            // Show Snack Bar
+            snackBarHostState.showSnackbar(message)
+            // Clear Snack Bar Message
+            viewModel.clearSnackBar()
+        }
+    }
+
     // Stop Dialog
     val showStopDialog = uiState.showStopDialog
     if(showStopDialog) {
@@ -37,10 +58,17 @@ fun MeterScreen(
         )
     }
 
-    Box(
-        modifier = modifier,
-    ) {
-        Text("Meter Screen")
+    Scaffold(
+        modifier = modifier
+            .fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(innerPadding),
+        ) {
+            Text("Meter Screen")
+        }
     }
 }
 
