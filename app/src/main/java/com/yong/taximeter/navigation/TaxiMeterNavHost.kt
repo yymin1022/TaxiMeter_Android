@@ -48,9 +48,14 @@ fun TaxiMeterNavHost(
             popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
         ) {
+            val navigatePop: () -> Unit = {
+                navController.popBackStack()
+            }
+
             MeterScreenNav(
                 modifier = Modifier
                     .fillMaxSize(),
+                navigatePop = navigatePop,
             )
         }
     }
@@ -72,8 +77,10 @@ private fun MainScreenNav(
 @Composable
 private fun MeterScreenNav(
     modifier: Modifier = Modifier,
+    navigatePop: () -> Unit,
 ) {
     MeterScreen(
         modifier = modifier,
+        navigatePop = navigatePop,
     )
 }
