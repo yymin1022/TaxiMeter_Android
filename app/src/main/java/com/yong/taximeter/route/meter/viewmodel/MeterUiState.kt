@@ -1,5 +1,6 @@
 package com.yong.taximeter.route.meter.viewmodel
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.yong.taximeter.domain.model.MeterStatus
 
@@ -21,6 +22,9 @@ data class MeterUiState(
     val isCityRate: Boolean = false,
     // Whether night rate is applied
     val isNightRate: Boolean = false,
+
+    // Meter animation frames
+    val animationFrames: List<Int> = emptyList(),
 
     // Show stop dialog
     val showStopDialog: Boolean = false,
