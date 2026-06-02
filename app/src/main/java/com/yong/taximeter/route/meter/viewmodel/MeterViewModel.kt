@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yong.taximeter.R
 import com.yong.taximeter.domain.model.MeterStatus
+import com.yong.taximeter.domain.model.ThemeSetting
+import com.yong.taximeter.domain.repository.SettingRepository
 import com.yong.taximeter.service.MeterService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -32,6 +34,8 @@ import javax.inject.Inject
 class MeterViewModel @Inject constructor(
     // Inject Android Context
     @ApplicationContext private val context: Context,
+    // Inject Setting Repository
+    private val settingRepository: SettingRepository,
 ) : ViewModel() {
     // UI State
     private val _uiState: MutableStateFlow<MeterUiState> = MutableStateFlow(MeterUiState())
@@ -86,7 +90,10 @@ class MeterViewModel @Inject constructor(
         }
     }
 
-    init { bindMeterService() }
+    init {
+        bindMeterService()
+        loadAnimationFrames()
+    }
 
     /**
      * Bind to [MeterService] with [serviceConnection]
@@ -94,6 +101,39 @@ class MeterViewModel @Inject constructor(
     private fun bindMeterService() {
         Intent(context, MeterService::class.java).also { intent ->
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    /**
+     * Load animation frames based on current theme setting
+     */
+    private fun loadAnimationFrames() {
+        // Get current theme setting
+        val themeSetting = settingRepository.getCurrentTheme()
+        // Generate animation frames list
+        val animationFrames = when(themeSetting) {
+            ThemeSetting.HORSE -> listOf(
+                R.drawable.ic_horse_1,
+                R.drawable.ic_horse_2,
+                R.drawable.ic_horse_3,
+            )
+            ThemeSetting.CIRCLE -> listOf(
+                R.drawable.ic_circle_1,
+                R.drawable.ic_circle_2,
+                R.drawable.ic_circle_3,
+                R.drawable.ic_circle_4,
+                R.drawable.ic_circle_5,
+                R.drawable.ic_circle_6,
+                R.drawable.ic_circle_7,
+                R.drawable.ic_circle_8,
+            )
+        }
+
+        // Update UI State
+        _uiState.update {
+            it.copy(
+                animationFrames = animationFrames,
+            )
         }
     }
 
