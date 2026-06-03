@@ -3,6 +3,7 @@ package com.yong.taximeter.route.meter.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,11 +28,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,6 +53,7 @@ import com.yong.taximeter.common.ui.theme.MeterTheme
 import com.yong.taximeter.domain.model.MeterStatus
 import com.yong.taximeter.route.meter.viewmodel.MeterUiState
 import com.yong.taximeter.route.meter.viewmodel.MeterViewModel
+import kotlinx.coroutines.delay
 import java.text.NumberFormat
 
 /**
@@ -192,6 +197,7 @@ private fun MeterContentPortrait(
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(end = 16.dp),
+            animationFrames = uiState.animationFrames,
             speedKph = uiState.currentSpeedKph,
         )
 
@@ -246,6 +252,7 @@ private fun MeterContentLandscape(
             // Meter Animation
             MeterAnimation(
                 modifier = Modifier,
+                animationFrames = uiState.animationFrames,
                 speedKph = uiState.currentSpeedKph,
             )
 
@@ -511,16 +518,47 @@ private fun MeterControlButton(
 @Composable
 private fun MeterAnimation(
     modifier: Modifier = Modifier,
+    animationFrames: List<Int>,
     speedKph: Double,
 ) {
-    // TODO: Implement Animation
+    // Exception when frames are empty
+    if(animationFrames.isEmpty()) return
+
+    // Animation frame index state
+    var frameIndex by remember { mutableIntStateOf(0) }
+
+    // Frame interval based on speed (ms)
+    val frameIntervalMs = when {
+        speedKph > 50 -> 142L
+        speedKph > 30 -> 200L
+        speedKph > 20 -> 250L
+        speedKph > 10 -> 333L
+        speedKph > 0  -> 500L
+        else -> 0L  // Stop animation
+    }
+
+    // Advance frame index based on interval
+    LaunchedEffect(frameIntervalMs) {
+        // If 0, stop animation
+        if(frameIntervalMs == 0L) return@LaunchedEffect
+
+        while(true) {
+            delay(frameIntervalMs)
+            frameIndex = (frameIndex + 1) % animationFrames.size
+        }
+    }
+
     Box(
-        modifier = modifier.size(90.dp),
+        modifier = modifier
+            .size(90.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = "🏇",
-            fontSize = 40.sp,
+        val targetFrame = animationFrames[frameIndex]
+        Image(
+            modifier = Modifier
+                .fillMaxSize(),
+            painter = painterResource(targetFrame),
+            contentDescription = null,
         )
     }
 }
