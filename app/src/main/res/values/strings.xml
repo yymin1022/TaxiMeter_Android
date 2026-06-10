@@ -46,13 +46,13 @@
 
     <string name="meter_cost">₩%s</string>
     <string name="meter_info_speed_title">Current Speed</string>
-    <string name="meter_info_speed_data">%s km/h</string>
+    <string name="meter_info_speed_data">%.1f km/h</string>
     <string name="meter_info_status_title">Status</string>
     <string name="meter_info_status_not_running">Not driving</string>
     <string name="meter_info_status_running">Driving...</string>
     <string name="meter_info_status_gps_error">GPS Error</string>
     <string name="meter_info_distance_title">Distance</string>
-    <string name="meter_info_distance_data">%s km</string>
+    <string name="meter_info_distance_data">%.1f km</string>
 
     <string name="meter_btn_start">Start</string>
     <string name="meter_btn_stop">Stop</string>
