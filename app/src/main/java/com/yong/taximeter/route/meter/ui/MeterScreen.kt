@@ -332,11 +332,11 @@ private fun MeterInfo(
 ) {
     val distanceText = stringResource(
         R.string.meter_info_distance_data,
-        NumberFormat.getNumberInstance().format(uiState.totalDistanceMeters / 1000),
+        uiState.totalDistanceMeters / 1000,
     )
     val speedText = stringResource(
         R.string.meter_info_speed_data,
-        NumberFormat.getNumberInstance().format(uiState.currentSpeedKph),
+        uiState.currentSpeedKph,
     )
     val statusText = when(uiState.meterStatus) {
         MeterStatus.NOT_RUNNING -> stringResource(R.string.meter_info_status_not_running)
