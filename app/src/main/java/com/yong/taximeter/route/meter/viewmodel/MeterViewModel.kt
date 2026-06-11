@@ -208,6 +208,7 @@ class MeterViewModel @Inject constructor(
         super.onCleared()
         observeJob?.cancel()
         context.unbindService(serviceConnection)
+        meterService = null
     }
 
     /**
