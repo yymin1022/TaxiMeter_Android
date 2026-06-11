@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
@@ -79,7 +80,15 @@ class MeterService : Service() {
         if(meterJob?.isActive == true) return
 
         // Run as foreground
-        startForeground(NOTIFICATION_ID, createNotification())
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                NOTIFICATION_ID,
+                createNotification(),
+                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, createNotification())
+        }
 
         serviceScope.launch {
             // Load cost info
