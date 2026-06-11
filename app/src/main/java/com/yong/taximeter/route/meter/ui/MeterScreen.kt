@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.room.util.TableInfo
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -207,7 +206,7 @@ private fun MeterContentPortrait(
             uiState = uiState,
         )
 
-        // Mete rInfo
+        // Meter Info
         MeterInfo(
             modifier = Modifier,
             uiState = uiState,
