@@ -24,10 +24,6 @@ class ObserveSpeedUseCase @Inject constructor(
     // Inject Location Repository
     private val locationRepository: LocationRepository,
 ) {
-    // Last calculated speed data
-    private var lastSpeedData = SpeedData.ZERO
-    // Last known location
-    private var lastLocation: LocationData? = null
 
     /**
      * Observe speed data from location updates
@@ -35,6 +31,11 @@ class ObserveSpeedUseCase @Inject constructor(
      * - Caller must ensure location permission is granted before collecting
      */
     operator fun invoke(): Flow<SpeedData> = channelFlow {
+        // Last calculated speed data
+        var lastSpeedData = SpeedData.ZERO
+        // Last known location
+        var lastLocation: LocationData? = null
+
         // GPS updates — only update last known data, do not emit
         launch {
             locationRepository.observeUpdate().collect { current ->
