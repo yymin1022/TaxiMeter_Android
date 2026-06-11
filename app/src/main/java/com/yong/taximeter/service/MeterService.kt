@@ -56,8 +56,6 @@ class MeterService : Service() {
 
     // City rate state
     private val _isCityRate = MutableStateFlow(false)
-    // Night rate state
-    private val _isNightRate = MutableStateFlow(false)
 
     // Meter state instance
     private val _meterState = MutableStateFlow<MeterState?>(null)
@@ -67,8 +65,6 @@ class MeterService : Service() {
      * Start meter service
      * - Ignore if already running
      * - Requires Location permissions
-     *
-     * @param isCityRate Whether to apply city surcharge
      */
     @RequiresPermission(
         anyOf = [
@@ -131,15 +127,6 @@ class MeterService : Service() {
      */
     fun setCityRate(enabled: Boolean) {
         _isCityRate.value = enabled
-    }
-
-    /**
-     * Update night rate during meter running
-     *
-     * @param enabled Whether to apply night surcharge
-     */
-    fun setNightRate(enabled: Boolean) {
-        _isNightRate.value = enabled
     }
 
     /**
