@@ -44,12 +44,40 @@
     <string name="store_snack_bar_purchase_pending">Purchase is currently pending.</string>
     <string name="store_snack_bar_purchase_success">Purchase completed successfully.</string>
 
+    <string name="meter_cost">₩%s</string>
+    <string name="meter_info_speed_title">Current Speed</string>
+    <string name="meter_info_speed_data">%.1f km/h</string>
+    <string name="meter_info_status_title">Status</string>
+    <string name="meter_info_status_not_running">Not driving</string>
+    <string name="meter_info_status_running">Driving...</string>
+    <string name="meter_info_status_gps_error">GPS Error</string>
+    <string name="meter_info_distance_title">Distance</string>
+    <string name="meter_info_distance_data">%.1f km</string>
+
+    <string name="meter_btn_start">Start</string>
+    <string name="meter_btn_stop">Stop</string>
+    <string name="meter_btn_percentage_night_true">Night rate ON</string>
+    <string name="meter_btn_percentage_night_false">Night rate OFF</string>
+    <string name="meter_btn_percentage_outcity_true">City rate ON</string>
+    <string name="meter_btn_percentage_outcity_false">City rate OFF</string>
+
+    <string name="meter_dialog_stop_title">Stop driving</string>
+    <string name="meter_dialog_stop_content">Cost: ₩%s\nDistance: %s km\nStop driving?</string>
+
+    <string name="meter_noti_channel_title">Taxi Meter</string>
+    <string name="meter_noti_content">Driving now..</string>
+    <string name="meter_noti_title">Taxi Meter</string>
+
+    <string name="meter_snack_bar_night_rate_info">Night rate will be automatically applied by time</string>
+
     <string name="setting_dialog_custom_cost_title">Set custom cost</string>
     <string name="setting_dialog_region_setting_title">Select region</string>
     <string name="setting_dialog_theme_setting_title">Select theme</string>
+
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_complete">Complete</string>
-    
+    <string name="dialog_ok">OK</string>
+
     <string name="dialog_cost_input_error_cost">Check valid input</string>
     <string name="dialog_cost_input_error_time">Time must be between 0 to 23</string>
 

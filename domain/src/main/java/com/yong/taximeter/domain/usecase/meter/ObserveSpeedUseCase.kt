@@ -4,9 +4,10 @@ import com.yong.taximeter.domain.defs.MeterDefs
 import com.yong.taximeter.domain.model.LocationData
 import com.yong.taximeter.domain.model.MeterStatus
 import com.yong.taximeter.domain.repository.LocationRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.asin
 import kotlin.math.cos
@@ -23,18 +24,38 @@ class ObserveSpeedUseCase @Inject constructor(
     // Inject Location Repository
     private val locationRepository: LocationRepository,
 ) {
+
     /**
      * Observe speed data from location updates
      * - Return [MeterStatus.GPS_ERROR] if accuracy is below threshold
      * - Caller must ensure location permission is granted before collecting
      */
-    operator fun invoke(): Flow<SpeedData> =
-        locationRepository.observeUpdate()
-            .scan<LocationData, Pair<LocationData?, SpeedData>>(null to SpeedData.ZERO) { (prev, _), current ->
-                val speedData = calculateSpeedData(prev, current)
-                current to speedData
+    operator fun invoke(): Flow<SpeedData> = channelFlow {
+        // Last calculated speed data
+        var lastSpeedData = SpeedData.ZERO
+        // Last known location
+        var lastLocation: LocationData? = null
+
+        // GPS updates — only update last known data, do not emit
+        launch {
+            locationRepository.observeUpdate().collect { current ->
+                lastSpeedData = calculateSpeedData(lastLocation, current)
+                lastLocation = current
             }
-            .map { (_, speedData) -> speedData }
+        }
+
+        // Timer ticks — emit periodically using last known speed
+        while (true) {
+            delay(MeterDefs.METER_UPDATE_INTERVAL_MS)
+            send(
+                lastSpeedData.copy(
+                    distanceDeltaMeters = lastSpeedData.speedKph / MPS_TO_KPH
+                            * (MeterDefs.METER_UPDATE_INTERVAL_MS / 1000.0),
+                    elapsedDeltaSeconds = MeterDefs.METER_UPDATE_INTERVAL_MS / 1000.0,
+                )
+            )
+        }
+    }
 
     /**
      * Calculate [SpeedData] from previous and current [LocationData]
