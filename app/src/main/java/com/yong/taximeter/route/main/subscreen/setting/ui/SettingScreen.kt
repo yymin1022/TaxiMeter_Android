@@ -24,6 +24,7 @@ import com.yong.taximeter.common.ui.dialog.CustomCostInputDialog
 import com.yong.taximeter.common.ui.dialog.RadioSelectDialog
 import com.yong.taximeter.common.ui.theme.Typography
 import com.yong.taximeter.common.ui.ad.NativeAdViewCompose
+import com.yong.taximeter.R
 import com.yong.taximeter.route.main.subscreen.setting.model.SettingItemGroup
 import com.yong.taximeter.route.main.subscreen.setting.viewmodel.SettingViewModel
 import com.yong.taximeter.route.main.subscreen.setting.viewmodel.ShowDialog
@@ -103,6 +104,7 @@ fun SettingScreen(
                     NativeAdViewCompose(
                         modifier = Modifier
                             .fillMaxWidth(),
+                        adUnitId = stringResource(id = R.string.admob_native_ad_unit_id),
                     )
                 }
             }
