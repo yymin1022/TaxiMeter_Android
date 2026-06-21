@@ -48,6 +48,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.yong.taximeter.R
 import com.yong.taximeter.common.ui.dialog.SimpleDialog
+import com.yong.taximeter.common.ui.ad.BannerAdView
 import com.yong.taximeter.common.ui.theme.MeterTheme
 import com.yong.taximeter.domain.model.MeterStatus
 import com.yong.taximeter.route.meter.viewmodel.MeterUiState
@@ -99,45 +100,58 @@ fun MeterScreen(
             .fillMaxSize(),
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            // Location permission state
-            val locationPermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) {
+                // Location permission state
+                val locationPermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
-            val onClickStart =  {
-                // Start meter only location permission is granted
-                if(locationPermission.status.isGranted) {
-                    // Checks permission with AccompanistPermission API, so suppress warning
-                    @SuppressLint("MissingPermission")
-                    viewModel.onClickStart()
-                } else {
-                    locationPermission.launchPermissionRequest()
+                val onClickStart =  {
+                    // Start meter only location permission is granted
+                    if(locationPermission.status.isGranted) {
+                        // Checks permission with AccompanistPermission API, so suppress warning
+                        @SuppressLint("MissingPermission")
+                        viewModel.onClickStart()
+                    } else {
+                        locationPermission.launchPermissionRequest()
+                    }
+                }
+
+                // Meter Content
+                MeterContent(
+                    uiState = uiState,
+                    onClickStart = onClickStart,
+                    onClickStop = viewModel::onClickStop,
+                    onClickCityRate = viewModel::onClickCityRate,
+                    onClickNightRate = viewModel::onClickNightRate,
+                )
+
+                // Back button
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(4.dp),
+                    onClick = navigatePop,
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = MeterTheme.colors.onBackground,
+                    )
                 }
             }
 
-            // Meter Content
-            MeterContent(
-                uiState = uiState,
-                onClickStart = onClickStart,
-                onClickStop = viewModel::onClickStop,
-                onClickCityRate = viewModel::onClickCityRate,
-                onClickNightRate = viewModel::onClickNightRate,
-            )
-
-            // Back button
-            IconButton(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(4.dp),
-                onClick = navigatePop,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = MeterTheme.colors.onBackground,
+            if (!uiState.isAdRemoved) {
+                BannerAdView(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                 )
             }
         }
