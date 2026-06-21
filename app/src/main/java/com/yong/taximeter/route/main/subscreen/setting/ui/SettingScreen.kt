@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yong.taximeter.common.ui.dialog.CustomCostInputDialog
 import com.yong.taximeter.common.ui.dialog.RadioSelectDialog
 import com.yong.taximeter.common.ui.theme.Typography
+import com.yong.taximeter.common.ui.ad.NativeAdViewCompose
 import com.yong.taximeter.route.main.subscreen.setting.model.SettingItemGroup
 import com.yong.taximeter.route.main.subscreen.setting.viewmodel.SettingViewModel
 import com.yong.taximeter.route.main.subscreen.setting.viewmodel.ShowDialog
@@ -88,13 +89,22 @@ fun SettingScreen(
         modifier = modifier
             .padding(8.dp),
     ) {
-        settingGroups?.let {
-            items(it.size) { idx ->
-                val settingGroup = it[idx]
+        settingGroups?.let { groups ->
+            items(groups.size) { idx ->
+                val settingGroup = groups[idx]
                 SettingGroup(
                     modifier = Modifier,
                     group = settingGroup,
                 )
+
+                // Show native ad in the middle (after the second group: index 1)
+                // only if ads are not removed.
+                if(idx == 1 && !uiState.isAdRemoved) {
+                    NativeAdViewCompose(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                    )
+                }
             }
         }
     }
