@@ -47,6 +47,8 @@ class SettingViewModel @Inject constructor(
             val developerInfoSettingGroup = loadDeveloperInfoSettingGroup()
             // Meter setting group
             val meterSettingGroup = loadMeterSettingGroup()
+            // Ad removal status
+            val isAdRemoved = settingRepository.isAdRemoved()
 
             // Build Setting Groups
             val settingGroups = buildList {
@@ -59,6 +61,7 @@ class SettingViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     settingGroups = settingGroups,
+                    isAdRemoved = isAdRemoved,
                 )
             }
         }
