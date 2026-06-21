@@ -21,4 +21,7 @@ interface SettingRepository {
     // Theme
     fun getCurrentTheme(): ThemeSetting
     fun setTheme(value: ThemeSetting)
+
+    // Advertisement Removal
+    fun isAdRemoved(): Boolean
 }
