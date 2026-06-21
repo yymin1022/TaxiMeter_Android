@@ -32,4 +32,7 @@ data class MeterUiState(
     // Message resource for SnackBar
     @get:StringRes
     val snackBarMessageRes: Int? = null,
+
+    // Advertisement Removal state
+    val isAdRemoved: Boolean = false,
 )
