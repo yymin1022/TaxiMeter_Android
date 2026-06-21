@@ -152,6 +152,7 @@ fun MeterScreen(
                 BannerAdView(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    adUnitId = stringResource(id = R.string.admob_banner_ad_unit_id),
                 )
             }
         }
