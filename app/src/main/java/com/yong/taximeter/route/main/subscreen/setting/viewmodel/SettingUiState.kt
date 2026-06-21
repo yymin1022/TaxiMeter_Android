@@ -16,6 +16,9 @@ data class SettingUiState(
 
     // Show Dialog
     val showDialog: ShowDialog = ShowDialog.Nothing,
+
+    // Advertisement Removal state
+    val isAdRemoved: Boolean = false,
 )
 
 sealed class ShowDialog {
