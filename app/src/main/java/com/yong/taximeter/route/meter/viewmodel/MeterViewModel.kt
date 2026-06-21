@@ -93,6 +93,19 @@ class MeterViewModel @Inject constructor(
     init {
         bindMeterService()
         loadAnimationFrames()
+        loadAdRemovalStatus()
+    }
+
+    /**
+     * Load ad removal status from setting repository
+     */
+    private fun loadAdRemovalStatus() {
+        val isAdRemoved = settingRepository.isAdRemoved()
+        _uiState.update {
+            it.copy(
+                isAdRemoved = isAdRemoved,
+            )
+        }
     }
 
     /**
