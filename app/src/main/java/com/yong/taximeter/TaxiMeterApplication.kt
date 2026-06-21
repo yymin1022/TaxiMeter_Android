@@ -6,6 +6,7 @@ import com.yong.taximeter.domain.defs.PreferenceDefs
 import com.yong.taximeter.domain.defs.ProductDefs
 import com.yong.taximeter.domain.model.PurchaseState
 import com.yong.taximeter.domain.repository.BillingRepository
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,9 @@ class TaxiMeterApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Initialize Mobile Ads SDK
+        MobileAds.initialize(this) {}
 
         appScope.launch {
             billingRepository.connect()
