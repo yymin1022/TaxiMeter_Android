@@ -48,6 +48,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.yong.taximeter.R
+import androidx.core.net.toUri
 
 @Composable
 fun BannerAdView(
@@ -71,7 +72,7 @@ fun BannerAdView(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl))
+                        val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
                         context.startActivity(intent)
                     },
                 contentScale = ContentScale.FillBounds
@@ -141,7 +142,7 @@ fun NativeAdViewCompose(
                     .fillMaxSize()
                     .background(Color(0x1A888888))
                     .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl))
+                        val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
                         context.startActivity(intent)
                     }
                     .padding(12.dp),
