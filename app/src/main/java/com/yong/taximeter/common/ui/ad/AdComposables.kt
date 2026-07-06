@@ -54,7 +54,7 @@ import androidx.core.net.toUri
 fun BannerAdView(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/6300978111", // GMS Ads Banner Test ID
-    @DrawableRes fallbackImageRes: Int = R.drawable.ic_launcher_foreground,
+    @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
     fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
@@ -156,7 +156,7 @@ fun BannerAdView(
 fun NativeAdViewCompose(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/2247696110", // Test Native Ad ID
-    @DrawableRes fallbackImageRes: Int = R.drawable.ic_launcher_foreground,
+    @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
     fallbackHeadline: String = "Useful Blog",
     fallbackBody: String = "1인개발자 Useful의 IT블로그",
     fallbackCtaText: String = "방문하기",
