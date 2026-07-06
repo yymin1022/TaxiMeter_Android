@@ -73,10 +73,10 @@ data class MeterCostCalculator(
         val newDistance = totalDistanceMeters + speedData.distanceDeltaMeters
         val newElapsed = totalElapsedSeconds + speedData.elapsedDeltaSeconds
 
-        // Detect city rate change and apply immediate base surcharge
+        // Detect city rate change and apply immediate base surcharge only if driving hasn't started
         val isCityRateChanged = this.isCityRate != isCityRate
         var newCost = cost
-        if (isCityRateChanged) {
+        if (isCityRateChanged && totalDistanceMeters == 0.0) {
             val baseSurcharge = (costInfo.costBase * costInfo.extraRateCity) / 100
             if (isCityRate) {
                 newCost += baseSurcharge

@@ -75,6 +75,9 @@ class MeterService : Service() {
     fun startMeter() {
         if(meterJob?.isActive == true) return
 
+        // Reset city rate status for a new run
+        _isCityRate.value = false
+
         // Run as foreground
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
