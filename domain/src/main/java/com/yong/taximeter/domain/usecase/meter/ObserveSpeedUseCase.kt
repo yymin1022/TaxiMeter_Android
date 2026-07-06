@@ -82,7 +82,13 @@ class ObserveSpeedUseCase @Inject constructor(
 
         // Calculate distance using Haversine formula
         val distanceDeltaMeters = haversineDistanceMeters(prev, current)
-        val speedKph = (distanceDeltaMeters / elapsedDeltaSeconds) * MPS_TO_KPH
+        
+        // Use precision speed from system GPS if available, otherwise calculate from coordinates
+        val speedKph = if (current.speedMps > 0f) {
+            current.speedMps * MPS_TO_KPH
+        } else {
+            (distanceDeltaMeters / elapsedDeltaSeconds) * MPS_TO_KPH
+        }
 
         return SpeedData(
             distanceDeltaMeters = distanceDeltaMeters,

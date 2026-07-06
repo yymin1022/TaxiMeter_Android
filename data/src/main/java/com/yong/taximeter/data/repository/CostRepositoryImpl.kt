@@ -89,15 +89,15 @@ class CostRepositoryImpl @Inject constructor(
 
     /**
      * Get cost info of [regionKey]
+     * - If null in DAO, return fallback default [CostInfo] instance
      *
      * @return [CostInfo] instance
-     * - If null, there is no such region
      */
     override suspend fun getCostInfo(
         regionKey: String
-    ): CostInfo? {
-        // Get entity from DAO, and convert to model
+    ): CostInfo {
+        // Get entity from DAO, and convert to model. Return fallback default if null.
         return costDao.getByRegion(regionKey)
-            ?.toDomain()
+            ?.toDomain() ?: CostInfo(region = regionKey)
     }
 }

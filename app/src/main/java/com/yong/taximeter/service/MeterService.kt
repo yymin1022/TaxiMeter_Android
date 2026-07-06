@@ -75,6 +75,9 @@ class MeterService : Service() {
     fun startMeter() {
         if(meterJob?.isActive == true) return
 
+        // Reset city rate status for a new run
+        _isCityRate.value = false
+
         // Run as foreground
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
@@ -89,7 +92,7 @@ class MeterService : Service() {
         serviceScope.launch {
             // Load cost info
             val regionKey = settingRepository.getCurrentRegion().key
-            val costInfo = costRepository.getCostInfo(regionKey) ?: return@launch
+            val costInfo = costRepository.getCostInfo(regionKey)
 
             // Init meter calculation use-case
             meterJob = launch {
