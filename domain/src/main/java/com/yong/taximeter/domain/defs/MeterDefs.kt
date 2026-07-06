@@ -8,10 +8,10 @@ object MeterDefs {
     const val COST_UNIT = 100
 
     // GPS accuracy permit threshold
-    const val GPS_ACCURACY_THRESHOLD = 20f
+    const val GPS_ACCURACY_THRESHOLD = 50f
 
     // Meter update interval (ms)
-    const val METER_UPDATE_INTERVAL_MS = 500L
+    const val METER_UPDATE_INTERVAL_MS = 1000L
 
     // Speed threshold with distance/time cost system (km/h)
     const val SPEED_THRESHOLD_KPH = 15.0

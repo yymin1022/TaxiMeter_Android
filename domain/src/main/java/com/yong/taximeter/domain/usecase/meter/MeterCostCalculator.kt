@@ -28,6 +28,8 @@ data class MeterCostCalculator(
     val status: MeterStatus,
     // Whether night rate is applied
     val isNightRate: Boolean,
+    // Whether city rate is applied
+    val isCityRate: Boolean,
 ) {
     companion object {
         /**
@@ -42,6 +44,7 @@ data class MeterCostCalculator(
             currentSpeedKph = 0.0,
             status = MeterStatus.NOT_RUNNING,
             isNightRate = false,
+            isCityRate = false,
         )
     }
 
@@ -70,6 +73,18 @@ data class MeterCostCalculator(
         val newDistance = totalDistanceMeters + speedData.distanceDeltaMeters
         val newElapsed = totalElapsedSeconds + speedData.elapsedDeltaSeconds
 
+        // Detect city rate change and apply immediate base surcharge
+        val isCityRateChanged = this.isCityRate != isCityRate
+        var newCost = cost
+        if (isCityRateChanged) {
+            val baseSurcharge = (costInfo.costBase * costInfo.extraRateCity) / 100
+            if (isCityRate) {
+                newCost += baseSurcharge
+            } else {
+                newCost -= baseSurcharge
+            }
+        }
+
         // Drain counter by distance
         val distanceDrain = speedData.distanceDeltaMeters.toInt()
         // Drain counter by time when speed is below threshold
@@ -80,7 +95,6 @@ data class MeterCostCalculator(
         // Check if night rate is enabled at current time
         val isNightRate = checkIsNightRate()
 
-        var newCost = cost
         var newCounter = costCounter - distanceDrain - timeDrain
 
         // Increase cost by unit when counter reaches 0
@@ -100,6 +114,7 @@ data class MeterCostCalculator(
             currentSpeedKph = speedData.speedKph,
             status = speedData.status,
             isNightRate = isNightRate,
+            isCityRate = isCityRate,
         )
     }
 
