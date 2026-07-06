@@ -19,14 +19,14 @@
     <string name="setting_item_subtitle_meter_set_custom_cost_enabled">Setup your own cost values</string>
     <string name="setting_item_title_meter_theme">Theme</string>
 
-    <string name="setting_group_title_cost_info">Cost Info</string>
+    <string name="setting_group_title_cost_info">Meter Info</string>
     <string name="setting_item_title_cost_info">Cost Info</string>
     <string name="setting_item_subtitle_cost_info_night_1step">Base: KRW %d (First %.1fkm)\nDistance cost: KRW 100 per %d meters\nTime cost: KRW 100 per %d seconds\nOut city extra: %d%%\nNight extra\n- %d%% (%02d:00 ~ %02d:00)</string>
     <string name="setting_item_subtitle_cost_info_night_2step">Base: KRW %d (First %.1fkm)\nDistance cost: KRW 100 per %d meters\nTime cost: KRW 100 per %d seconds\nOut city extra: %d%%\nNight extra\n- %d%% (%02d:00 ~ %02d:00)\n- %d%% (%02d:00 ~ %02d:00)</string>
     <string name="setting_item_title_cost_version">Cost DB Version</string>
 
     <string name="setting_group_title_developer_info">Developer Info</string>
-    <string name="setting_item_title_developer_name">Useful</string>
+    <string name="setting_item_title_developer_name" translatable="false">Useful</string>
     <string name="setting_item_subtitle_developer_name">Chung-Ang University Dept. Software (2019 ~ 2025)</string>
     <string name="setting_item_title_developer_blog">Developer\'s Blog</string>
     <string name="setting_item_title_developer_github">Developer\'s GitHub</string>
@@ -46,13 +46,13 @@
 
     <string name="meter_cost">₩%s</string>
     <string name="meter_info_speed_title">Current Speed</string>
-    <string name="meter_info_speed_data">%.1f km/h</string>
+    <string name="meter_info_speed_data" translatable="false">%.1f km/h</string>
     <string name="meter_info_status_title">Status</string>
     <string name="meter_info_status_not_running">Not driving</string>
     <string name="meter_info_status_running">Driving...</string>
     <string name="meter_info_status_gps_error">GPS Error</string>
     <string name="meter_info_distance_title">Distance</string>
-    <string name="meter_info_distance_data">%.1f km</string>
+    <string name="meter_info_distance_data" translatable="false">%.1f km</string>
 
     <string name="meter_btn_start">Start</string>
     <string name="meter_btn_stop">Stop</string>
@@ -120,7 +120,7 @@
     <string name="theme_circle">Circle</string>
     <string name="theme_horse">Horse</string>
 
-    <string name="ad_fallback_headline">Useful Blog</string>
-    <string name="ad_fallback_body">1인개발자 Useful의 IT블로그</string>
-    <string name="ad_fallback_cta">방문하기</string>
+    <string name="ad_fallback_headline" translatable="false">Useful Blog</string>
+    <string name="ad_fallback_body">Developer Useful\'s IT Blog</string>
+    <string name="ad_fallback_cta">Visit</string>
 </resources>
