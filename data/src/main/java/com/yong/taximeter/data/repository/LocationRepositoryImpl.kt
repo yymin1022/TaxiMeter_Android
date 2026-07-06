@@ -42,6 +42,7 @@ class LocationRepositoryImpl @Inject constructor(
                             longitude = location.longitude,
                             accuracyMeters = location.accuracy,
                             timestampMillis = location.time,
+                            speedMps = location.speed,
                         )
                     )
                 }

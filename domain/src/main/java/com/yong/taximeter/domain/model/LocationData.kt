@@ -12,4 +12,6 @@ data class LocationData(
     val accuracyMeters: Float = 0f,
     // GPS Timestamp (ms)
     val timestampMillis: Long = 0L,
+    // GPS Speed (m/s)
+    val speedMps: Float = 0f,
 )
