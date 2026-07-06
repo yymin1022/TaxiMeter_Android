@@ -122,9 +122,9 @@ fun NativeAdViewCompose(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/2247696110", // Test Native Ad ID
     @DrawableRes fallbackImageRes: Int = R.drawable.ic_launcher_foreground,
-    fallbackHeadline: String = "TaxiMeter Premium",
-    fallbackBody: String = "Enjoy TaxiMeter with premium features and ads removed.",
-    fallbackCtaText: String = "Learn More",
+    fallbackHeadline: String = "Useful Blog",
+    fallbackBody: String = "1인개발자 Useful의 IT블로그",
+    fallbackCtaText: String = "방문하기",
     fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
