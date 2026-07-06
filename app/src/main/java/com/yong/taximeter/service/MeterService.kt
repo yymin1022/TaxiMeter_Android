@@ -89,7 +89,7 @@ class MeterService : Service() {
         serviceScope.launch {
             // Load cost info
             val regionKey = settingRepository.getCurrentRegion().key
-            val costInfo = costRepository.getCostInfo(regionKey) ?: return@launch
+            val costInfo = costRepository.getCostInfo(regionKey)
 
             // Init meter calculation use-case
             meterJob = launch {

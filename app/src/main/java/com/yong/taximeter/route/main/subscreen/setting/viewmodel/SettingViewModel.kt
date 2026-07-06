@@ -109,31 +109,30 @@ class SettingViewModel @Inject constructor(
             items = buildList {
                 // Current cost info
                 val currentRegion = settingRepository.getCurrentRegion()
-                costRepository.getCostInfo(currentRegion.key)?.let { costInfo ->
-                    val isNightExtra2step = costInfo.isNightExtra2step
-                    // Cost Info item
-                    add(
-                        SettingItem(
-                            titleRes = R.string.setting_item_title_cost_info,
-                            subtitleRes =
-                                if(isNightExtra2step) R.string.setting_item_subtitle_cost_info_night_2step
-                                else R.string.setting_item_subtitle_cost_info_night_1step,
-                            subtitleFormatArgs = listOf(
-                                costInfo.costBase,
-                                costInfo.distBase.toFloat() / 1000,
-                                costInfo.costRunPer,
-                                costInfo.costTimePer,
-                                costInfo.extraRateCity,
-                                costInfo.extraRateNight1,
-                                costInfo.nightStartHour1,
-                                costInfo.nightEndHour1,
-                                costInfo.extraRateNight2,
-                                costInfo.nightStartHour2,
-                                costInfo.nightEndHour2,
-                            ),
-                        )
+                val costInfo = costRepository.getCostInfo(currentRegion.key)
+                val isNightExtra2step = costInfo.isNightExtra2step
+                // Cost Info item
+                add(
+                    SettingItem(
+                        titleRes = R.string.setting_item_title_cost_info,
+                        subtitleRes =
+                            if(isNightExtra2step) R.string.setting_item_subtitle_cost_info_night_2step
+                            else R.string.setting_item_subtitle_cost_info_night_1step,
+                        subtitleFormatArgs = listOf(
+                            costInfo.costBase,
+                            costInfo.distBase.toFloat() / 1000,
+                            costInfo.costRunPer,
+                            costInfo.costTimePer,
+                            costInfo.extraRateCity,
+                            costInfo.extraRateNight1,
+                            costInfo.nightStartHour1,
+                            costInfo.nightEndHour1,
+                            costInfo.extraRateNight2,
+                            costInfo.nightStartHour2,
+                            costInfo.nightEndHour2,
+                        ),
                     )
-                }
+                )
 
                 // Custom cost flag
                 val isCustomCost = (currentRegion == RegionSetting.CUSTOM)
