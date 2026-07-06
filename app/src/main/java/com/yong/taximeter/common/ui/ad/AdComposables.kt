@@ -66,17 +66,52 @@ fun BannerAdView(
             .height(50.dp) // Fixed height to prevent layout shifts
     ) {
         if (isFailed) {
-            Image(
-                painter = painterResource(id = fallbackImageRes),
-                contentDescription = "Default Ad Banner",
+            Row(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(
+                        androidx.compose.ui.graphics.Brush.linearGradient(
+                            colors = listOf(Color(0xFF1E5FC1), Color(0xFF103D88))
+                        )
+                    )
                     .clickable {
                         val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
                         context.startActivity(intent)
-                    },
-                contentScale = ContentScale.FillBounds
-            )
+                    }
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = fallbackImageRes),
+                    contentDescription = "Useful Blog Icon",
+                    modifier = Modifier
+                        .size(32.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Useful Blog",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "1인개발자 Useful의 IT블로그 방문하기",
+                        color = Color.White.copy(alpha = 0.8f),
+                        fontSize = 10.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Text(
+                    text = "방문하기",
+                    color = Color(0xFFFF9800),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         } else {
             val adView = remember {
                 com.google.android.gms.ads.AdView(context).apply {
