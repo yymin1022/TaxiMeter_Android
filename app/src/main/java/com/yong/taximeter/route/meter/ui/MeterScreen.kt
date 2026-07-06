@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.activity.compose.BackHandler
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -68,6 +69,15 @@ fun MeterScreen(
 ) {
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Handle system back gesture
+    BackHandler(enabled = uiState.meterStatus != MeterStatus.NOT_RUNNING) {
+        if (uiState.showStopDialog) {
+            viewModel.onCancelStop()
+        } else {
+            viewModel.onClickStop()
+        }
+    }
 
     // SnackBar State
     val snackBarHostState = remember { SnackbarHostState() }
@@ -138,7 +148,13 @@ fun MeterScreen(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(4.dp),
-                    onClick = navigatePop,
+                    onClick = {
+                        if (uiState.meterStatus != MeterStatus.NOT_RUNNING) {
+                            viewModel.onClickStop()
+                        } else {
+                            navigatePop()
+                        }
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
