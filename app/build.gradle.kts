@@ -30,10 +30,14 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-7726147556907333~6019267956"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
         }
     }
 
@@ -74,7 +78,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
-    // GMS Location Dependency
+    // GMS Dependency
+    implementation(libs.play.services.ads)
     implementation(libs.play.services.location)
 
     // Firebase Dependency

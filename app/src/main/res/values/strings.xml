@@ -119,4 +119,8 @@
 
     <string name="theme_circle">Circle</string>
     <string name="theme_horse">Horse</string>
+
+    <string name="ad_fallback_headline">Useful Blog</string>
+    <string name="ad_fallback_body">1인개발자 Useful의 IT블로그</string>
+    <string name="ad_fallback_cta">방문하기</string>
 </resources>

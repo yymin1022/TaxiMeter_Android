@@ -44,4 +44,8 @@ class SettingRepositoryImpl @Inject constructor(
     override fun setTheme(value: ThemeSetting) {
         preferenceDataSource.setString(PreferenceDefs.PREF_KEY_SETTING_THEME, value.key)
     }
+
+    override fun isAdRemoved(): Boolean {
+        return preferenceDataSource.getBoolean(PreferenceDefs.PREF_KEY_AD_REMOVE, false)
+    }
 }
