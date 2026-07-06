@@ -33,9 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -69,11 +69,7 @@ fun BannerAdView(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        androidx.compose.ui.graphics.Brush.linearGradient(
-                            colors = listOf(Color(0xFF1E5FC1), Color(0xFF103D88))
-                        )
-                    )
+                    .background(Color(0xFF103D88))
                     .clickable {
                         val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
                         context.startActivity(intent)
@@ -92,13 +88,13 @@ fun BannerAdView(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "Useful Blog",
+                        text = stringResource(R.string.ad_fallback_headline),
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "1인개발자 Useful의 IT블로그 방문하기",
+                        text = stringResource(R.string.ad_fallback_body),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 10.sp,
                         maxLines = 1,
@@ -106,14 +102,14 @@ fun BannerAdView(
                     )
                 }
                 Text(
-                    text = "방문하기",
-                    color = Color(0xFFFF9800),
+                    text = stringResource(R.string.ad_fallback_cta),
+                    color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         } else {
-            val adView = remember {
+            val adView = remember(context, adUnitId) {
                 com.google.android.gms.ads.AdView(context).apply {
                     setAdSize(com.google.android.gms.ads.AdSize.BANNER)
                     setAdUnitId(adUnitId)
@@ -157,9 +153,9 @@ fun NativeAdViewCompose(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/2247696110", // Test Native Ad ID
     @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
-    fallbackHeadline: String = "Useful Blog",
-    fallbackBody: String = "1인개발자 Useful의 IT블로그",
-    fallbackCtaText: String = "방문하기",
+    fallbackHeadline: String = stringResource(R.string.ad_fallback_headline),
+    fallbackBody: String = stringResource(R.string.ad_fallback_body),
+    fallbackCtaText: String = stringResource(R.string.ad_fallback_cta),
     fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
@@ -273,42 +269,49 @@ fun NativeAdViewCompose(
                     modifier = Modifier.fillMaxSize(),
                     factory = { ctx ->
                         val view = LayoutInflater.from(ctx).inflate(R.layout.layout_native_ad, null) as NativeAdView
-                        
+                        view.headlineView = view.findViewById(R.id.ad_headline)
+                        view.bodyView = view.findViewById(R.id.ad_body)
+                        view.callToActionView = view.findViewById(R.id.ad_call_to_action)
+                        view.iconView = view.findViewById(R.id.ad_icon)
+                        view
+                    },
+                    update = { view ->
                         // Bind views
-                        val headlineView = view.findViewById<TextView>(R.id.ad_headline)
-                        headlineView.text = currentNativeAd.headline
-                        view.headlineView = headlineView
+                        val headlineView = view.headlineView as? TextView
+                        headlineView?.text = currentNativeAd.headline
 
-                        val bodyView = view.findViewById<TextView>(R.id.ad_body)
-                        if (currentNativeAd.body == null) {
-                            bodyView.visibility = View.GONE
-                        } else {
-                            bodyView.visibility = View.VISIBLE
-                            bodyView.text = currentNativeAd.body
+                        val bodyView = view.bodyView as? TextView
+                        if (bodyView != null) {
+                            if (currentNativeAd.body == null) {
+                                bodyView.visibility = View.GONE
+                            } else {
+                                bodyView.visibility = View.VISIBLE
+                                bodyView.text = currentNativeAd.body
+                            }
                         }
-                        view.bodyView = bodyView
 
-                        val ctaView = view.findViewById<android.widget.Button>(R.id.ad_call_to_action)
-                        if (currentNativeAd.callToAction == null) {
-                            ctaView.visibility = View.GONE
-                        } else {
-                            ctaView.visibility = View.VISIBLE
-                            ctaView.text = currentNativeAd.callToAction
+                        val ctaView = view.callToActionView as? android.widget.Button
+                        if (ctaView != null) {
+                            if (currentNativeAd.callToAction == null) {
+                                ctaView.visibility = View.GONE
+                            } else {
+                                ctaView.visibility = View.VISIBLE
+                                ctaView.text = currentNativeAd.callToAction
+                            }
                         }
-                        view.callToActionView = ctaView
 
-                        val iconView = view.findViewById<ImageView>(R.id.ad_icon)
-                        if (currentNativeAd.icon == null) {
-                            iconView.visibility = View.GONE
-                        } else {
-                            iconView.visibility = View.VISIBLE
-                            iconView.setImageDrawable(currentNativeAd.icon?.drawable)
+                        val iconView = view.iconView as? ImageView
+                        if (iconView != null) {
+                            if (currentNativeAd.icon == null) {
+                                iconView.visibility = View.GONE
+                            } else {
+                                iconView.visibility = View.VISIBLE
+                                iconView.setImageDrawable(currentNativeAd.icon?.drawable)
+                            }
                         }
-                        view.iconView = iconView
 
                         // Register native ad object
                         view.setNativeAd(currentNativeAd)
-                        view
                     }
                 )
             } else if (isLoading) {
