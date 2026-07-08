@@ -50,6 +50,7 @@
     <string name="meter_btn_percentage_outcity_false">시외할증 미적용</string>
     <string name="meter_dialog_stop_title">주행 종료</string>
     <string name="meter_dialog_stop_content">요금: %s원\n주행 거리: %skm\n주행을 종료하시겠습니까?</string>
+    <string name="meter_dialog_stop_exit_content">주행을 종료하고 홈 화면으로 이동하시겠습니까?</string>
     <string name="meter_noti_channel_title">미터기 동작 알림</string>
     <string name="meter_noti_content">주행 중..</string>
     <string name="meter_noti_title">택시미터기</string>

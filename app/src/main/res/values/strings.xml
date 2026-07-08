@@ -63,6 +63,7 @@
 
     <string name="meter_dialog_stop_title">Stop driving</string>
     <string name="meter_dialog_stop_content">Cost: ₩%s\nDistance: %s km\nStop driving?</string>
+    <string name="meter_dialog_stop_exit_content">Driving will be stopped and you will return to Home. Exit?</string>
 
     <string name="meter_noti_channel_title">Taxi Meter</string>
     <string name="meter_noti_content">Driving now..</string>
