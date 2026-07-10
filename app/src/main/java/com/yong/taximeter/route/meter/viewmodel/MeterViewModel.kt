@@ -94,6 +94,44 @@ class MeterViewModel @Inject constructor(
         bindMeterService()
         loadAnimationFrames()
         loadAdRemovalStatus()
+        checkLegalWarning()
+    }
+
+    /**
+     * On confirm legal warning dialog
+     */
+    fun onConfirmLegalWarning() {
+        settingRepository.setLegalWarningChecked(true)
+        _uiState.update {
+            it.copy(
+                showLegalWarningDialog = false,
+            )
+        }
+    }
+
+    /**
+     * On dismiss legal warning dialog
+     */
+    fun onDismissLegalWarning() {
+        _uiState.update {
+            it.copy(
+                showLegalWarningDialog = false,
+            )
+        }
+    }
+
+    /**
+     * Check if legal warning is already checked, and show dialog if not
+     */
+    private fun checkLegalWarning() {
+        val checked = settingRepository.isLegalWarningChecked()
+        if(!checked) {
+            _uiState.update {
+                it.copy(
+                    showLegalWarningDialog = true,
+                )
+            }
+        }
     }
 
     /**

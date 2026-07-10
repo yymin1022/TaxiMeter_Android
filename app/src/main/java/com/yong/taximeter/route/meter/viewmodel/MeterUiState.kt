@@ -26,6 +26,8 @@ data class MeterUiState(
     // Meter animation frames
     val animationFrames: List<Int> = emptyList(),
 
+    // Show legal warning dialog
+    val showLegalWarningDialog: Boolean = false,
     // Show stop dialog
     val showStopDialog: Boolean = false,
 
