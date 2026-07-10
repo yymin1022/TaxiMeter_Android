@@ -124,6 +124,20 @@ fun MeterScreen(
         )
     }
 
+    // Legal Warning Dialog
+    val showLegalWarningDialog = uiState.showLegalWarningDialog
+    if (showLegalWarningDialog) {
+        SimpleDialog(
+            titleRes = R.string.meter_dialog_legal_warning_title,
+            descRes = R.string.meter_dialog_legal_warning_content,
+            onConfirm = viewModel::onConfirmLegalWarning,
+            onDismiss = {
+                viewModel.onDismissLegalWarning()
+                navigatePop()
+            },
+        )
+    }
+
     // Meter UI Content
     Scaffold(
         modifier = modifier
