@@ -61,6 +61,8 @@
     <string name="meter_btn_percentage_outcity_true">City rate ON</string>
     <string name="meter_btn_percentage_outcity_false">City rate OFF</string>
 
+    <string name="meter_dialog_legal_warning_title">Meter information</string>
+    <string name="meter_dialog_legal_warning_content">This app is not an officially certified taxi meter and is for reference purposes only. Charging fares based on this app may result in fines or other penalties under South Korea\'s Passenger Transport Service Act (여객자동차 운수사업법).</string>
     <string name="meter_dialog_stop_title">Stop driving</string>
     <string name="meter_dialog_stop_content">Cost: ₩%s\nDistance: %s km\nStop driving?</string>
     <string name="meter_dialog_stop_exit_content">Driving will be stopped and you will return to Home. Exit?</string>
