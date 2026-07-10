@@ -48,4 +48,12 @@ class SettingRepositoryImpl @Inject constructor(
     override fun isAdRemoved(): Boolean {
         return preferenceDataSource.getBoolean(PreferenceDefs.PREF_KEY_AD_REMOVE, false)
     }
+
+    override fun isLegalWarningChecked(): Boolean {
+        return preferenceDataSource.getBoolean(PreferenceDefs.PREF_KEY_METER_LEGAL_WARNING_CHECKED, false)
+    }
+
+    override fun setLegalWarningChecked(checked: Boolean) {
+        preferenceDataSource.setBoolean(PreferenceDefs.PREF_KEY_METER_LEGAL_WARNING_CHECKED, checked)
+    }
 }

@@ -24,4 +24,8 @@ interface SettingRepository {
 
     // Advertisement Removal
     fun isAdRemoved(): Boolean
+
+    // Legal Warning Checked
+    fun isLegalWarningChecked(): Boolean
+    fun setLegalWarningChecked(checked: Boolean)
 }

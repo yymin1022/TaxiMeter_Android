@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,12 +71,15 @@ fun MeterScreen(
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // Track whether the exit warning dialog should show (triggered by back request)
+    var showExitDialog by remember { mutableStateOf(false) }
+
     // Handle system back gesture
     BackHandler(enabled = uiState.meterStatus != MeterStatus.NOT_RUNNING) {
-        if (uiState.showStopDialog) {
-            viewModel.onCancelStop()
-        } else {
-            viewModel.onClickStop()
+        when {
+            uiState.showStopDialog -> viewModel.onCancelStop()
+            showExitDialog -> showExitDialog = false
+            else -> showExitDialog = true
         }
     }
 
@@ -101,6 +105,36 @@ fun MeterScreen(
             totalDistanceMeters = uiState.totalDistanceMeters,
             onConfirm = viewModel::onConfirmStop,
             onDismiss = viewModel::onCancelStop,
+        )
+    }
+
+    // Exit Warning Dialog
+    if (showExitDialog) {
+        SimpleDialog(
+            titleRes = R.string.meter_dialog_stop_title,
+            descRes = R.string.meter_dialog_stop_exit_content,
+            onConfirm = {
+                showExitDialog = false
+                viewModel.onConfirmStop()
+                navigatePop()
+            },
+            onDismiss = {
+                showExitDialog = false
+            }
+        )
+    }
+
+    // Legal Warning Dialog
+    val showLegalWarningDialog = uiState.showLegalWarningDialog
+    if (showLegalWarningDialog) {
+        SimpleDialog(
+            titleRes = R.string.meter_dialog_legal_warning_title,
+            descRes = R.string.meter_dialog_legal_warning_content,
+            onConfirm = viewModel::onConfirmLegalWarning,
+            onDismiss = {
+                viewModel.onDismissLegalWarning()
+                navigatePop()
+            },
         )
     }
 
@@ -150,7 +184,7 @@ fun MeterScreen(
                         .padding(4.dp),
                     onClick = {
                         if (uiState.meterStatus != MeterStatus.NOT_RUNNING) {
-                            viewModel.onClickStop()
+                            showExitDialog = true
                         } else {
                             navigatePop()
                         }
