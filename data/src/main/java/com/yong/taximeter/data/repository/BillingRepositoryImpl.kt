@@ -123,9 +123,9 @@ class BillingRepositoryImpl @Inject constructor(
             }
 
             // Purchase Canceled
-            // - Do nothing
             BillingClient.BillingResponseCode.USER_CANCELED -> {
                 logger.log("Purchase canceled by user")
+                _purchaseChannel.trySend(Result.failure(Exception("Purchase canceled by user")))
             }
 
             // Purchase failed with Error
