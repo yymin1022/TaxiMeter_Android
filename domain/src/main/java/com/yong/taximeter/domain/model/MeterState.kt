@@ -18,4 +18,6 @@ data class MeterState(
     val status: MeterStatus = MeterStatus.NOT_RUNNING,
     // Whether night rate is applied
     val isNightRate: Boolean = false,
+    // Whether city rate is applied
+    val isCityRate: Boolean = false,
 )
