@@ -7,7 +7,11 @@ import com.yong.taximeter.domain.defs.PreferenceDefs
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
 import com.yong.taximeter.domain.model.ThemeSetting
+import com.yong.taximeter.domain.model.ThemeModeSetting
 import com.yong.taximeter.domain.repository.SettingRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class SettingRepositoryImpl @Inject constructor(
@@ -21,6 +25,8 @@ class SettingRepositoryImpl @Inject constructor(
         private val DEFAULT_REGION = RegionSetting.SEOUL
         private val DEFAULT_THEME = ThemeSetting.HORSE
     }
+
+    private val _themeModeFlow = MutableStateFlow(getThemeMode())
 
     override suspend fun setCustomCostInfo(value: CostInfo) {
         val costEntity = value.toEntity()
@@ -55,5 +61,19 @@ class SettingRepositoryImpl @Inject constructor(
 
     override fun setLegalWarningChecked(checked: Boolean) {
         preferenceDataSource.setBoolean(PreferenceDefs.PREF_KEY_METER_LEGAL_WARNING_CHECKED, checked)
+    }
+
+    override fun getThemeMode(): ThemeModeSetting {
+        val key = preferenceDataSource.getString(PreferenceDefs.PREF_KEY_THEME_MODE, ThemeModeSetting.SYSTEM.key)
+        return ThemeModeSetting.entries.find { it.key == key } ?: ThemeModeSetting.SYSTEM
+    }
+
+    override fun setThemeMode(value: ThemeModeSetting) {
+        preferenceDataSource.setString(PreferenceDefs.PREF_KEY_THEME_MODE, value.key)
+        _themeModeFlow.value = value
+    }
+
+    override fun observeThemeMode(): Flow<ThemeModeSetting> {
+        return _themeModeFlow.asStateFlow()
     }
 }
