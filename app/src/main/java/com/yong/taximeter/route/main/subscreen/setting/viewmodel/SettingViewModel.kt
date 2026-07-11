@@ -6,6 +6,7 @@ import com.yong.taximeter.R
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
 import com.yong.taximeter.domain.model.ThemeSetting
+import com.yong.taximeter.domain.model.ThemeModeSetting
 import com.yong.taximeter.domain.repository.CostRepository
 import com.yong.taximeter.domain.repository.SettingRepository
 import com.yong.taximeter.route.main.subscreen.setting.model.SettingItem
@@ -243,6 +244,17 @@ class SettingViewModel @Inject constructor(
                         onClick = this@SettingViewModel::onClickThemeSettingItem,
                     )
                 )
+
+                // Theme Mode value
+                val curThemeModeTextRes = settingRepository.getThemeMode().toStringRes()
+                // Theme Mode item
+                add(
+                    SettingItem(
+                        titleRes = R.string.setting_item_title_app_theme_mode,
+                        subtitleRes = curThemeModeTextRes,
+                        onClick = this@SettingViewModel::onClickThemeModeSettingItem,
+                    )
+                )
             }
         )
     }
@@ -395,6 +407,50 @@ class SettingViewModel @Inject constructor(
         return when(this) {
             ThemeSetting.CIRCLE -> R.string.theme_circle
             ThemeSetting.HORSE -> R.string.theme_horse
+        }
+    }
+
+    /**
+     * Click Theme Mode Setting Item
+     */
+    private fun onClickThemeModeSettingItem() {
+        val showThemeModeSelectDialog = ShowDialog.RadioSelectDialog(
+            titleRes = R.string.setting_dialog_app_theme_mode_title,
+            itemTextResources = ThemeModeSetting.entries.map { it.toStringRes() },
+            onComplete = this::onCompleteThemeModeSetting,
+        )
+
+        _uiState.update {
+            it.copy(
+                showDialog = showThemeModeSelectDialog,
+            )
+        }
+    }
+
+    /**
+     * Selected Theme Mode Setting
+     */
+    private fun onCompleteThemeModeSetting(idx: Int) {
+        val selectedMode = ThemeModeSetting.entries[idx]
+        settingRepository.setThemeMode(selectedMode)
+
+        loadSettingGroups()
+
+        _uiState.update {
+            it.copy(
+                showDialog = ShowDialog.Nothing,
+            )
+        }
+    }
+
+    /**
+     * Convert [ThemeModeSetting] to String Resource
+     */
+    private fun ThemeModeSetting.toStringRes(): Int {
+        return when(this) {
+            ThemeModeSetting.SYSTEM -> R.string.theme_mode_system
+            ThemeModeSetting.DARK -> R.string.theme_mode_dark
+            ThemeModeSetting.LIGHT -> R.string.theme_mode_light
         }
     }
 }
