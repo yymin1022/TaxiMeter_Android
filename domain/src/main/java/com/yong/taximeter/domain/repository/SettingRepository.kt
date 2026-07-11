@@ -3,7 +3,8 @@ package com.yong.taximeter.domain.repository
 import com.yong.taximeter.domain.model.CostInfo
 import com.yong.taximeter.domain.model.RegionSetting
 import com.yong.taximeter.domain.model.ThemeSetting
-
+import com.yong.taximeter.domain.model.ThemeModeSetting
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Setting Repository Interface
@@ -28,4 +29,9 @@ interface SettingRepository {
     // Legal Warning Checked
     fun isLegalWarningChecked(): Boolean
     fun setLegalWarningChecked(checked: Boolean)
+
+    // App Theme Mode
+    fun getThemeMode(): ThemeModeSetting
+    fun setThemeMode(value: ThemeModeSetting)
+    fun observeThemeMode(): Flow<ThemeModeSetting>
 }

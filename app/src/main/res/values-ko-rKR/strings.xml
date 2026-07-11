@@ -14,7 +14,8 @@
     <string name="setting_item_title_meter_set_custom_cost">요금정보 직접 설정</string>
     <string name="setting_item_subtitle_meter_set_custom_cost_disabled">요금정보를 직접 설정하려면, 먼저 지역을 커스텀으로 변경해주세요.</string>
     <string name="setting_item_subtitle_meter_set_custom_cost_enabled">요금정보를 직접 설정하세요.</string>
-    <string name="setting_item_title_meter_theme">테마</string>
+    <string name="setting_item_title_meter_theme">미터기 종류</string>
+    <string name="setting_item_title_app_theme_mode">테마</string>
     <string name="setting_group_title_cost_info">미터기 정보</string>
     <string name="setting_item_title_cost_info">요금 정보</string>
     <string name="setting_item_subtitle_cost_info_night_1step">기본요금: %d원 (최초 %.1fkm)\n거리요금: %dm당 100원\n시간요금: %d초당 100원\n시외할증: %d%%\n야간할증\n- %d%% (%02d:00 ~ %02d:00)</string>
@@ -57,7 +58,8 @@
     <string name="meter_snack_bar_night_rate_info">야간할증은 시간에 따라 자동으로 적용됩니다.</string>
     <string name="setting_dialog_custom_cost_title">커스텀 요금정보 설정</string>
     <string name="setting_dialog_region_setting_title">지역 선택</string>
-    <string name="setting_dialog_theme_setting_title">테마 선택</string>
+    <string name="setting_dialog_theme_setting_title">미터기 종류 선택</string>
+    <string name="setting_dialog_app_theme_mode_title">테마 선택</string>
     <string name="dialog_cancel">취소</string>
     <string name="dialog_complete">완료</string>
     <string name="dialog_ok">확인</string>
@@ -94,8 +96,11 @@
     <string name="region_chungbuk">충청북도</string>
     <string name="region_chungnam">충청남도</string>
     <string name="region_custom">커스텀</string>
-    <string name="theme_circle">원형 테마</string>
-    <string name="theme_horse">말 테마</string>
+    <string name="theme_circle">원형 미터기</string>
+    <string name="theme_horse">말 미터기</string>
+    <string name="theme_mode_system">시스템 설정 적용</string>
+    <string name="theme_mode_dark">다크 테마</string>
+    <string name="theme_mode_light">라이트 테마</string>
     <string name="ad_fallback_body">1인개발자 Useful의 IT블로그</string>
     <string name="ad_fallback_cta">방문하기</string>
     <string name="meter_dialog_legal_warning_content">본 미터기 앱은 공식 인증된 미터기 앱이 아니므로 참고용으로만 사용해주세요. 이 앱으로 요금을 청구하는 경우, 「여객자동차 운수사업법」에 따라 과태료 등 처벌을 받을 수 있습니다.</string>

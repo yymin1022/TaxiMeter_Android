@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -135,7 +136,7 @@ private fun SettingGroup(
                     .padding(horizontal = 16.dp),
                 text = it,
                 style = Typography.titleMedium.copy(
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.primary,
                 ),
             )
         }
@@ -182,21 +183,24 @@ private fun SettingItemInternal(
     isEnabled: Boolean,
     onClickItem: () -> Unit,
 ) {
+    val onSurface = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = if(isEnabled) {
-        Typography.titleMedium
+        Typography.titleMedium.copy(
+            color = onSurface
+        )
     } else {
         Typography.titleMedium.copy(
-            color = Color.LightGray
+            color = onSurface.copy(alpha = 0.38f)
         )
     }
 
     val subtitleTextStyle = if(isEnabled) {
         Typography.titleSmall.copy(
-            color = Color.DarkGray,
+            color = onSurface.copy(alpha = 0.6f)
         )
     } else {
         Typography.titleSmall.copy(
-            color = Color.LightGray,
+            color = onSurface.copy(alpha = 0.38f)
         )
     }
 
