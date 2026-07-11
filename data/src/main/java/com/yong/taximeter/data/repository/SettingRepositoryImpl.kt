@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SettingRepositoryImpl @Inject constructor(
     // Inject Cost DB DAO
     private val costDao: CostInfoDao,
