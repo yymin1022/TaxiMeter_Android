@@ -77,6 +77,7 @@ class MeterViewModel @Inject constructor(
                                 totalDistanceMeters = state.totalDistanceMeters,
                                 meterStatus = curMeterStatus!!,
                                 isNightRate = state.isNightRate,
+                                isCityRate = state.isCityRate,
                             )
                         }
                     }
