@@ -30,11 +30,12 @@ data class MeterCostCalculator(
     val isNightRate: Boolean,
     // Whether city rate is applied
     val isCityRate: Boolean,
+    // Current surcharge rate (%)
+    val surchargeRate: Int,
 ) {
-    // Dynamic calculation of total cost
+    // Dynamic calculation of total cost based only on internal state
     val cost: Int
         get() {
-            val surchargeRate = calculateSurchargeRate(isCityRate, isNightRate)
             val baseSurcharge = (costInfo.costBase.toLong() * surchargeRate / 100).toInt()
             return costInfo.costBase + baseSurcharge + accumulatedExtraCost
         }
@@ -53,6 +54,7 @@ data class MeterCostCalculator(
             status = MeterStatus.NOT_RUNNING,
             isNightRate = false,
             isCityRate = false,
+            surchargeRate = 0,
         )
     }
 
@@ -89,16 +91,19 @@ data class MeterCostCalculator(
             (costInfo.costRunPer.toDouble() / costInfo.costTimePer * speedData.elapsedDeltaSeconds).toInt()
         } else 0
 
+        // Get current hour once to maintain state consistency
+        val hour = LocalTime.now().hour
+
         // Check if night rate is enabled at current time
-        val isNightRate = checkIsNightRate()
+        val isNightRate = checkIsNightRate(hour)
+        val newSurchargeRate = calculateSurchargeRate(isCityRate, isNightRate, hour)
 
         var newAccumulatedExtra = accumulatedExtraCost
         var newCounter = costCounter - distanceDrain - timeDrain
 
         // Increase cost by unit when counter reaches 0
         while(newCounter <= 0) {
-            val surchargeRate = calculateSurchargeRate(isCityRate, isNightRate)
-            val unitSurcharge = (MeterDefs.COST_UNIT.toLong() * surchargeRate / 100).toInt()
+            val unitSurcharge = (MeterDefs.COST_UNIT.toLong() * newSurchargeRate / 100).toInt()
             newAccumulatedExtra += MeterDefs.COST_UNIT + unitSurcharge
             
             newCounter += costInfo.costRunPer
@@ -114,16 +119,17 @@ data class MeterCostCalculator(
             status = speedData.status,
             isNightRate = isNightRate,
             isCityRate = isCityRate,
+            surchargeRate = newSurchargeRate,
         )
     }
 
     /**
      * Calculate total surcharge rate based on active surcharges
      */
-    private fun calculateSurchargeRate(isCityRate: Boolean, isNightRate: Boolean): Int {
+    private fun calculateSurchargeRate(isCityRate: Boolean, isNightRate: Boolean, hour: Int): Int {
         var surchargeRate = 0
         if(isNightRate) {
-            surchargeRate += getNightSurchargeRate()
+            surchargeRate += getNightSurchargeRate(hour)
         }
         if(isCityRate) {
             surchargeRate += costInfo.extraRateCity
@@ -134,8 +140,7 @@ data class MeterCostCalculator(
     /**
      * Get active night surcharge rate based on current hour
      */
-    private fun getNightSurchargeRate(): Int {
-        val hour = LocalTime.now().hour
+    private fun getNightSurchargeRate(hour: Int): Int {
         return if(costInfo.isNightExtra2step) {
             when {
                 isInNightRange(hour, costInfo.nightStartHour2, costInfo.nightEndHour2) ->
@@ -152,8 +157,7 @@ data class MeterCostCalculator(
     /**
      * Check if night rate is applicable based on current hour
      */
-    private fun checkIsNightRate(): Boolean {
-        val hour = LocalTime.now().hour
+    private fun checkIsNightRate(hour: Int): Boolean {
         return if(costInfo.isNightExtra2step) {
             isInNightRange(hour, costInfo.nightStartHour1, costInfo.nightEndHour1)
                 || isInNightRange(hour, costInfo.nightStartHour2, costInfo.nightEndHour2)
