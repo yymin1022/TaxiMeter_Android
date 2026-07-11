@@ -3,6 +3,7 @@ package com.yong.taximeter.di
 import android.content.Context
 import androidx.room.Room
 import com.yong.taximeter.data.dao.CostInfoDao
+import com.yong.taximeter.data.dao.MeterHistoryDao
 import com.yong.taximeter.data.database.TaxiMeterDatabase
 import dagger.Module
 import dagger.Provides
@@ -24,11 +25,18 @@ object DatabaseProvider {
     ): TaxiMeterDatabase {
         return Room.databaseBuilder(
             context, TaxiMeterDatabase::class.java, "taximeter-db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration(true)
+        .build()
     }
 
     @Provides
     fun provideCostInfoDao(database: TaxiMeterDatabase): CostInfoDao {
         return database.costInfoDao()
+    }
+
+    @Provides
+    fun provideMeterHistoryDao(database: TaxiMeterDatabase): MeterHistoryDao {
+        return database.meterHistoryDao()
     }
 }

@@ -12,9 +12,12 @@ import android.os.IBinder
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import com.yong.taximeter.R
+import com.yong.taximeter.core.common.AppLogger
+import com.yong.taximeter.domain.model.MeterHistory
 import com.yong.taximeter.domain.model.MeterState
 import com.yong.taximeter.domain.model.MeterStatus
 import com.yong.taximeter.domain.repository.CostRepository
+import com.yong.taximeter.domain.repository.MeterHistoryRepository
 import com.yong.taximeter.domain.repository.SettingRepository
 import com.yong.taximeter.domain.usecase.meter.CalculateMeterCostUseCase
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +48,10 @@ class MeterService : Service() {
     lateinit var costRepository: CostRepository
     @Inject
     lateinit var settingRepository: SettingRepository
+    @Inject
+    lateinit var meterHistoryRepository: MeterHistoryRepository
+    @Inject
+    lateinit var logger: AppLogger
 
     // Inject Use-case
     @Inject
@@ -118,6 +125,31 @@ class MeterService : Service() {
     fun stopMeter() {
         meterJob?.cancel()
         meterJob = null
+
+        val state = _meterState.value
+        if (state != null && (state.currentCost > 0 || state.totalDistanceMeters > 0.0)) {
+            serviceScope.launch {
+                try {
+                    meterHistoryRepository.insertHistory(
+                        MeterHistory(
+                            timestamp = System.currentTimeMillis(),
+                            cost = state.currentCost,
+                            distanceMeters = state.totalDistanceMeters,
+                            elapsedSeconds = state.totalElapsedSeconds,
+                        )
+                    )
+                } catch (e: Exception) {
+                    logger.recordException(e, "Failed to insert meter history")
+                } finally {
+                    cleanupService()
+                }
+            }
+        } else {
+            cleanupService()
+        }
+    }
+
+    private fun cleanupService() {
         _meterState.value = null
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()

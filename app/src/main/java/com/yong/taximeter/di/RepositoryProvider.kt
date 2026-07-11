@@ -11,12 +11,15 @@ import com.yong.taximeter.data.datasource.PreferenceDataSource
 import com.yong.taximeter.data.repository.BillingRepositoryImpl
 import com.yong.taximeter.data.repository.CostRepositoryImpl
 import com.yong.taximeter.data.repository.LocationRepositoryImpl
+import com.yong.taximeter.data.dao.MeterHistoryDao
+import com.yong.taximeter.data.repository.MeterHistoryRepositoryImpl
 import com.yong.taximeter.data.repository.SettingRepositoryImpl
 import com.yong.taximeter.domain.defs.MeterDefs
 import com.yong.taximeter.domain.repository.BillingRepository
 import com.yong.taximeter.domain.repository.CostRepository
 import com.yong.taximeter.domain.repository.LocationRepository
 import com.yong.taximeter.domain.repository.SettingRepository
+import com.yong.taximeter.domain.repository.MeterHistoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -82,6 +85,16 @@ object RepositoryProvider {
         return SettingRepositoryImpl(
             costDao,
             preferenceDataSource,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideMeterHistoryRepository(
+        meterHistoryDao: MeterHistoryDao,
+    ): MeterHistoryRepository {
+        return MeterHistoryRepositoryImpl(
+            meterHistoryDao,
         )
     }
 }
