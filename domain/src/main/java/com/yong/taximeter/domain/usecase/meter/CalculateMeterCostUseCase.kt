@@ -23,16 +23,33 @@ class CalculateMeterCostUseCase @Inject constructor(
      * @param costInfo Cost info for current region
      * @param isCityRate Whether to apply city surcharge
      */
+    /**
+     * Update events for meter calculation
+     */
+    private sealed interface MeterUpdateEvent {
+        data class Speed(val speedData: SpeedData) : MeterUpdateEvent
+        data class Surcharge(val isCityRate: Boolean) : MeterUpdateEvent
+    }
+
+    /**
+     * Start meter and emit [MeterState] on each location update
+     *
+     * @param costInfo Cost info for current region
+     * @param isCityRate Whether to apply city surcharge
+     */
     operator fun invoke(
         costInfo: CostInfo,
         isCityRate: Flow<Boolean>,
     ): Flow<MeterState> {
-        return observeSpeedUseCase()
-            .combine(isCityRate) { speedData, isCityRate ->
-                speedData to isCityRate
-            }
-            .scan(MeterCostCalculator.newWithCostInfo(costInfo)) { acc, (speedData, isCityRate) ->
-                acc.update(speedData, isCityRate)
+        val speedEvents = observeSpeedUseCase().map { MeterUpdateEvent.Speed(it) }
+        val surchargeEvents = isCityRate.map { MeterUpdateEvent.Surcharge(it) }
+
+        return kotlinx.coroutines.flow.merge(speedEvents, surchargeEvents)
+            .scan(MeterCostCalculator.newWithCostInfo(costInfo)) { acc, event ->
+                when(event) {
+                    is MeterUpdateEvent.Speed -> acc.update(event.speedData, acc.isCityRate)
+                    is MeterUpdateEvent.Surcharge -> acc.updateSurcharge(event.isCityRate)
+                }
             }
             .map { it.toMeterState() }
     }

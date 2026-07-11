@@ -124,6 +124,21 @@ data class MeterCostCalculator(
     }
 
     /**
+     * Update surcharge states only without draining any cost counter.
+     */
+    fun updateSurcharge(isCityRate: Boolean): MeterCostCalculator {
+        val hour = java.time.LocalTime.now().hour
+        val isNightRate = checkIsNightRate(hour)
+        val newSurchargeRate = calculateSurchargeRate(isCityRate, isNightRate, hour)
+
+        return copy(
+            isNightRate = isNightRate,
+            isCityRate = isCityRate,
+            surchargeRate = newSurchargeRate,
+        )
+    }
+
+    /**
      * Calculate total surcharge rate based on active surcharges
      */
     private fun calculateSurchargeRate(isCityRate: Boolean, isNightRate: Boolean, hour: Int): Int {
