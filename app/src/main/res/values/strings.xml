@@ -17,7 +17,8 @@
     <string name="setting_item_title_meter_set_custom_cost">Set custom cost parameter</string>
     <string name="setting_item_subtitle_meter_set_custom_cost_disabled">To use, set region as custom</string>
     <string name="setting_item_subtitle_meter_set_custom_cost_enabled">Setup your own cost values</string>
-    <string name="setting_item_title_meter_theme">Theme</string>
+    <string name="setting_item_title_meter_theme">Meter Type</string>
+    <string name="setting_item_title_app_theme_mode">App Theme</string>
 
     <string name="setting_group_title_cost_info">Meter Info</string>
     <string name="setting_item_title_cost_info">Cost Info</string>
@@ -75,7 +76,8 @@
 
     <string name="setting_dialog_custom_cost_title">Set custom cost</string>
     <string name="setting_dialog_region_setting_title">Select region</string>
-    <string name="setting_dialog_theme_setting_title">Select theme</string>
+    <string name="setting_dialog_theme_setting_title">Select Meter Type</string>
+    <string name="setting_dialog_app_theme_mode_title">Select App Theme</string>
 
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_complete">Complete</string>
@@ -122,6 +124,9 @@
 
     <string name="theme_circle">Circle</string>
     <string name="theme_horse">Horse</string>
+    <string name="theme_mode_system">System default</string>
+    <string name="theme_mode_dark">Dark theme</string>
+    <string name="theme_mode_light">Light theme</string>
 
     <string name="ad_fallback_headline" translatable="false">Useful Blog</string>
     <string name="ad_fallback_body">Developer Useful\'s IT Blog</string>
