@@ -210,6 +210,9 @@ class MeterService : Service() {
             .setContentTitle(getString(R.string.meter_noti_title))
             .setContentText(getString(R.string.meter_noti_content))
             .setOngoing(true)
+            .addExtras(android.os.Bundle().apply {
+                putBoolean("android.requestPromotedOngoing", true)
+            })
             .build()
     }
 
