@@ -1,6 +1,7 @@
 package com.yong.taximeter.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -42,6 +43,32 @@ class MeterService : Service() {
 
     private val binder = MeterBinder()
     override fun onBind(intent: Intent): IBinder = binder
+
+    @SuppressLint("MissingPermission")
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_START -> {
+                val hasFineLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                val hasCoarseLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                if (hasFineLocation || hasCoarseLocation) {
+                    startMeter()
+                } else {
+                    stopSelf()
+                }
+            }
+            ACTION_STOP -> {
+                stopMeter()
+            }
+        }
+        return START_NOT_STICKY
+    }
 
     // Inject Repositories
     @Inject
@@ -200,6 +227,8 @@ class MeterService : Service() {
     }
 
     companion object {
+        const val ACTION_START = "com.yong.taximeter.ACTION_START"
+        const val ACTION_STOP = "com.yong.taximeter.ACTION_STOP"
         private const val NOTIFICATION_CHANNEL_ID = "meter_service_channel"
         private const val NOTIFICATION_ID = 1022
     }
