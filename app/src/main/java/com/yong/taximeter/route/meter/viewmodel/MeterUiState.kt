@@ -28,6 +28,8 @@ data class MeterUiState(
 
     // Show legal warning dialog
     val showLegalWarningDialog: Boolean = false,
+    // Show permission warning dialog (notification / battery optimizations)
+    val showPermissionWarningDialog: Boolean = false,
     // Show stop dialog
     val showStopDialog: Boolean = false,
 
