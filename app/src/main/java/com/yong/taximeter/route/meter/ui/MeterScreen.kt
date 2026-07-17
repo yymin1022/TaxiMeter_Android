@@ -2,6 +2,7 @@ package com.yong.taximeter.route.meter.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.os.Build
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -135,6 +136,32 @@ fun MeterScreen(
                 viewModel.onDismissLegalWarning()
                 navigatePop()
             },
+        )
+    }
+
+    // Permission Warning Dialog
+    val showPermissionWarningDialog = uiState.showPermissionWarningDialog
+    val notificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        null
+    }
+
+    if (showPermissionWarningDialog) {
+        SimpleDialog(
+            titleRes = R.string.meter_dialog_permission_warning_title,
+            descRes = R.string.meter_dialog_permission_warning_content,
+            onConfirm = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (notificationPermission?.status?.isGranted == false) {
+                        notificationPermission.launchPermissionRequest()
+                    }
+                }
+                viewModel.onConfirmPermissionWarning()
+            },
+            onDismiss = {
+                viewModel.onDismissPermissionWarning()
+            }
         )
     }
 
