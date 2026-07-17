@@ -6,6 +6,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
@@ -124,6 +125,7 @@ class MeterService : Service() {
 
         // Reset city rate status for a new run
         _isCityRate.value = false
+        isRunning = true
 
         // Run as foreground
         ServiceCompat.startForeground(
@@ -190,6 +192,7 @@ class MeterService : Service() {
 
     private fun cleanupService() {
         _meterState.value = null
+        isRunning = false
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -220,6 +223,14 @@ class MeterService : Service() {
     ): Notification {
         if (notificationBuilder == null) {
             createNotificationChannel()
+
+            val intent = Intent(this, com.yong.taximeter.activity.MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("OPEN_METER", true)
+            }
+            val pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
             notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_noti_taxi)
                 .setContentTitle(getString(R.string.meter_noti_title))
@@ -227,6 +238,7 @@ class MeterService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setOnlyAlertOnce(true)
                 .setRequestPromotedOngoing(true)
+                .setContentIntent(pendingIntent)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         }
 
@@ -295,5 +307,6 @@ class MeterService : Service() {
         const val ACTION_STOP = "com.yong.taximeter.ACTION_STOP"
         private const val NOTIFICATION_CHANNEL_ID = "meter_service_channel_v2"
         private const val NOTIFICATION_ID = 1022
+        var isRunning = false
     }
 }
