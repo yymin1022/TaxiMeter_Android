@@ -1,10 +1,12 @@
 package com.yong.taximeter.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
@@ -32,6 +34,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.core.net.toUri
+import androidx.core.app.ServiceCompat
+import android.content.pm.ServiceInfo
 
 @AndroidEntryPoint
 class MeterService : Service() {
@@ -42,6 +47,39 @@ class MeterService : Service() {
 
     private val binder = MeterBinder()
     override fun onBind(intent: Intent): IBinder = binder
+
+    @SuppressLint("MissingPermission")
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_START -> {
+                val hasFineLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                val hasCoarseLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                if (hasFineLocation || hasCoarseLocation) {
+                    startMeter()
+                } else {
+                    // Start foreground first to prevent ForegroundServiceDidNotStartInTimeException on API 26+
+                    ServiceCompat.startForeground(
+                        this,
+                        NOTIFICATION_ID,
+                        createNotification(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                    )
+                    cleanupService()
+                }
+            }
+            ACTION_STOP -> {
+                stopMeter()
+            }
+        }
+        return START_NOT_STICKY
+    }
 
     // Inject Repositories
     @Inject
@@ -68,6 +106,9 @@ class MeterService : Service() {
     private val _meterState = MutableStateFlow<MeterState?>(null)
     val meterState: StateFlow<MeterState?> = _meterState.asStateFlow()
 
+    // Reusable notification builder
+    private var notificationBuilder: NotificationCompat.Builder? = null
+
     /**
      * Start meter service
      * - Ignore if already running
@@ -84,17 +125,15 @@ class MeterService : Service() {
 
         // Reset city rate status for a new run
         _isCityRate.value = false
+        isRunning = true
 
         // Run as foreground
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(
-                NOTIFICATION_ID,
-                createNotification(),
-                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-            )
-        } else {
-            startForeground(NOTIFICATION_ID, createNotification())
-        }
+        ServiceCompat.startForeground(
+            this,
+            NOTIFICATION_ID,
+            createNotification(),
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+        )
 
         serviceScope.launch {
             // Load cost info
@@ -114,6 +153,8 @@ class MeterService : Service() {
                 }.collect { state ->
                     // Update meter state
                     _meterState.value = state
+                    // Update notification with current state
+                    updateNotification(state)
                 }
             }
         }
@@ -151,6 +192,7 @@ class MeterService : Service() {
 
     private fun cleanupService() {
         _meterState.value = null
+        isRunning = false
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -170,20 +212,69 @@ class MeterService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+        notificationBuilder = null
     }
 
     /**
      * Create notification instance
      */
-    private fun createNotification(): Notification {
-        createNotificationChannel()
+    private fun createNotification(
+        state: MeterState? = null,
+    ): Notification {
+        if (notificationBuilder == null) {
+            createNotificationChannel()
 
-        return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_noti_taxi)
-            .setContentTitle(getString(R.string.meter_noti_title))
-            .setContentText(getString(R.string.meter_noti_content))
-            .setOngoing(true)
-            .build()
+            val intent = Intent(this, com.yong.taximeter.activity.MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("OPEN_METER", true)
+            }
+            val pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+            notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_noti_taxi)
+                .setContentTitle(getString(R.string.meter_noti_title))
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setOnlyAlertOnce(true)
+                .setRequestPromotedOngoing(true)
+                .setContentIntent(pendingIntent)
+                .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+        }
+
+        // Notification content text
+        // - Cost if state is available, or default string if not
+        val contentText = if (state != null) {
+            val costText = getString(R.string.meter_cost, java.text.NumberFormat.getNumberInstance().format(state.currentCost))
+            val distanceText = getString(R.string.meter_info_distance_data, state.totalDistanceMeters / 1000)
+            "$costText / $distanceText"
+        } else {
+            getString(R.string.meter_noti_content)
+        }
+
+        val shortText = if (state != null) {
+            getString(R.string.meter_cost, java.text.NumberFormat.getNumberInstance().format(state.currentCost))
+        } else {
+            getString(R.string.meter_cost, "0")
+        }
+
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .bigText(contentText)
+
+        val builder = notificationBuilder!!
+            .setContentText(contentText)
+            .setShortCriticalText(shortText)
+            .setStyle(bigTextStyle)
+
+        return builder.build()
+    }
+
+    /**
+     * Apply to notification manager
+     */
+    private fun updateNotification(state: MeterState) {
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.notify(NOTIFICATION_ID, createNotification(state))
     }
 
     /**
@@ -193,14 +284,29 @@ class MeterService : Service() {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             getString(R.string.meter_noti_channel_title),
-            NotificationManager.IMPORTANCE_LOW,
-        )
+            NotificationManager.IMPORTANCE_DEFAULT,
+        ).apply {
+            // Samsung One UI collapses notifications if sound is null (Silent).
+            // To keep it in the "Alerting" section (not collapsed) but remain silent,
+            // we set the sound to a non-existent dummy resource URI.
+            // The system fails to resolve the resource and plays nothing, while maintaining the "Alerting" status.
+            val dummyUri = "android.resource://$packageName/raw/silent".toUri()
+            val audioAttributes = android.media.AudioAttributes.Builder()
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
+                .build()
+            setSound(dummyUri, audioAttributes)
+            enableVibration(false)
+        }
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
     }
 
     companion object {
-        private const val NOTIFICATION_CHANNEL_ID = "meter_service_channel"
+        const val ACTION_START = "com.yong.taximeter.ACTION_START"
+        const val ACTION_STOP = "com.yong.taximeter.ACTION_STOP"
+        private const val NOTIFICATION_CHANNEL_ID = "meter_service_channel_v2"
         private const val NOTIFICATION_ID = 1022
+        var isRunning = false
     }
 }

@@ -96,6 +96,7 @@ class MeterViewModel @Inject constructor(
         loadAnimationFrames()
         loadAdRemovalStatus()
         checkLegalWarning()
+        checkPermissions()
     }
 
     /**
@@ -118,6 +119,66 @@ class MeterViewModel @Inject constructor(
             it.copy(
                 showLegalWarningDialog = false,
             )
+        }
+    }
+
+    /**
+     * Check if notification permission is granted (API 33+) and if battery optimizations are ignored.
+     * Show permission warning dialog if any is missing.
+     */
+    fun checkPermissions() {
+        // Check for notification permission granted
+        val isNotificationGranted = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+
+        // Check for battery optimizations are ignored
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        val isIgnoringBatteryOptimizations = powerManager.isIgnoringBatteryOptimizations(context.packageName)
+
+        // Show dialog if one of them is not true
+        if (!isNotificationGranted || !isIgnoringBatteryOptimizations) {
+            _uiState.update {
+                it.copy(showPermissionWarningDialog = true)
+            }
+        }
+    }
+
+    /**
+     * On confirm permission warning dialog
+     */
+    fun onConfirmPermissionWarning() {
+        _uiState.update {
+            it.copy(showPermissionWarningDialog = false)
+        }
+
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        if (!powerManager.isIgnoringBatteryOptimizations(context.packageName)) {
+            val intent = Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            try {
+                context.startActivity(intent)
+            } catch (_: Exception) {
+                val fallbackIntent = Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(fallbackIntent)
+            }
+        }
+    }
+
+    /**
+     * On dismiss permission warning dialog
+     */
+    fun onDismissPermissionWarning() {
+        _uiState.update {
+            it.copy(showPermissionWarningDialog = false)
         }
     }
 
@@ -195,7 +256,10 @@ class MeterViewModel @Inject constructor(
      */
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     fun onClickStart() {
-        meterService?.startMeter()
+        Intent(context, MeterService::class.java).apply {
+            action = MeterService.ACTION_START
+            context.startForegroundService(this)
+        }
     }
 
     /**

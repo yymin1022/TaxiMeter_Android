@@ -14,6 +14,12 @@ import com.yong.taximeter.common.ui.theme.TaxiMeterTheme
 import com.yong.taximeter.domain.model.ThemeModeSetting
 import com.yong.taximeter.domain.repository.SettingRepository
 import com.yong.taximeter.navigation.TaxiMeterNavHost
+import com.yong.taximeter.navigation.TaxiMeterNavRoute
+import com.yong.taximeter.service.MeterService
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import android.content.Intent
+import androidx.compose.runtime.LaunchedEffect
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -23,8 +29,11 @@ class MainActivity: ComponentActivity() {
     @Inject
     lateinit var settingRepository: SettingRepository
 
+    private val activityIntent = mutableStateOf<Intent?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activityIntent.value = intent
 
         enableEdgeToEdge()
         setContent {
@@ -37,16 +46,35 @@ class MainActivity: ComponentActivity() {
                 ThemeModeSetting.LIGHT -> false
             }
 
+            val currentIntent by activityIntent
+
             TaxiMeterTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
 
+                // Open Meter UI if meter is currently running
+                // - case 1: Clicked meter running notification
+                // - case 2: Re-opened app while meter service is running
+                LaunchedEffect(currentIntent) {
+                    val shouldOpenMeter = currentIntent?.getBooleanExtra("OPEN_METER", false) == true || MeterService.isRunning
+                    if (shouldOpenMeter) {
+                        navController.navigate(TaxiMeterNavRoute.Meter) {
+                            launchSingleTop = true
+                        }
+                    }
+                }
+
                 // TaxiMeter Nav Host
                 TaxiMeterNavHost(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     navController = navController,
                 )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        activityIntent.value = intent
     }
 }
