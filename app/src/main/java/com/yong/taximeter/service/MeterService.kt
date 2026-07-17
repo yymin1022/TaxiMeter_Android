@@ -34,6 +34,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.core.net.toUri
+import androidx.core.app.ServiceCompat
+import android.content.pm.ServiceInfo
 
 @AndroidEntryPoint
 class MeterService : Service() {
@@ -61,7 +63,14 @@ class MeterService : Service() {
                 if (hasFineLocation || hasCoarseLocation) {
                     startMeter()
                 } else {
-                    stopSelf()
+                    // Start foreground first to prevent ForegroundServiceDidNotStartInTimeException on API 26+
+                    ServiceCompat.startForeground(
+                        this,
+                        NOTIFICATION_ID,
+                        createNotification(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                    )
+                    cleanupService()
                 }
             }
             ACTION_STOP -> {
@@ -117,15 +126,12 @@ class MeterService : Service() {
         _isCityRate.value = false
 
         // Run as foreground
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(
-                NOTIFICATION_ID,
-                createNotification(),
-                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-            )
-        } else {
-            startForeground(NOTIFICATION_ID, createNotification())
-        }
+        ServiceCompat.startForeground(
+            this,
+            NOTIFICATION_ID,
+            createNotification(),
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+        )
 
         serviceScope.launch {
             // Load cost info
