@@ -195,7 +195,10 @@ class MeterViewModel @Inject constructor(
      */
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     fun onClickStart() {
-        meterService?.startMeter()
+        Intent(context, MeterService::class.java).apply {
+            action = MeterService.ACTION_START
+            context.startForegroundService(this)
+        }
     }
 
     /**
