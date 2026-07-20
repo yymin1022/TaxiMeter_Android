@@ -296,7 +296,18 @@ class MeterViewModel @Inject constructor(
     fun onConfirmStop() {
         curMeterStatus = null
         meterService?.stopMeter()
-        _uiState.update { MeterUiState() }
+        _uiState.update {
+            it.copy(
+                currentCost = 0,
+                costCounter = 0,
+                currentSpeedKph = 0.0,
+                totalDistanceMeters = 0.0,
+                meterStatus = MeterStatus.NOT_RUNNING,
+                isCityRate = false,
+                isNightRate = false,
+                showStopDialog = false,
+            )
+        }
     }
 
     /**
