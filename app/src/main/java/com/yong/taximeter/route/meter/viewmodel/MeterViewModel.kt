@@ -67,6 +67,12 @@ class MeterViewModel @Inject constructor(
                             curMeterStatus = MeterStatus.NOT_RUNNING
                             it.copy(
                                 meterStatus = curMeterStatus!!,
+                                currentCost = 0,
+                                costCounter = 0,
+                                currentSpeedKph = 0.0,
+                                totalDistanceMeters = 0.0,
+                                isCityRate = false,
+                                isNightRate = false,
                             )
                         } else {
                             curMeterStatus = state.status
@@ -298,13 +304,6 @@ class MeterViewModel @Inject constructor(
         meterService?.stopMeter()
         _uiState.update {
             it.copy(
-                currentCost = 0,
-                costCounter = 0,
-                currentSpeedKph = 0.0,
-                totalDistanceMeters = 0.0,
-                meterStatus = MeterStatus.NOT_RUNNING,
-                isCityRate = false,
-                isNightRate = false,
                 showStopDialog = false,
             )
         }

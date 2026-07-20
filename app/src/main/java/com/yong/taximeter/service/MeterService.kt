@@ -7,10 +7,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import com.yong.taximeter.R
@@ -44,6 +46,8 @@ class MeterService : Service() {
     inner class MeterBinder : Binder() {
         fun getService(): MeterService = this@MeterService
     }
+
+    private var wakeLock: PowerManager.WakeLock? = null
 
     private val binder = MeterBinder()
     override fun onBind(intent: Intent): IBinder = binder
@@ -127,6 +131,17 @@ class MeterService : Service() {
         _isCityRate.value = false
         isRunning = true
 
+        // Acquire WakeLock to keep CPU awake during calculation
+        if (wakeLock == null) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "TaxiMeter::MeterServiceWakeLock"
+            ).apply {
+                acquire()
+            }
+        }
+
         // Run as foreground
         ServiceCompat.startForeground(
             this,
@@ -193,6 +208,10 @@ class MeterService : Service() {
     private fun cleanupService() {
         _meterState.value = null
         isRunning = false
+        if (wakeLock?.isHeld == true) {
+            wakeLock?.release()
+        }
+        wakeLock = null
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -212,6 +231,10 @@ class MeterService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+        if (wakeLock?.isHeld == true) {
+            wakeLock?.release()
+        }
+        wakeLock = null
         notificationBuilder = null
     }
 

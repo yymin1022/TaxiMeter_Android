@@ -27,6 +27,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -81,6 +83,16 @@ fun MeterScreen(
             uiState.showStopDialog -> viewModel.onCancelStop()
             showExitDialog -> showExitDialog = false
             else -> showExitDialog = true
+        }
+    }
+
+    // Keep screen awake while meter is running
+    val isKeepScreenOn = uiState.meterStatus != MeterStatus.NOT_RUNNING
+    val currentView = LocalView.current
+    DisposableEffect(isKeepScreenOn) {
+        currentView.keepScreenOn = isKeepScreenOn
+        onDispose {
+            currentView.keepScreenOn = false
         }
     }
 
