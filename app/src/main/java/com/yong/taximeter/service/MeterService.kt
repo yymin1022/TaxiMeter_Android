@@ -7,14 +7,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.yong.taximeter.R
 import com.yong.taximeter.core.common.AppLogger
 import com.yong.taximeter.domain.model.MeterHistory
@@ -48,6 +51,26 @@ class MeterService : Service() {
     }
 
     private var wakeLock: PowerManager.WakeLock? = null
+    private var isNotificationDismissedByUser = false
+
+    private val dismissReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ACTION_DISMISS_NOTIFICATION) {
+                isNotificationDismissedByUser = true
+            }
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        val filter = IntentFilter(ACTION_DISMISS_NOTIFICATION)
+        ContextCompat.registerReceiver(
+            this,
+            dismissReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
 
     private val binder = MeterBinder()
     override fun onBind(intent: Intent): IBinder = binder
@@ -129,6 +152,7 @@ class MeterService : Service() {
 
         // Reset city rate status for a new run
         _isCityRate.value = false
+        isNotificationDismissedByUser = false
         isRunning = true
 
         // Acquire WakeLock to keep CPU awake during calculation
@@ -235,6 +259,11 @@ class MeterService : Service() {
             wakeLock?.release()
         }
         wakeLock = null
+        try {
+            unregisterReceiver(dismissReceiver)
+        } catch (e: Exception) {
+            logger.recordException(e, "Failed to unregister dismissReceiver")
+        }
         notificationBuilder = null
     }
 
@@ -254,6 +283,12 @@ class MeterService : Service() {
             val pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+            val dismissIntent = Intent(ACTION_DISMISS_NOTIFICATION).apply {
+                setPackage(packageName)
+            }
+            val dismissPendingIntent = PendingIntent.getBroadcast(this, 1, dismissIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
             notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_noti_taxi)
                 .setContentTitle(getString(R.string.meter_noti_title))
@@ -262,6 +297,7 @@ class MeterService : Service() {
                 .setOnlyAlertOnce(true)
                 .setRequestPromotedOngoing(true)
                 .setContentIntent(pendingIntent)
+                .setDeleteIntent(dismissPendingIntent)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         }
 
@@ -296,6 +332,7 @@ class MeterService : Service() {
      * Apply to notification manager
      */
     private fun updateNotification(state: MeterState) {
+        if (isNotificationDismissedByUser) return
         val manager = getSystemService(NotificationManager::class.java)
         manager.notify(NOTIFICATION_ID, createNotification(state))
     }
@@ -328,6 +365,7 @@ class MeterService : Service() {
     companion object {
         const val ACTION_START = "com.yong.taximeter.ACTION_START"
         const val ACTION_STOP = "com.yong.taximeter.ACTION_STOP"
+        const val ACTION_DISMISS_NOTIFICATION = "com.yong.taximeter.ACTION_DISMISS_NOTIFICATION"
         private const val NOTIFICATION_CHANNEL_ID = "meter_service_channel_v2"
         private const val NOTIFICATION_ID = 1022
         var isRunning = false
