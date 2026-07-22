@@ -49,6 +49,7 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.yong.taximeter.R
 import androidx.core.net.toUri
+import kotlinx.coroutines.delay
 
 @Composable
 fun BannerAdView(
@@ -60,25 +61,41 @@ fun BannerAdView(
     val context = LocalContext.current
     var isFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
+    var dummyAd by remember { mutableStateOf(DummyAdDefs.getRandomAd()) }
+
+    LaunchedEffect(isFailed) {
+        if (isFailed) {
+            while (true) {
+                delay(DummyAdDefs.DUMMY_AD_ROTATION_INTERVAL_MS)
+                dummyAd = DummyAdDefs.getRandomAd(except = dummyAd)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
             .height(50.dp) // Fixed height to prevent layout shifts
     ) {
         if (isFailed) {
+            val iconRes = dummyAd?.iconRes ?: fallbackImageRes
+            val titleText = dummyAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
+            val subtitleText = dummyAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
+            val ctaText = dummyAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_cta)
+            val targetUrl = dummyAd?.targetUrl ?: fallbackUrl
+
             Row(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0xFF103D88))
                     .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
                         context.startActivity(intent)
                     }
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = fallbackImageRes),
+                    painter = painterResource(id = iconRes),
                     contentDescription = "Useful Blog Icon",
                     modifier = Modifier
                         .size(32.dp)
@@ -88,13 +105,13 @@ fun BannerAdView(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = stringResource(R.string.ad_fallback_headline),
+                        text = titleText,
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(R.string.ad_fallback_body),
+                        text = subtitleText,
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 10.sp,
                         maxLines = 1,
@@ -102,7 +119,7 @@ fun BannerAdView(
                     )
                 }
                 Text(
-                    text = stringResource(R.string.ad_fallback_cta),
+                    text = ctaText,
                     color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
@@ -162,25 +179,41 @@ fun NativeAdViewCompose(
     var nativeAd by remember { mutableStateOf<NativeAd?>(null) }
     var isFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
+    var dummyAd by remember { mutableStateOf(DummyAdDefs.getRandomAd()) }
+
+    LaunchedEffect(isFailed) {
+        if (isFailed) {
+            while (true) {
+                delay(DummyAdDefs.DUMMY_AD_ROTATION_INTERVAL_MS)
+                dummyAd = DummyAdDefs.getRandomAd(except = dummyAd)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
             .height(90.dp) // Fixed height to prevent layout shifts
     ) {
         if (isFailed) {
+            val iconRes = dummyAd?.iconRes ?: fallbackImageRes
+            val titleText = dummyAd?.titleRes?.let { stringResource(it) } ?: fallbackHeadline
+            val bodyText = dummyAd?.subtitleRes?.let { stringResource(it) } ?: fallbackBody
+            val ctaText = dummyAd?.ctaRes?.let { stringResource(it) } ?: fallbackCtaText
+            val targetUrl = dummyAd?.targetUrl ?: fallbackUrl
+
             Row(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0x1A888888))
                     .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
                         context.startActivity(intent)
                     }
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = fallbackImageRes),
+                    painter = painterResource(id = iconRes),
                     contentDescription = "Default Ad Icon",
                     modifier = Modifier
                         .size(48.dp)
@@ -207,7 +240,7 @@ fun NativeAdViewCompose(
                         }
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = fallbackHeadline,
+                            text = titleText,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             maxLines = 1,
@@ -215,7 +248,7 @@ fun NativeAdViewCompose(
                         )
                     }
                     Text(
-                        text = fallbackBody,
+                        text = bodyText,
                         fontSize = 12.sp,
                         color = Color.Gray,
                         maxLines = 2,
@@ -226,7 +259,7 @@ fun NativeAdViewCompose(
 
                 Button(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl))
+                        val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
                         context.startActivity(intent)
                     },
                     modifier = Modifier
@@ -235,7 +268,7 @@ fun NativeAdViewCompose(
                     contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     Text(
-                        text = fallbackCtaText,
+                        text = ctaText,
                         fontSize = 12.sp
                     )
                 }
@@ -254,6 +287,7 @@ fun NativeAdViewCompose(
                         }
                     })
                     .build()
+
                 adLoader.loadAd(AdRequest.Builder().build())
             }
 
@@ -263,55 +297,29 @@ fun NativeAdViewCompose(
                 }
             }
 
-            val currentNativeAd = nativeAd
-            if (currentNativeAd != null) {
+            if (nativeAd != null) {
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
                     factory = { ctx ->
-                        val view = LayoutInflater.from(ctx).inflate(R.layout.layout_native_ad, null) as NativeAdView
-                        view.headlineView = view.findViewById(R.id.ad_headline)
-                        view.bodyView = view.findViewById(R.id.ad_body)
-                        view.callToActionView = view.findViewById(R.id.ad_call_to_action)
-                        view.iconView = view.findViewById(R.id.ad_icon)
-                        view
-                    },
-                    update = { view ->
-                        // Bind views
-                        val headlineView = view.headlineView as? TextView
-                        headlineView?.text = currentNativeAd.headline
+                        val inflater = LayoutInflater.from(ctx)
+                        val adView = inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
+                        val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
+                        val bodyView = adView.findViewById<TextView>(R.id.ad_body)
+                        val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
 
-                        val bodyView = view.bodyView as? TextView
-                        if (bodyView != null) {
-                            if (currentNativeAd.body == null) {
-                                bodyView.visibility = View.GONE
-                            } else {
-                                bodyView.visibility = View.VISIBLE
-                                bodyView.text = currentNativeAd.body
-                            }
+                        headlineView.text = nativeAd?.headline
+                        adView.headlineView = headlineView
+
+                        bodyView.text = nativeAd?.body
+                        adView.bodyView = bodyView
+
+                        nativeAd?.icon?.let { icon ->
+                            iconView.setImageDrawable(icon.drawable)
+                            adView.iconView = iconView
                         }
 
-                        val ctaView = view.callToActionView as? android.widget.Button
-                        if (ctaView != null) {
-                            if (currentNativeAd.callToAction == null) {
-                                ctaView.visibility = View.GONE
-                            } else {
-                                ctaView.visibility = View.VISIBLE
-                                ctaView.text = currentNativeAd.callToAction
-                            }
-                        }
-
-                        val iconView = view.iconView as? ImageView
-                        if (iconView != null) {
-                            if (currentNativeAd.icon == null) {
-                                iconView.visibility = View.GONE
-                            } else {
-                                iconView.visibility = View.VISIBLE
-                                iconView.setImageDrawable(currentNativeAd.icon?.drawable)
-                            }
-                        }
-
-                        // Register native ad object
-                        view.setNativeAd(currentNativeAd)
+                        adView.setNativeAd(nativeAd!!)
+                        adView
                     }
                 )
             } else if (isLoading) {
