@@ -63,8 +63,32 @@ fun BannerAdView(
     var isLoading by remember { mutableStateOf(true) }
     var dummyAd by remember { mutableStateOf(DummyAdDefs.getRandomAd()) }
 
-    LaunchedEffect(isFailed) {
-        if (isFailed) {
+    val adView = remember(context, adUnitId) {
+        com.google.android.gms.ads.AdView(context).apply {
+            setAdSize(com.google.android.gms.ads.AdSize.BANNER)
+            setAdUnitId(adUnitId)
+            adListener = object : AdListener() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    isFailed = true
+                    isLoading = false
+                }
+                override fun onAdLoaded() {
+                    isLoading = false
+                    isFailed = false
+                }
+            }
+        }
+    }
+
+    DisposableEffect(adView) {
+        adView.loadAd(AdRequest.Builder().build())
+        onDispose {
+            adView.destroy()
+        }
+    }
+
+    LaunchedEffect(isLoading, isFailed) {
+        if (isLoading || isFailed) {
             while (true) {
                 delay(DummyAdDefs.DUMMY_AD_ROTATION_INTERVAL_MS)
                 dummyAd = DummyAdDefs.getRandomAd(except = dummyAd)
@@ -76,7 +100,12 @@ fun BannerAdView(
         modifier = modifier
             .height(50.dp) // Fixed height to prevent layout shifts
     ) {
-        if (isFailed) {
+        if (!isLoading && !isFailed) {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { adView }
+            )
+        } else {
             val iconRes = dummyAd?.iconRes ?: fallbackImageRes
             val titleText = dummyAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
             val subtitleText = dummyAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
@@ -97,8 +126,7 @@ fun BannerAdView(
                 Image(
                     painter = painterResource(id = iconRes),
                     contentDescription = "Useful Blog Icon",
-                    modifier = Modifier
-                        .size(32.dp)
+                    modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
@@ -125,42 +153,6 @@ fun BannerAdView(
                     fontWeight = FontWeight.Bold
                 )
             }
-        } else {
-            val adView = remember(context, adUnitId) {
-                com.google.android.gms.ads.AdView(context).apply {
-                    setAdSize(com.google.android.gms.ads.AdSize.BANNER)
-                    setAdUnitId(adUnitId)
-                    adListener = object : AdListener() {
-                        override fun onAdFailedToLoad(error: LoadAdError) {
-                            isFailed = true
-                            isLoading = false
-                        }
-                        override fun onAdLoaded() {
-                            isLoading = false
-                        }
-                    }
-                }
-            }
-
-            DisposableEffect(adView) {
-                adView.loadAd(AdRequest.Builder().build())
-                onDispose {
-                    adView.destroy()
-                }
-            }
-
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { adView }
-            )
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.05f))
-                )
-            }
         }
     }
 }
@@ -181,8 +173,32 @@ fun NativeAdViewCompose(
     var isLoading by remember { mutableStateOf(true) }
     var dummyAd by remember { mutableStateOf(DummyAdDefs.getRandomAd()) }
 
-    LaunchedEffect(isFailed) {
-        if (isFailed) {
+    LaunchedEffect(adUnitId) {
+        val adLoader = AdLoader.Builder(context, adUnitId)
+            .forNativeAd { ad ->
+                nativeAd = ad
+                isLoading = false
+                isFailed = false
+            }
+            .withAdListener(object : AdListener() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    isFailed = true
+                    isLoading = false
+                }
+            })
+            .build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
+    }
+
+    DisposableEffect(nativeAd) {
+        onDispose {
+            nativeAd?.destroy()
+        }
+    }
+
+    LaunchedEffect(isLoading, isFailed) {
+        if (isLoading || isFailed) {
             while (true) {
                 delay(DummyAdDefs.DUMMY_AD_ROTATION_INTERVAL_MS)
                 dummyAd = DummyAdDefs.getRandomAd(except = dummyAd)
@@ -194,7 +210,32 @@ fun NativeAdViewCompose(
         modifier = modifier
             .height(90.dp) // Fixed height to prevent layout shifts
     ) {
-        if (isFailed) {
+        if (nativeAd != null && !isLoading && !isFailed) {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { ctx ->
+                    val inflater = LayoutInflater.from(ctx)
+                    val adView = inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
+                    val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
+                    val bodyView = adView.findViewById<TextView>(R.id.ad_body)
+                    val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
+
+                    headlineView.text = nativeAd?.headline
+                    adView.headlineView = headlineView
+
+                    bodyView.text = nativeAd?.body
+                    adView.bodyView = bodyView
+
+                    nativeAd?.icon?.let { icon ->
+                        iconView.setImageDrawable(icon.drawable)
+                        adView.iconView = iconView
+                    }
+
+                    adView.setNativeAd(nativeAd!!)
+                    adView
+                }
+            )
+        } else {
             val iconRes = dummyAd?.iconRes ?: fallbackImageRes
             val titleText = dummyAd?.titleRes?.let { stringResource(it) } ?: fallbackHeadline
             val bodyText = dummyAd?.subtitleRes?.let { stringResource(it) } ?: fallbackBody
@@ -272,62 +313,6 @@ fun NativeAdViewCompose(
                         fontSize = 12.sp
                     )
                 }
-            }
-        } else {
-            LaunchedEffect(adUnitId) {
-                val adLoader = AdLoader.Builder(context, adUnitId)
-                    .forNativeAd { ad ->
-                        nativeAd = ad
-                        isLoading = false
-                    }
-                    .withAdListener(object : AdListener() {
-                        override fun onAdFailedToLoad(error: LoadAdError) {
-                            isFailed = true
-                            isLoading = false
-                        }
-                    })
-                    .build()
-
-                adLoader.loadAd(AdRequest.Builder().build())
-            }
-
-            DisposableEffect(nativeAd) {
-                onDispose {
-                    nativeAd?.destroy()
-                }
-            }
-
-            if (nativeAd != null) {
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = { ctx ->
-                        val inflater = LayoutInflater.from(ctx)
-                        val adView = inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
-                        val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
-                        val bodyView = adView.findViewById<TextView>(R.id.ad_body)
-                        val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
-
-                        headlineView.text = nativeAd?.headline
-                        adView.headlineView = headlineView
-
-                        bodyView.text = nativeAd?.body
-                        adView.bodyView = bodyView
-
-                        nativeAd?.icon?.let { icon ->
-                            iconView.setImageDrawable(icon.drawable)
-                            adView.iconView = iconView
-                        }
-
-                        adView.setNativeAd(nativeAd!!)
-                        adView
-                    }
-                )
-            } else if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.05f))
-                )
             }
         }
     }
