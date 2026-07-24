@@ -61,7 +61,7 @@ fun BannerAdView(
     val context = LocalContext.current
     var isFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
-    var dummyAd by remember { mutableStateOf(DummyAdDefs.getRandomAd()) }
+    var fallbackAd by remember { mutableStateOf(FallbackAdDefs.getRandomAd()) }
 
     val adView = remember(context, adUnitId) {
         com.google.android.gms.ads.AdView(context).apply {
@@ -90,8 +90,8 @@ fun BannerAdView(
     LaunchedEffect(isLoading, isFailed) {
         if (isLoading || isFailed) {
             while (true) {
-                delay(DummyAdDefs.DUMMY_AD_ROTATION_INTERVAL_MS)
-                dummyAd = DummyAdDefs.getRandomAd(except = dummyAd)
+                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS)
+                fallbackAd = FallbackAdDefs.getRandomAd(except = fallbackAd)
             }
         }
     }
@@ -106,11 +106,11 @@ fun BannerAdView(
                 factory = { adView }
             )
         } else {
-            val iconRes = dummyAd?.iconRes ?: fallbackImageRes
-            val titleText = dummyAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
-            val subtitleText = dummyAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
-            val ctaText = dummyAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_cta)
-            val targetUrl = dummyAd?.targetUrl ?: fallbackUrl
+            val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
+            val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
+            val subtitleText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
+            val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_cta)
+            val targetUrl = fallbackAd?.targetUrl ?: fallbackUrl
 
             Row(
                 modifier = Modifier
@@ -171,7 +171,7 @@ fun NativeAdViewCompose(
     var nativeAd by remember { mutableStateOf<NativeAd?>(null) }
     var isFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
-    var dummyAd by remember { mutableStateOf(DummyAdDefs.getRandomAd()) }
+    var fallbackAd by remember { mutableStateOf(FallbackAdDefs.getRandomAd()) }
 
     LaunchedEffect(adUnitId) {
         val adLoader = AdLoader.Builder(context, adUnitId)
@@ -200,8 +200,8 @@ fun NativeAdViewCompose(
     LaunchedEffect(isLoading, isFailed) {
         if (isLoading || isFailed) {
             while (true) {
-                delay(DummyAdDefs.DUMMY_AD_ROTATION_INTERVAL_MS)
-                dummyAd = DummyAdDefs.getRandomAd(except = dummyAd)
+                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS)
+                fallbackAd = FallbackAdDefs.getRandomAd(except = fallbackAd)
             }
         }
     }
@@ -236,11 +236,11 @@ fun NativeAdViewCompose(
                 }
             )
         } else {
-            val iconRes = dummyAd?.iconRes ?: fallbackImageRes
-            val titleText = dummyAd?.titleRes?.let { stringResource(it) } ?: fallbackHeadline
-            val bodyText = dummyAd?.subtitleRes?.let { stringResource(it) } ?: fallbackBody
-            val ctaText = dummyAd?.ctaRes?.let { stringResource(it) } ?: fallbackCtaText
-            val targetUrl = dummyAd?.targetUrl ?: fallbackUrl
+            val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
+            val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: fallbackHeadline
+            val bodyText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: fallbackBody
+            val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: fallbackCtaText
+            val targetUrl = fallbackAd?.targetUrl ?: fallbackUrl
 
             Row(
                 modifier = Modifier

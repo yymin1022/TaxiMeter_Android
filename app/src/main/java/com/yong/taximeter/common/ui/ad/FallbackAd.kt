@@ -5,9 +5,9 @@ import androidx.annotation.StringRes
 import com.yong.taximeter.R
 
 /**
- * Data class representing a fallback dummy ad
+ * Data class representing a fallback ad
  */
-data class DummyAd(
+data class FallbackAd(
     @DrawableRes val iconRes: Int,
     @StringRes val titleRes: Int,
     @StringRes val subtitleRes: Int,
