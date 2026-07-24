@@ -1,9 +1,7 @@
 package com.yong.taximeter.common.ui.ad
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -12,16 +10,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,14 +36,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.yong.taximeter.R
-import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 
 @Composable
@@ -64,8 +61,8 @@ fun BannerAdView(
     var fallbackAd by remember { mutableStateOf(FallbackAdDefs.getRandomAd()) }
 
     val adView = remember(context, adUnitId) {
-        com.google.android.gms.ads.AdView(context).apply {
-            setAdSize(com.google.android.gms.ads.AdSize.BANNER)
+        AdView(context).apply {
+            setAdSize(AdSize.BANNER)
             setAdUnitId(adUnitId)
             adListener = object : AdListener() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
@@ -97,62 +94,16 @@ fun BannerAdView(
     }
 
     Box(
-        modifier = modifier
-            .height(50.dp) // Fixed height to prevent layout shifts
+        modifier = modifier.height(50.dp) // Fixed height to prevent layout shifts
     ) {
         if (!isLoading && !isFailed) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { adView }
-            )
+            BannerAdContent(adView = adView)
         } else {
-            val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
-            val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
-            val subtitleText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
-            val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_cta)
-            val targetUrl = fallbackAd?.targetUrl ?: fallbackUrl
-
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFF103D88))
-                    .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
-                        context.startActivity(intent)
-                    }
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = "Useful Blog Icon",
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = titleText,
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = subtitleText,
-                        color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 10.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Text(
-                    text = ctaText,
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            FallbackAdContent(
+                fallbackAd = fallbackAd,
+                fallbackImageRes = fallbackImageRes,
+                fallbackUrl = fallbackUrl
+            )
         }
     }
 }
@@ -207,113 +158,115 @@ fun NativeAdViewCompose(
     }
 
     Box(
-        modifier = modifier
-            .height(90.dp) // Fixed height to prevent layout shifts
+        modifier = modifier.height(90.dp) // Fixed height to prevent layout shifts
     ) {
         if (nativeAd != null && !isLoading && !isFailed) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    val inflater = LayoutInflater.from(ctx)
-                    val adView = inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
-                    val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
-                    val bodyView = adView.findViewById<TextView>(R.id.ad_body)
-                    val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
-
-                    headlineView.text = nativeAd?.headline
-                    adView.headlineView = headlineView
-
-                    bodyView.text = nativeAd?.body
-                    adView.bodyView = bodyView
-
-                    nativeAd?.icon?.let { icon ->
-                        iconView.setImageDrawable(icon.drawable)
-                        adView.iconView = iconView
-                    }
-
-                    adView.setNativeAd(nativeAd!!)
-                    adView
-                }
-            )
+            NativeAdContent(nativeAd = nativeAd!!)
         } else {
-            val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
-            val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: fallbackHeadline
-            val bodyText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: fallbackBody
-            val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: fallbackCtaText
-            val targetUrl = fallbackAd?.targetUrl ?: fallbackUrl
-
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0x1A888888))
-                    .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
-                        context.startActivity(intent)
-                    }
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = "Default Ad Icon",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(end = 12.dp)
-                )
-
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(Color(0xFFFF9800))
-                                .padding(horizontal = 4.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                text = "AD",
-                                color = Color.White,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = titleText,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    Text(
-                        text = bodyText,
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .height(36.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    Text(
-                        text = ctaText,
-                        fontSize = 12.sp
-                    )
-                }
-            }
+            FallbackAdContent(
+                fallbackAd = fallbackAd,
+                fallbackImageRes = fallbackImageRes,
+                fallbackUrl = fallbackUrl
+            )
         }
+    }
+}
+
+@Composable
+fun BannerAdContent(
+    adView: AdView,
+    modifier: Modifier = Modifier
+) {
+    AndroidView(
+        modifier = modifier.fillMaxSize(),
+        factory = { adView }
+    )
+}
+
+@Composable
+fun NativeAdContent(
+    nativeAd: NativeAd,
+    modifier: Modifier = Modifier
+) {
+    AndroidView(
+        modifier = modifier.fillMaxSize(),
+        factory = { ctx ->
+            val inflater = LayoutInflater.from(ctx)
+            val adView = inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
+            val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
+            val bodyView = adView.findViewById<TextView>(R.id.ad_body)
+            val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
+
+            headlineView.text = nativeAd.headline
+            adView.headlineView = headlineView
+
+            bodyView.text = nativeAd.body
+            adView.bodyView = bodyView
+
+            nativeAd.icon?.let { icon ->
+                iconView.setImageDrawable(icon.drawable)
+                adView.iconView = iconView
+            }
+
+            adView.setNativeAd(nativeAd)
+            adView
+        }
+    )
+}
+
+@Composable
+fun FallbackAdContent(
+    fallbackAd: FallbackAd?,
+    @DrawableRes fallbackImageRes: Int,
+    fallbackUrl: String,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
+    val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
+    val subtitleText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
+    val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_cta)
+    val targetUrl = fallbackAd?.targetUrl ?: fallbackUrl
+
+    Row(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFF103D88))
+            .clickable {
+                val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
+                context.startActivity(intent)
+            }
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = "Fallback Ad Icon",
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = titleText,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = subtitleText,
+                color = Color.White.copy(alpha = 0.8f),
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Text(
+            text = ctaText,
+            color = Color.White,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
