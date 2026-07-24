@@ -164,6 +164,7 @@ fun NativeAdViewCompose(
             NativeAdContent(nativeAd = nativeAd!!)
         } else {
             FallbackAdContent(
+                modifier = Modifier.padding(vertical = 16.dp),
                 fallbackAd = fallbackAd,
                 fallbackImageRes = fallbackImageRes,
                 fallbackUrl = fallbackUrl
