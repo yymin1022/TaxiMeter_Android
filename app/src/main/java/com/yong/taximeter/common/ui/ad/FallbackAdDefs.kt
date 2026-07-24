@@ -33,7 +33,17 @@ object FallbackAdDefs {
             titleRes = R.string.fallback_ad_blog_title,
             descRes = R.string.fallback_ad_blog_desc,
             targetUrlRes = R.string.fallback_ad_blog_url,
-        )
+        ),
+
+        // Typer by NewMeans
+        FallbackAd(
+            bgColor = Color(0xFFFCF2D9),
+            textColor = Color.Black,
+            iconRes = R.mipmap.ic_typer,
+            titleRes = R.string.fallback_ad_typer_title,
+            descRes = R.string.fallback_ad_typer_desc,
+            targetUrlRes = R.string.fallback_ad_typer_url,
+        ),
     )
 
     /**
