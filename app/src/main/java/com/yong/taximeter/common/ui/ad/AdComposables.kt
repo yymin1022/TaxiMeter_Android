@@ -1,27 +1,23 @@
 package com.yong.taximeter.common.ui.ad
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,109 +37,75 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.yong.taximeter.R
-import androidx.core.net.toUri
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_COLOR
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_DESC_RES
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_ICON_RES
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_TITLE_RES
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun BannerAdView(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/6300978111", // GMS Ads Banner Test ID
-    @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
-    fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
     var isFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
+    var fallbackAd by remember { mutableStateOf(FallbackAdDefs.getRandomAd()) }
+
+    val adView = remember(context, adUnitId) {
+        AdView(context).apply {
+            setAdSize(AdSize.BANNER)
+            setAdUnitId(adUnitId)
+            adListener = object : AdListener() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    isFailed = true
+                    isLoading = false
+                }
+                override fun onAdLoaded() {
+                    isLoading = false
+                    isFailed = false
+                }
+            }
+        }
+    }
+
+    DisposableEffect(adView) {
+        adView.loadAd(AdRequest.Builder().build())
+        onDispose {
+            adView.destroy()
+        }
+    }
+
+    LaunchedEffect(isLoading, isFailed) {
+        if (isLoading || isFailed) {
+            while (true) {
+                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS.milliseconds)
+                fallbackAd = FallbackAdDefs.getRandomAd(except = fallbackAd)
+            }
+        }
+    }
 
     Box(
-        modifier = modifier
-            .height(50.dp) // Fixed height to prevent layout shifts
+        modifier = modifier.height(50.dp) // Fixed height to prevent layout shifts
     ) {
-        if (isFailed) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFF103D88))
-                    .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
-                        context.startActivity(intent)
-                    }
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = fallbackImageRes),
-                    contentDescription = "Useful Blog Icon",
-                    modifier = Modifier
-                        .size(32.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.ad_fallback_headline),
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(R.string.ad_fallback_body),
-                        color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 10.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.ad_fallback_cta),
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+        if (!isLoading && !isFailed) {
+            BannerAdContent(adView = adView)
         } else {
-            val adView = remember(context, adUnitId) {
-                com.google.android.gms.ads.AdView(context).apply {
-                    setAdSize(com.google.android.gms.ads.AdSize.BANNER)
-                    setAdUnitId(adUnitId)
-                    adListener = object : AdListener() {
-                        override fun onAdFailedToLoad(error: LoadAdError) {
-                            isFailed = true
-                            isLoading = false
-                        }
-                        override fun onAdLoaded() {
-                            isLoading = false
-                        }
-                    }
-                }
-            }
-
-            DisposableEffect(adView) {
-                adView.loadAd(AdRequest.Builder().build())
-                onDispose {
-                    adView.destroy()
-                }
-            }
-
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { adView }
+            FallbackAdContent(
+                fallbackAd = fallbackAd,
             )
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.05f))
-                )
-            }
         }
     }
 }
@@ -152,175 +114,180 @@ fun BannerAdView(
 fun NativeAdViewCompose(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/2247696110", // Test Native Ad ID
-    @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
-    fallbackHeadline: String = stringResource(R.string.ad_fallback_headline),
-    fallbackBody: String = stringResource(R.string.ad_fallback_body),
-    fallbackCtaText: String = stringResource(R.string.ad_fallback_cta),
-    fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
     var nativeAd by remember { mutableStateOf<NativeAd?>(null) }
     var isFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
+    var fallbackAd by remember { mutableStateOf(FallbackAdDefs.getRandomAd()) }
+
+    LaunchedEffect(adUnitId) {
+        val adLoader = AdLoader.Builder(context, adUnitId)
+            .forNativeAd { ad ->
+                nativeAd = ad
+                isLoading = false
+                isFailed = false
+            }
+            .withAdListener(object : AdListener() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    isFailed = true
+                    isLoading = false
+                }
+            })
+            .build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
+    }
+
+    DisposableEffect(nativeAd) {
+        onDispose {
+            nativeAd?.destroy()
+        }
+    }
+
+    LaunchedEffect(isLoading, isFailed) {
+        if (isLoading || isFailed) {
+            while (true) {
+                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS.milliseconds)
+                fallbackAd = FallbackAdDefs.getRandomAd(except = fallbackAd)
+            }
+        }
+    }
 
     Box(
-        modifier = modifier
-            .height(90.dp) // Fixed height to prevent layout shifts
+        modifier = modifier.height(90.dp) // Fixed height to prevent layout shifts
     ) {
-        if (isFailed) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0x1A888888))
-                    .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, fallbackUrl.toUri())
-                        context.startActivity(intent)
-                    }
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = fallbackImageRes),
-                    contentDescription = "Default Ad Icon",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(end = 12.dp)
-                )
-
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(Color(0xFFFF9800))
-                                .padding(horizontal = 4.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                text = "AD",
-                                color = Color.White,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = fallbackHeadline,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    Text(
-                        text = fallbackBody,
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl))
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .height(36.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    Text(
-                        text = fallbackCtaText,
-                        fontSize = 12.sp
-                    )
-                }
-            }
+        if (nativeAd != null && !isLoading && !isFailed) {
+            NativeAdContent(nativeAd = nativeAd!!)
         } else {
-            LaunchedEffect(adUnitId) {
-                val adLoader = AdLoader.Builder(context, adUnitId)
-                    .forNativeAd { ad ->
-                        nativeAd = ad
-                        isLoading = false
-                    }
-                    .withAdListener(object : AdListener() {
-                        override fun onAdFailedToLoad(error: LoadAdError) {
-                            isFailed = true
-                            isLoading = false
-                        }
-                    })
-                    .build()
-                adLoader.loadAd(AdRequest.Builder().build())
+            FallbackAdContent(
+                modifier = Modifier.padding(vertical = 16.dp),
+                fallbackAd = fallbackAd,
+            )
+        }
+    }
+}
+
+@Composable
+fun BannerAdContent(
+    adView: AdView,
+    modifier: Modifier = Modifier
+) {
+    AndroidView(
+        modifier = modifier.fillMaxSize(),
+        factory = { adView }
+    )
+}
+
+@Composable
+fun NativeAdContent(
+    nativeAd: NativeAd,
+    modifier: Modifier = Modifier
+) {
+    AndroidView(
+        modifier = modifier.fillMaxSize(),
+        factory = { ctx ->
+            val inflater = LayoutInflater.from(ctx)
+            inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
+        },
+        update = { adView ->
+            val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
+            val bodyView = adView.findViewById<TextView>(R.id.ad_body)
+            val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
+            val ctaView = adView.findViewById<Button>(R.id.ad_call_to_action)
+
+            headlineView.text = nativeAd.headline
+            adView.headlineView = headlineView
+
+            if (nativeAd.body != null) {
+                bodyView.text = nativeAd.body
+                bodyView.visibility = View.VISIBLE
+                adView.bodyView = bodyView
+            } else {
+                bodyView.visibility = View.GONE
             }
 
-            DisposableEffect(nativeAd) {
-                onDispose {
-                    nativeAd?.destroy()
+            val icon = nativeAd.icon
+            if (icon != null) {
+                iconView.setImageDrawable(icon.drawable)
+                iconView.visibility = View.VISIBLE
+                adView.iconView = iconView
+            } else {
+                iconView.visibility = View.GONE
+            }
+
+            val cta = nativeAd.callToAction
+            if (cta != null) {
+                ctaView.text = cta
+                ctaView.visibility = View.VISIBLE
+                adView.callToActionView = ctaView
+            } else {
+                ctaView.visibility = View.GONE
+            }
+
+            adView.setNativeAd(nativeAd)
+        }
+    )
+}
+
+@Composable
+fun FallbackAdContent(
+    fallbackAd: FallbackAd?,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val backgroundColor = fallbackAd?.bgColor ?: FALLBACK_AD_DEFAULT_COLOR
+    val iconRes = fallbackAd?.iconRes ?: FALLBACK_AD_DEFAULT_ICON_RES
+    val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(FALLBACK_AD_DEFAULT_TITLE_RES)
+    val descText = fallbackAd?.descRes?.let { stringResource(it) } ?: stringResource(FALLBACK_AD_DEFAULT_DESC_RES)
+    val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_cta_default)
+    val targetUrl = fallbackAd?.targetUrlRes?.let { stringResource(it) }
+
+    Row(
+        modifier = modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+            .clickable {
+                targetUrl?.let {
+                    val intent = Intent(Intent.ACTION_VIEW, it.toUri())
+                    context.startActivity(intent)
                 }
             }
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = "Fallback Ad Icon",
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = titleText,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = descText,
+                color = Color.White.copy(alpha = 0.8f),
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
-            val currentNativeAd = nativeAd
-            if (currentNativeAd != null) {
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = { ctx ->
-                        val view = LayoutInflater.from(ctx).inflate(R.layout.layout_native_ad, null) as NativeAdView
-                        view.headlineView = view.findViewById(R.id.ad_headline)
-                        view.bodyView = view.findViewById(R.id.ad_body)
-                        view.callToActionView = view.findViewById(R.id.ad_call_to_action)
-                        view.iconView = view.findViewById(R.id.ad_icon)
-                        view
-                    },
-                    update = { view ->
-                        // Bind views
-                        val headlineView = view.headlineView as? TextView
-                        headlineView?.text = currentNativeAd.headline
-
-                        val bodyView = view.bodyView as? TextView
-                        if (bodyView != null) {
-                            if (currentNativeAd.body == null) {
-                                bodyView.visibility = View.GONE
-                            } else {
-                                bodyView.visibility = View.VISIBLE
-                                bodyView.text = currentNativeAd.body
-                            }
-                        }
-
-                        val ctaView = view.callToActionView as? android.widget.Button
-                        if (ctaView != null) {
-                            if (currentNativeAd.callToAction == null) {
-                                ctaView.visibility = View.GONE
-                            } else {
-                                ctaView.visibility = View.VISIBLE
-                                ctaView.text = currentNativeAd.callToAction
-                            }
-                        }
-
-                        val iconView = view.iconView as? ImageView
-                        if (iconView != null) {
-                            if (currentNativeAd.icon == null) {
-                                iconView.visibility = View.GONE
-                            } else {
-                                iconView.visibility = View.VISIBLE
-                                iconView.setImageDrawable(currentNativeAd.icon?.drawable)
-                            }
-                        }
-
-                        // Register native ad object
-                        view.setNativeAd(currentNativeAd)
-                    }
-                )
-            } else if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.05f))
-                )
-            }
+        // Show cta when target url is available
+        targetUrl?.let {
+            Text(
+                text = ctaText,
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
