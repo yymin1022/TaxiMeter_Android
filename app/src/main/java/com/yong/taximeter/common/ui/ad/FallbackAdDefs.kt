@@ -11,10 +11,10 @@ object FallbackAdDefs {
     val fallbackAdList: List<FallbackAd> = listOf(
         FallbackAd(
             iconRes = R.drawable.ic_blog_icon,
-            titleRes = R.string.ad_fallback_headline,
-            subtitleRes = R.string.ad_fallback_body,
+            titleRes = R.string.fallback_ad_blog_title,
+            subtitleRes = R.string.fallback_ad_blog_desc,
             targetUrl = "https://dev-lr.com",
-            ctaRes = R.string.ad_fallback_cta
+            ctaRes = R.string.fallback_ad_cta_default
         )
     )
 

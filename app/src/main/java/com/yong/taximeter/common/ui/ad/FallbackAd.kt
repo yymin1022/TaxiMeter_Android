@@ -11,6 +11,6 @@ data class FallbackAd(
     @DrawableRes val iconRes: Int,
     @StringRes val titleRes: Int,
     @StringRes val subtitleRes: Int,
-    val targetUrl: String,
-    @StringRes val ctaRes: Int = R.string.ad_fallback_cta
+    @StringRes val targetUrl: Int,
+    @StringRes val ctaRes: Int = R.string.fallback_ad_cta_default
 )

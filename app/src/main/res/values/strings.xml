@@ -130,7 +130,8 @@
     <string name="theme_mode_dark">Dark theme</string>
     <string name="theme_mode_light">Light theme</string>
 
-    <string name="ad_fallback_headline" translatable="false">Useful Blog</string>
-    <string name="ad_fallback_body">Developer Useful\'s IT Blog</string>
-    <string name="ad_fallback_cta">Visit</string>
+    <string name="fallback_ad_cta_default">Visit</string>
+    <string name="fallback_ad_blog_title" translatable="false">Useful Blog</string>
+    <string name="fallback_ad_blog_desc">Developer Useful\'s IT Blog</string>
+    <string name="fallback_ad_blog_url" translatable="false">https://dev-lr.com</string>
 </resources>

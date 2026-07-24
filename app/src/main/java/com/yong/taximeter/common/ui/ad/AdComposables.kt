@@ -102,7 +102,6 @@ fun BannerAdView(
             FallbackAdContent(
                 fallbackAd = fallbackAd,
                 fallbackImageRes = fallbackImageRes,
-                fallbackUrl = fallbackUrl
             )
         }
     }
@@ -113,9 +112,9 @@ fun NativeAdViewCompose(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/2247696110", // Test Native Ad ID
     @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
-    fallbackHeadline: String = stringResource(R.string.ad_fallback_headline),
-    fallbackBody: String = stringResource(R.string.ad_fallback_body),
-    fallbackCtaText: String = stringResource(R.string.ad_fallback_cta),
+    fallbackHeadline: String = stringResource(R.string.fallback_ad_blog_title),
+    fallbackBody: String = stringResource(R.string.fallback_ad_blog_desc),
+    fallbackCtaText: String = stringResource(R.string.fallback_ad_cta_default),
     fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
@@ -167,7 +166,6 @@ fun NativeAdViewCompose(
                 modifier = Modifier.padding(vertical = 16.dp),
                 fallbackAd = fallbackAd,
                 fallbackImageRes = fallbackImageRes,
-                fallbackUrl = fallbackUrl
             )
         }
     }
@@ -219,15 +217,14 @@ fun NativeAdContent(
 fun FallbackAdContent(
     fallbackAd: FallbackAd?,
     @DrawableRes fallbackImageRes: Int,
-    fallbackUrl: String,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
-    val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_headline)
-    val subtitleText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_body)
-    val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.ad_fallback_cta)
-    val targetUrl = fallbackAd?.targetUrl ?: fallbackUrl
+    val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_blog_title)
+    val subtitleText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_blog_desc)
+    val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_cta_default)
+    val targetUrl = stringResource(fallbackAd?.targetUrl ?: R.string.fallback_ad_blog_url)
 
     Row(
         modifier = modifier
