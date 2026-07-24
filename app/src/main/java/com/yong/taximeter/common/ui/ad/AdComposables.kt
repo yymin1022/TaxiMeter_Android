@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +49,7 @@ import com.yong.taximeter.R
 import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_COLOR
 import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_DESC_RES
 import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_ICON_RES
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_TEXT_COLOR
 import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_TITLE_RES
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -237,6 +237,7 @@ fun FallbackAdContent(
 ) {
     val context = LocalContext.current
     val backgroundColor = fallbackAd?.bgColor ?: FALLBACK_AD_DEFAULT_COLOR
+    val textColor = fallbackAd?.textColor ?: FALLBACK_AD_DEFAULT_TEXT_COLOR
     val iconRes = fallbackAd?.iconRes ?: FALLBACK_AD_DEFAULT_ICON_RES
     val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(FALLBACK_AD_DEFAULT_TITLE_RES)
     val descText = fallbackAd?.descRes?.let { stringResource(it) } ?: stringResource(FALLBACK_AD_DEFAULT_DESC_RES)
@@ -267,13 +268,13 @@ fun FallbackAdContent(
         ) {
             Text(
                 text = titleText,
-                color = Color.White,
+                color = textColor,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = descText,
-                color = Color.White.copy(alpha = 0.8f),
+                color = textColor.copy(alpha = 0.8f),
                 fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -284,7 +285,7 @@ fun FallbackAdContent(
         targetUrl?.let {
             Text(
                 text = ctaText,
-                color = Color.White,
+                color = textColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )

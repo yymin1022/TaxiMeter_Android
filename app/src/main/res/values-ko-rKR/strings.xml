@@ -109,4 +109,6 @@
     <string name="meter_dialog_legal_warning_title">미터기 안내</string>
     <string name="meter_dialog_permission_warning_title">백그라운드 동작 안내</string>
     <string name="meter_dialog_permission_warning_content">미터기가 백그라운드에서도 동작하기 위해서는 다음 설정이 필요합니다:\n\n1. 알림 권한 (주행 알림 표시)\n2. 배터리 사용량 최적화 제외 (백그라운드 강제종료 방지)\n\n설정 화면으로 이동하시겠습니까?</string>
+    <string name="fallback_ad_typer_title">Typer: ASMR 키보드 벽돌깨기</string>
+    <string name="fallback_ad_typer_desc">도각도각 힐링 사운드, 나만의 키보드를 만들고, 데스크테리어를 완성해보세요!</string>
 </resources>

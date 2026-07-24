@@ -9,7 +9,8 @@ import com.yong.taximeter.R
  * Data class representing a fallback ad
  */
 data class FallbackAd(
-    val bgColor: Color = Color.White,
+    val bgColor: Color = Color.DarkGray,
+    val textColor: Color = Color.White,
     @DrawableRes val iconRes: Int,
     @StringRes val titleRes: Int,
     @StringRes val descRes: Int,
