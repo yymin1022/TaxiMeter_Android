@@ -50,6 +50,7 @@ import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_DESC_R
 import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_ICON_RES
 import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_TITLE_RES
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun BannerAdView(
@@ -88,7 +89,7 @@ fun BannerAdView(
     LaunchedEffect(isLoading, isFailed) {
         if (isLoading || isFailed) {
             while (true) {
-                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS)
+                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS.milliseconds)
                 fallbackAd = FallbackAdDefs.getRandomAd(except = fallbackAd)
             }
         }
@@ -145,7 +146,7 @@ fun NativeAdViewCompose(
     LaunchedEffect(isLoading, isFailed) {
         if (isLoading || isFailed) {
             while (true) {
-                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS)
+                delay(FallbackAdDefs.FALLBACK_AD_ROTATION_INTERVAL_MS.milliseconds)
                 fallbackAd = FallbackAdDefs.getRandomAd(except = fallbackAd)
             }
         }
