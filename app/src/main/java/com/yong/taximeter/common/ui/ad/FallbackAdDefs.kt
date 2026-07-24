@@ -1,5 +1,6 @@
 package com.yong.taximeter.common.ui.ad
 
+import androidx.compose.ui.graphics.Color
 import com.yong.taximeter.R
 
 /**
@@ -8,13 +9,28 @@ import com.yong.taximeter.R
 object FallbackAdDefs {
     const val FALLBACK_AD_ROTATION_INTERVAL_MS = 15_000L
 
+    val FALLBACK_AD_DEFAULT_COLOR = Color.DarkGray
+    val FALLBACK_AD_DEFAULT_ICON_RES = R.drawable.ic_noti_taxi
+    val FALLBACK_AD_DEFAULT_TITLE_RES = R.string.fallback_ad_title_default
+    val FALLBACK_AD_DEFAULT_DESC_RES = R.string.fallback_ad_desc_default
+
+
     val fallbackAdList: List<FallbackAd> = listOf(
+        // Default - Remove Advertisement
         FallbackAd(
+            bgColor = FALLBACK_AD_DEFAULT_COLOR,
+            iconRes = FALLBACK_AD_DEFAULT_ICON_RES,
+            titleRes = FALLBACK_AD_DEFAULT_TITLE_RES,
+            descRes = FALLBACK_AD_DEFAULT_DESC_RES,
+        ),
+
+        // Blog
+        FallbackAd(
+            bgColor = Color(0xFF103D88),
             iconRes = R.drawable.ic_blog_icon,
             titleRes = R.string.fallback_ad_blog_title,
-            subtitleRes = R.string.fallback_ad_blog_desc,
-            targetUrl = "https://dev-lr.com",
-            ctaRes = R.string.fallback_ad_cta_default
+            descRes = R.string.fallback_ad_blog_desc,
+            targetUrlRes = R.string.fallback_ad_blog_url,
         )
     )
 

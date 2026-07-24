@@ -131,6 +131,9 @@
     <string name="theme_mode_light">Light theme</string>
 
     <string name="fallback_ad_cta_default">Visit</string>
+    <string name="fallback_ad_title_default">Remove Advertisement</string>
+    <string name="fallback_ad_desc_default">Enjoy clean meter screen!</string>
+
     <string name="fallback_ad_blog_title" translatable="false">Useful Blog</string>
     <string name="fallback_ad_blog_desc">Developer Useful\'s IT Blog</string>
     <string name="fallback_ad_blog_url" translatable="false">https://dev-lr.com</string>

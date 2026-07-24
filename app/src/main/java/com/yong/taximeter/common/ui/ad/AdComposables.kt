@@ -4,7 +4,6 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,14 +45,16 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.yong.taximeter.R
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_COLOR
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_DESC_RES
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_ICON_RES
+import com.yong.taximeter.common.ui.ad.FallbackAdDefs.FALLBACK_AD_DEFAULT_TITLE_RES
 import kotlinx.coroutines.delay
 
 @Composable
 fun BannerAdView(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/6300978111", // GMS Ads Banner Test ID
-    @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
-    fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
     var isFailed by remember { mutableStateOf(false) }
@@ -101,7 +102,6 @@ fun BannerAdView(
         } else {
             FallbackAdContent(
                 fallbackAd = fallbackAd,
-                fallbackImageRes = fallbackImageRes,
             )
         }
     }
@@ -111,11 +111,6 @@ fun BannerAdView(
 fun NativeAdViewCompose(
     modifier: Modifier = Modifier,
     adUnitId: String = "ca-app-pub-3940256099942544/2247696110", // Test Native Ad ID
-    @DrawableRes fallbackImageRes: Int = R.drawable.ic_blog_icon,
-    fallbackHeadline: String = stringResource(R.string.fallback_ad_blog_title),
-    fallbackBody: String = stringResource(R.string.fallback_ad_blog_desc),
-    fallbackCtaText: String = stringResource(R.string.fallback_ad_cta_default),
-    fallbackUrl: String = "https://dev-lr.com"
 ) {
     val context = LocalContext.current
     var nativeAd by remember { mutableStateOf<NativeAd?>(null) }
@@ -165,7 +160,6 @@ fun NativeAdViewCompose(
             FallbackAdContent(
                 modifier = Modifier.padding(vertical = 16.dp),
                 fallbackAd = fallbackAd,
-                fallbackImageRes = fallbackImageRes,
             )
         }
     }
@@ -216,23 +210,25 @@ fun NativeAdContent(
 @Composable
 fun FallbackAdContent(
     fallbackAd: FallbackAd?,
-    @DrawableRes fallbackImageRes: Int,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val iconRes = fallbackAd?.iconRes ?: fallbackImageRes
-    val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_blog_title)
-    val subtitleText = fallbackAd?.subtitleRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_blog_desc)
+    val backgroundColor = fallbackAd?.bgColor ?: FALLBACK_AD_DEFAULT_COLOR
+    val iconRes = fallbackAd?.iconRes ?: FALLBACK_AD_DEFAULT_ICON_RES
+    val titleText = fallbackAd?.titleRes?.let { stringResource(it) } ?: stringResource(FALLBACK_AD_DEFAULT_TITLE_RES)
+    val descText = fallbackAd?.descRes?.let { stringResource(it) } ?: stringResource(FALLBACK_AD_DEFAULT_DESC_RES)
     val ctaText = fallbackAd?.ctaRes?.let { stringResource(it) } ?: stringResource(R.string.fallback_ad_cta_default)
-    val targetUrl = stringResource(fallbackAd?.targetUrl ?: R.string.fallback_ad_blog_url)
+    val targetUrl = fallbackAd?.targetUrlRes?.let { stringResource(it) }
 
     Row(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF103D88))
+            .background(backgroundColor)
             .clickable {
-                val intent = Intent(Intent.ACTION_VIEW, targetUrl.toUri())
-                context.startActivity(intent)
+                targetUrl?.let {
+                    val intent = Intent(Intent.ACTION_VIEW, it.toUri())
+                    context.startActivity(intent)
+                }
             }
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -253,18 +249,22 @@ fun FallbackAdContent(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = subtitleText,
+                text = descText,
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
-        Text(
-            text = ctaText,
-            color = Color.White,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        )
+
+        // Show cta when target url is available
+        targetUrl?.let {
+            Text(
+                text = ctaText,
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }

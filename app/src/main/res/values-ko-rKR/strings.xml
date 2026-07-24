@@ -103,6 +103,8 @@
     <string name="theme_mode_light">라이트 테마</string>
     <string name="fallback_ad_blog_desc">1인개발자 Useful의 IT블로그</string>
     <string name="fallback_ad_cta_default">방문하기</string>
+    <string name="fallback_ad_title_default">광고 제거하기</string>
+    <string name="fallback_ad_desc_default">깔끔한 택시미터기를 사용해보세요!</string>
     <string name="meter_dialog_legal_warning_content">본 미터기 앱은 공식 인증된 미터기 앱이 아니므로 참고용으로만 사용해주세요. 이 앱으로 요금을 청구하는 경우, 「여객자동차 운수사업법」에 따라 과태료 등 처벌을 받을 수 있습니다.</string>
     <string name="meter_dialog_legal_warning_title">미터기 안내</string>
     <string name="meter_dialog_permission_warning_title">백그라운드 동작 안내</string>
