@@ -137,4 +137,8 @@
     <string name="fallback_ad_blog_title" translatable="false">Useful Blog</string>
     <string name="fallback_ad_blog_desc">Developer Useful\'s IT Blog</string>
     <string name="fallback_ad_blog_url" translatable="false">https://dev-lr.com</string>
+
+    <string name="fallback_ad_typer_title">Typer: ASMR Keyboard Smash</string>
+    <string name="fallback_ad_typer_desc">Keyboard ASMR &amp; Brick Breaker</string>
+    <string name="fallback_ad_typer_url" translatable="false">https://play.google.com/store/apps/details?id=com.NewMeans.Typer&amp;utm_source=useful_taximeter&amp;utm_campaign=typer_crosspromo_banner</string>
 </resources>
