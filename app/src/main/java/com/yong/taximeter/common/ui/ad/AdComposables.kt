@@ -2,6 +2,8 @@ package com.yong.taximeter.common.ui.ad
 
 import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.compose.foundation.Image
@@ -186,24 +188,44 @@ fun NativeAdContent(
         modifier = modifier.fillMaxSize(),
         factory = { ctx ->
             val inflater = LayoutInflater.from(ctx)
-            val adView = inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
+            inflater.inflate(R.layout.layout_native_ad, null) as NativeAdView
+        },
+        update = { adView ->
             val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
             val bodyView = adView.findViewById<TextView>(R.id.ad_body)
             val iconView = adView.findViewById<ImageView>(R.id.ad_icon)
+            val ctaView = adView.findViewById<Button>(R.id.ad_call_to_action)
 
             headlineView.text = nativeAd.headline
             adView.headlineView = headlineView
 
-            bodyView.text = nativeAd.body
-            adView.bodyView = bodyView
+            if (nativeAd.body != null) {
+                bodyView.text = nativeAd.body
+                bodyView.visibility = View.VISIBLE
+                adView.bodyView = bodyView
+            } else {
+                bodyView.visibility = View.GONE
+            }
 
-            nativeAd.icon?.let { icon ->
+            val icon = nativeAd.icon
+            if (icon != null) {
                 iconView.setImageDrawable(icon.drawable)
+                iconView.visibility = View.VISIBLE
                 adView.iconView = iconView
+            } else {
+                iconView.visibility = View.GONE
+            }
+
+            val cta = nativeAd.callToAction
+            if (cta != null) {
+                ctaView.text = cta
+                ctaView.visibility = View.VISIBLE
+                adView.callToActionView = ctaView
+            } else {
+                ctaView.visibility = View.GONE
             }
 
             adView.setNativeAd(nativeAd)
-            adView
         }
     )
 }
