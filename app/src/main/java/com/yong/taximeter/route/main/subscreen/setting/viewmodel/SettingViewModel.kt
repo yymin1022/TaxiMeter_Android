@@ -27,7 +27,7 @@ class SettingViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
 ): ViewModel() {
     companion object {
-        private const val URL_DEVELOPER_BLOG = "https://dev-lr.com"
+        private const val URL_DEVELOPER_BLOG = "https://useful-min.dev"
         private const val URL_DEVELOPER_GITHUB = "https://github.com/yymin1022"
         private const val URL_DEVELOPER_LINKEDIN = "https://linkedin.com/in/yymin1022"
         private const val URL_PRIVACY_POLICY = "https://defcon.or.kr/privacy"
