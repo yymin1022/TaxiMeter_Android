@@ -34,9 +34,11 @@ GPS speed data is used to determine fare calculation in real time.
 ## Screenshots
 
 <p align="left">
-  <img src="https://github.com/user-attachments/assets/c5b45718-96c4-4a18-af91-acda5a63ca78" width=30%>
-  <img src="https://github.com/user-attachments/assets/beb26627-4ead-4d0b-af96-4da58eb3afa5" width=30%>
-  <img src="https://github.com/user-attachments/assets/89b39eb1-48f7-4fbb-ad05-c82b2de78212" width=30%>
+  <img src="https://github.com/user-attachments/assets/0add3689-2b62-4c1e-a0f7-02da86f473b0" width=30%>
+  <img src="https://github.com/user-attachments/assets/76096a1b-4cd0-43f9-aae9-c20ffa0e9876" width=30%>
+  <img src="https://github.com/user-attachments/assets/c67d734b-5ad2-4f8f-bdb1-bae81ec9ffd7" width=30%>
+  <img src="https://github.com/user-attachments/assets/9155e46f-6fc9-4878-b6c2-4229b1fb3e81" width=30%>
+  <img src="https://github.com/user-attachments/assets/c3b43763-2bff-4d99-93db-aa297f51dbe6" width=30%>
 </p>
 
 ## Useful links
