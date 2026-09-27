@@ -12,16 +12,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.yong.taximeter.route.main.model.TabInfo
+import com.yong.taximeter.route.main.subscreen.history.ui.HistoryScreen
 import com.yong.taximeter.route.main.subscreen.home.ui.HomeScreen
 import com.yong.taximeter.route.main.subscreen.setting.ui.SettingScreen
 import com.yong.taximeter.route.main.subscreen.store.ui.StoreScreen
 import com.yong.taximeter.route.main.viewmodel.MainViewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.ui.res.stringResource
 
 /**
  * Main Screen
@@ -85,22 +86,27 @@ private fun MainSubscreen(
     ) {
         // Set subscreen ui for each tab
         when(selectedTabIdx) {
-            // 0. Setting UI
-            0 -> SettingScreen(
-                modifier = Modifier,
-            )
-
-            // 1. Home UI
-            1 -> HomeScreen(
+            // 0. Home UI
+            0 -> HomeScreen(
                 modifier = Modifier,
                 snackBarHostState = snackBarHostState,
                 navigateToMeter = navigateToMeter,
+            )
+
+            // 1. History UI
+            1 -> HistoryScreen(
+                modifier = Modifier,
             )
 
             // 2. Store UI
             2 -> StoreScreen(
                 modifier = Modifier,
                 snackBarHostState = snackBarHostState,
+            )
+
+            // 3. Setting UI
+            3 -> SettingScreen(
+                modifier = Modifier,
             )
 
             // Not must be happened
