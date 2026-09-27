@@ -17,4 +17,10 @@ interface MeterHistoryDao {
 
     @Query("SELECT * FROM meter_history ORDER BY timestamp DESC")
     fun getAllHistories(): Flow<List<MeterHistoryEntity>>
+
+    @Query("DELETE FROM meter_history WHERE id = :id")
+    suspend fun deleteHistoryById(id: Long)
+
+    @Query("DELETE FROM meter_history")
+    suspend fun deleteAllHistories()
 }

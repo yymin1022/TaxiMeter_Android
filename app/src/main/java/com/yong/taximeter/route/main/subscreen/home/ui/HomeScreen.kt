@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalTaxi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yong.taximeter.R
 import com.yong.taximeter.common.ui.theme.Typography
+import com.yong.taximeter.route.main.subscreen.home.viewmodel.HomeCaption
 import com.yong.taximeter.route.main.subscreen.home.viewmodel.HomeViewModel
 
 // Constant values
@@ -75,6 +79,7 @@ fun HomeScreen(
         // Description Text
         DescriptionText(
             modifier = Modifier,
+            caption = uiState.homeCaption,
         )
     }
 }
@@ -158,15 +163,33 @@ private fun AppLogoText(
 @Composable
 private fun DescriptionText(
     modifier: Modifier = Modifier,
+    caption: HomeCaption? = null,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            stringResource(R.string.home_desc_text),
-            style = Typography.headlineSmall,
-        )
+        if (caption != null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(caption.stringRes, *caption.formatArgs.toTypedArray()),
+                    style = Typography.titleMedium,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.home_desc_text),
+                    style = Typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            Text(
+                text = stringResource(R.string.home_desc_text),
+                style = Typography.headlineSmall,
+            )
+        }
     }
 }

@@ -2,10 +2,15 @@
     <string name="app_name">TaxiMeter</string>
 
     <string name="main_tab_home">Home</string>
+    <string name="main_tab_history">History</string>
     <string name="main_tab_setting">Setting</string>
     <string name="main_tab_store">Store</string>
 
     <string name="home_desc_text">Touch to start</string>
+    <string name="home_caption_distance">Traveled %.1f km so far!</string>
+    <string name="home_caption_trips">Ready for trip #%d!</string>
+    <string name="home_caption_cost">Calculated %s in total fares with TaxiMeter!</string>
+    <string name="home_caption_safe_drive">Have a safe drive to your destination today!</string>
     <string name="home_logo_text_meter">Meter</string>
     <string name="home_logo_text_taxi">Taxi</string>
 
@@ -44,6 +49,17 @@
     <string name="store_snack_bar_purchase_failed">Failed to process purchasing.</string>
     <string name="store_snack_bar_purchase_pending">Purchase is currently pending.</string>
     <string name="store_snack_bar_purchase_success">Purchase completed successfully.</string>
+
+    <string name="history_empty">No driving history yet.</string>
+    <string name="history_summary_trips">Trips</string>
+    <string name="history_summary_cost">Total Cost</string>
+    <string name="history_summary_distance">Total Distance</string>
+    <string name="history_btn_clear_all">Clear all history</string>
+    <string name="history_dialog_clear_all_title">Clear all history</string>
+    <string name="history_dialog_clear_all_desc">Are you sure you want to delete all driving history? This action cannot be undone.</string>
+    <string name="history_item_duration">%1$d min %2$d sec</string>
+    <string name="history_clipboard_copy_format">Traveled %1$.1f km with TaxiMeter.\nTotal Fare: ₩%2$s\nDuration: %3$d min %4$d sec\n%5$s</string>
+    <string name="history_snack_bar_copied">Driving history copied to clipboard.</string>
 
     <string name="meter_cost">₩%s</string>
     <string name="meter_info_speed_title">Current Speed</string>

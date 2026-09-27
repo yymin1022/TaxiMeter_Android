@@ -12,4 +12,10 @@ interface MeterHistoryRepository {
 
     // Get all histories ordered by timestamp descending
     fun getAllHistories(): Flow<List<MeterHistory>>
+
+    // Delete history by ID
+    suspend fun deleteHistory(id: Long)
+
+    // Delete all histories
+    suspend fun deleteAllHistories()
 }

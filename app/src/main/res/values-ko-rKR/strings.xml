@@ -2,9 +2,14 @@
 <resources>
     <string name="app_name">택시미터기</string>
     <string name="main_tab_home">홈</string>
+    <string name="main_tab_history">기록</string>
     <string name="main_tab_setting">설정</string>
     <string name="main_tab_store">결제</string>
     <string name="home_desc_text">터치하여 시작하기</string>
+    <string name="home_caption_distance">지금까지 총 %.1fkm 달렸어요!</string>
+    <string name="home_caption_trips">벌써 %d번째 주행을 기다리고 있어요!</string>
+    <string name="home_caption_cost">미터기와 총 %s원만큼 달렸어요!</string>
+    <string name="home_caption_safe_drive">오늘도 목적지까지 안전하게 달려볼까요?</string>
     <string name="home_logo_text_meter">미터기</string>
     <string name="home_logo_text_taxi">택시</string>
     <string name="home_snack_bar_update_failure">요금정보 업데이트에 실패하였습니다. 네트워크 상태를 확인해주세요.</string>
@@ -36,6 +41,18 @@
     <string name="store_snack_bar_purchase_failed">구매 진행에 실패하였습니다.</string>
     <string name="store_snack_bar_purchase_pending">구매 진행이 지연되고 있습니다.</string>
     <string name="store_snack_bar_purchase_success">구매가 완료되었습니다.</string>
+
+    <string name="history_empty">저장된 주행기록이 없습니다.</string>
+    <string name="history_summary_trips">총 주행 횟수</string>
+    <string name="history_summary_cost">총 요금</string>
+    <string name="history_summary_distance">총 거리</string>
+    <string name="history_btn_clear_all">모든 주행기록 삭제</string>
+    <string name="history_dialog_clear_all_title">주행기록 모두 삭제</string>
+    <string name="history_dialog_clear_all_desc">모든 주행기록을 삭제하시겠습니까? 삭제된 기록은 복구할 수 없습니다.</string>
+    <string name="history_item_duration">%1$d분 %2$d초</string>
+    <string name="history_clipboard_copy_format">택시미터기와 함께 %1$.1fkm 달렸어요.\n총 요금: %2$s원\n주행 시간: %3$d분 %4$d초\n%5$s</string>
+    <string name="history_snack_bar_copied">주행기록이 클립보드에 복사되었습니다.</string>
+
     <string name="meter_cost">%s원</string>
     <string name="meter_info_speed_title">현재 속도</string>
     <string name="meter_info_status_title">주행 상태</string>
