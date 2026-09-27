@@ -96,6 +96,7 @@ private fun MainSubscreen(
             // 1. History UI
             1 -> HistoryScreen(
                 modifier = Modifier,
+                snackBarHostState = snackBarHostState,
             )
 
             // 2. Store UI

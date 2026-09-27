@@ -1,5 +1,6 @@
 package com.yong.taximeter.route.main.subscreen.history.ui
 
+import android.content.ClipData
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -33,9 +35,12 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,6 +55,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 /**
  * History Screen
@@ -58,8 +64,37 @@ import java.util.Locale
 fun HistoryScreen(
     modifier: Modifier = Modifier,
     viewModel: HistoryViewModel = hiltViewModel(),
+    snackBarHostState: SnackbarHostState,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val clipboard = LocalClipboard.current
+    val coroutineScope = rememberCoroutineScope()
+    val copyTemplate = stringResource(R.string.history_clipboard_copy_format)
+    val copiedMessage = stringResource(R.string.history_snack_bar_copied)
+
+    val onCopyHistory: (MeterHistory) -> Unit = { history ->
+        val formattedCost = NumberFormat.getNumberInstance().format(history.cost)
+        val totalSeconds = history.elapsedSeconds.toInt()
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        val formattedDate = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault()).format(Date(history.timestamp))
+
+        val copyText = String.format(
+            Locale.getDefault(),
+            copyTemplate,
+            history.distanceMeters / 1000f,
+            formattedCost,
+            minutes,
+            seconds,
+            formattedDate,
+        )
+
+        coroutineScope.launch {
+            val clipEntry = ClipData.newPlainText("history", copyText).toClipEntry()
+            clipboard.setClipEntry(clipEntry)
+            snackBarHostState.showSnackbar(copiedMessage)
+        }
+    }
 
     if (uiState.showClearAllConfirm) {
         SimpleDialog(
@@ -97,6 +132,7 @@ fun HistoryScreen(
                     totalDistanceMeters = uiState.totalDistanceMeters,
                     onDeleteHistory = viewModel::deleteHistory,
                     onClearAllClick = viewModel::showClearAllConfirm,
+                    onCopyHistory = onCopyHistory,
                 )
             }
         }
@@ -142,6 +178,7 @@ private fun HistoryContent(
     totalDistanceMeters: Double,
     onDeleteHistory: (Long) -> Unit,
     onClearAllClick: () -> Unit,
+    onCopyHistory: (MeterHistory) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -168,6 +205,7 @@ private fun HistoryContent(
                 HistorySwipeItem(
                     history = history,
                     onDelete = { onDeleteHistory(history.id) },
+                    onCopy = { onCopyHistory(history) },
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -275,6 +313,7 @@ private fun HistorySwipeItem(
     modifier: Modifier = Modifier,
     history: MeterHistory,
     onDelete: () -> Unit,
+    onCopy: () -> Unit,
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
 
@@ -317,6 +356,7 @@ private fun HistorySwipeItem(
         HistoryItemCard(
             modifier = Modifier.fillMaxWidth(),
             history = history,
+            onClick = onCopy,
         )
     }
 }
@@ -328,6 +368,7 @@ private fun HistorySwipeItem(
 private fun HistoryItemCard(
     modifier: Modifier = Modifier,
     history: MeterHistory,
+    onClick: () -> Unit,
 ) {
     val dateText = remember(history.timestamp) {
         SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault()).format(Date(history.timestamp))
@@ -352,6 +393,7 @@ private fun HistoryItemCard(
     )
 
     Card(
+        onClick = onClick,
         modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
