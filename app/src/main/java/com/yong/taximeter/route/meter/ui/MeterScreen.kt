@@ -2,13 +2,10 @@ package com.yong.taximeter.route.meter.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,10 +37,11 @@ import com.yong.taximeter.R
 import com.yong.taximeter.common.ui.ad.BannerAdView
 import com.yong.taximeter.common.ui.dialog.SimpleDialog
 import com.yong.taximeter.common.ui.theme.MeterTheme
+import com.yong.taximeter.common.window.FoldablePosture
+import com.yong.taximeter.common.window.rememberFoldablePosture
 import com.yong.taximeter.domain.model.MeterStatus
-import com.yong.taximeter.route.meter.ui.components.MeterControlSection
-import com.yong.taximeter.route.meter.ui.components.MeterDisplaySection
-import com.yong.taximeter.route.meter.ui.components.MeterInfoSection
+import com.yong.taximeter.route.meter.ui.components.MeterFoldableView
+import com.yong.taximeter.route.meter.ui.components.MeterStandardView
 import com.yong.taximeter.route.meter.viewmodel.MeterUiState
 import com.yong.taximeter.route.meter.viewmodel.MeterViewModel
 import java.text.NumberFormat
@@ -61,6 +58,9 @@ fun MeterScreen(
 ) {
     // UI State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Foldable Posture
+    val foldablePosture = rememberFoldablePosture()
 
     // Track whether the exit warning dialog should show (triggered by back request)
     var showExitDialog by remember { mutableStateOf(false) }
@@ -195,14 +195,28 @@ fun MeterScreen(
                     }
                 }
 
-                // Meter Content
-                MeterContent(
-                    uiState = uiState,
-                    onClickStart = onClickStart,
-                    onClickStop = viewModel::onClickStop,
-                    onClickCityRate = viewModel::onClickCityRate,
-                    onClickNightRate = viewModel::onClickNightRate,
-                )
+                // Meter Content (Foldable or Standard)
+                when (foldablePosture) {
+                    is FoldablePosture.Available -> {
+                        MeterFoldableView(
+                            posture = foldablePosture,
+                            uiState = uiState,
+                            onClickStart = onClickStart,
+                            onClickStop = viewModel::onClickStop,
+                            onClickCityRate = viewModel::onClickCityRate,
+                            onClickNightRate = viewModel::onClickNightRate,
+                        )
+                    }
+                    FoldablePosture.Unavailable -> {
+                        MeterStandardView(
+                            uiState = uiState,
+                            onClickStart = onClickStart,
+                            onClickStop = viewModel::onClickStop,
+                            onClickCityRate = viewModel::onClickCityRate,
+                            onClickNightRate = viewModel::onClickNightRate,
+                        )
+                    }
+                }
 
                 // Back button
                 IconButton(
@@ -232,138 +246,6 @@ fun MeterScreen(
                     adUnitId = stringResource(id = R.string.admob_banner_ad_unit_id),
                 )
             }
-        }
-    }
-}
-
-/**
- * Meter Content UI
- */
-@Composable
-private fun MeterContent(
-    uiState: MeterUiState,
-    onClickStart: () -> Unit,
-    onClickStop: () -> Unit,
-    onClickCityRate: () -> Unit,
-    onClickNightRate: () -> Unit,
-) {
-    // Screen orientation state
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    if(isLandscape) {
-        MeterContentLandscape(
-            uiState = uiState,
-            onClickStart = onClickStart,
-            onClickStop = onClickStop,
-            onClickCityRate = onClickCityRate,
-            onClickNightRate = onClickNightRate,
-        )
-    } else {
-        MeterContentPortrait(
-            uiState = uiState,
-            onClickStart = onClickStart,
-            onClickStop = onClickStop,
-            onClickCityRate = onClickCityRate,
-            onClickNightRate = onClickNightRate,
-        )
-    }
-}
-
-/**
- * Portrait Meter Content UI
- */
-@Composable
-private fun MeterContentPortrait(
-    uiState: MeterUiState,
-    onClickStart: () -> Unit,
-    onClickStop: () -> Unit,
-    onClickCityRate: () -> Unit,
-    onClickNightRate: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-    ) {
-        // Meter Display Section
-        MeterDisplaySection(
-            animationFrames = uiState.animationFrames,
-            speedKph = uiState.currentSpeedKph,
-            currentCost = uiState.currentCost,
-            costCounter = uiState.costCounter,
-        )
-
-        // Meter Info Section
-        MeterInfoSection(
-            currentSpeedKph = uiState.currentSpeedKph,
-            meterStatus = uiState.meterStatus,
-            totalDistanceMeters = uiState.totalDistanceMeters,
-        )
-
-        // Meter Control Section
-        MeterControlSection(
-            isCityRate = uiState.isCityRate,
-            isNightRate = uiState.isNightRate,
-            onClickStart = onClickStart,
-            onClickStop = onClickStop,
-            onClickCityRate = onClickCityRate,
-            onClickNightRate = onClickNightRate,
-        )
-    }
-}
-
-/**
- * Landscape Meter Content UI
- */
-@Composable
-private fun MeterContentLandscape(
-    uiState: MeterUiState,
-    onClickStart: () -> Unit,
-    onClickStop: () -> Unit,
-    onClickCityRate: () -> Unit,
-    onClickNightRate: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
-                .padding(bottom = 64.dp),
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Bottom,
-        ) {
-            // Meter Display Section
-            MeterDisplaySection(
-                animationFrames = uiState.animationFrames,
-                speedKph = uiState.currentSpeedKph,
-                currentCost = uiState.currentCost,
-                costCounter = uiState.costCounter,
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom,
-        ) {
-            // Meter Info Section
-            MeterInfoSection(
-                currentSpeedKph = uiState.currentSpeedKph,
-                meterStatus = uiState.meterStatus,
-                totalDistanceMeters = uiState.totalDistanceMeters,
-            )
-
-            // Meter Control Section
-            MeterControlSection(
-                isCityRate = uiState.isCityRate,
-                isNightRate = uiState.isNightRate,
-                onClickStart = onClickStart,
-                onClickStop = onClickStop,
-                onClickCityRate = onClickCityRate,
-                onClickNightRate = onClickNightRate,
-            )
         }
     }
 }
