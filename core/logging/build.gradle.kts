@@ -41,11 +41,6 @@ java {
 }
 
 dependencies {
-    // Android Dependency
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-
     // JavaX Dependency
     implementation(libs.javax.inject)
 
