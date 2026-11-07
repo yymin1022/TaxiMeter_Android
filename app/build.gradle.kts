@@ -100,7 +100,6 @@ dependencies {
     // Room Dependency
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
 
     // In-app browser Dependency
     implementation(libs.androidx.browser)
