@@ -27,6 +27,7 @@ navigationCompose = "2.9.7"
 playServicesAds = "25.4.0"
 playServicesLocation = "21.3.0"
 room = "2.8.4"
+window = "1.5.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -48,6 +49,7 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-window = { module = "androidx.window:window", version.ref = "window" }
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billingKtx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics" }
