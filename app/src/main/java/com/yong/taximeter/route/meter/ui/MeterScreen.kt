@@ -5,9 +5,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,7 +32,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.yong.taximeter.R
-import com.yong.taximeter.common.ui.ad.BannerAdView
 import com.yong.taximeter.common.ui.dialog.SimpleDialog
 import com.yong.taximeter.common.ui.theme.MeterTheme
 import com.yong.taximeter.common.window.FoldablePosture
@@ -171,79 +168,65 @@ fun MeterScreen(
             .fillMaxSize(),
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-            ) {
-                // Location permission state
-                val locationPermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+            // Location permission state
+            val locationPermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
-                val onClickStart =  {
-                    // Start meter only location permission is granted
-                    if(locationPermission.status.isGranted) {
-                        // Checks permission with AccompanistPermission API, so suppress warning
-                        @SuppressLint("MissingPermission")
-                        viewModel.onClickStart()
-                    } else {
-                        locationPermission.launchPermissionRequest()
-                    }
+            val onClickStart = {
+                // Start meter only location permission is granted
+                if (locationPermission.status.isGranted) {
+                    // Checks permission with AccompanistPermission API, so suppress warning
+                    @SuppressLint("MissingPermission")
+                    viewModel.onClickStart()
+                } else {
+                    locationPermission.launchPermissionRequest()
                 }
+            }
 
-                // Meter Content (Foldable or Standard)
-                when (foldablePosture) {
-                    is FoldablePosture.Available -> {
-                        MeterFoldableView(
-                            posture = foldablePosture,
-                            uiState = uiState,
-                            onClickStart = onClickStart,
-                            onClickStop = viewModel::onClickStop,
-                            onClickCityRate = viewModel::onClickCityRate,
-                            onClickNightRate = viewModel::onClickNightRate,
-                        )
-                    }
-                    FoldablePosture.Unavailable -> {
-                        MeterStandardView(
-                            uiState = uiState,
-                            onClickStart = onClickStart,
-                            onClickStop = viewModel::onClickStop,
-                            onClickCityRate = viewModel::onClickCityRate,
-                            onClickNightRate = viewModel::onClickNightRate,
-                        )
-                    }
+            // Meter Content (Foldable or Standard)
+            when (foldablePosture) {
+                is FoldablePosture.Available -> {
+                    MeterFoldableView(
+                        posture = foldablePosture,
+                        uiState = uiState,
+                        onClickStart = onClickStart,
+                        onClickStop = viewModel::onClickStop,
+                        onClickCityRate = viewModel::onClickCityRate,
+                        onClickNightRate = viewModel::onClickNightRate,
+                    )
                 }
-
-                // Back button
-                IconButton(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(4.dp),
-                    onClick = {
-                        if (uiState.meterStatus != MeterStatus.NOT_RUNNING) {
-                            showExitDialog = true
-                        } else {
-                            navigatePop()
-                        }
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        tint = MeterTheme.colors.onBackground,
+                FoldablePosture.Unavailable -> {
+                    MeterStandardView(
+                        uiState = uiState,
+                        onClickStart = onClickStart,
+                        onClickStop = viewModel::onClickStop,
+                        onClickCityRate = viewModel::onClickCityRate,
+                        onClickNightRate = viewModel::onClickNightRate,
                     )
                 }
             }
 
-            if (!uiState.isAdRemoved) {
-                BannerAdView(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    adUnitId = stringResource(id = R.string.admob_banner_ad_unit_id),
+            // Back button
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(4.dp),
+                onClick = {
+                    if (uiState.meterStatus != MeterStatus.NOT_RUNNING) {
+                        showExitDialog = true
+                    } else {
+                        navigatePop()
+                    }
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    tint = MeterTheme.colors.onBackground,
                 )
             }
         }
