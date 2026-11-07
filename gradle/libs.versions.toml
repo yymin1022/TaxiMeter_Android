@@ -2,7 +2,6 @@
 accompanistPermissions = "0.37.3"
 activityCompose = "1.13.0"
 agp = "9.1.0"
-appcompat = "1.7.1"
 billingKtx = "8.3.0"
 browser = "1.10.0"
 composeBom = "2026.03.01"
@@ -22,7 +21,6 @@ kotlinxCoroutinesCore = "1.10.2"
 kotlinxSerializationJson = "1.10.0"
 ksp = "2.3.6"
 lifecycleRuntimeKtx = "2.10.0"
-material = "1.13.0"
 navigationCompose = "2.9.7"
 playServicesAds = "25.4.0"
 playServicesLocation = "21.3.0"
@@ -32,7 +30,6 @@ window = "1.5.1"
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -61,7 +58,6 @@ javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "j
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
