@@ -41,11 +41,6 @@ java {
 }
 
 dependencies {
-    // Android Dependency
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-
     // JavaX Dependency
     implementation(libs.javax.inject)
 
@@ -54,8 +49,8 @@ dependencies {
 
     // Firebase Dependency
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics.ktx)
-    implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     // Test Dependency
     testImplementation(libs.junit)

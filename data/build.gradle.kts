@@ -44,8 +44,6 @@ java {
 dependencies {
     // Android Dependency
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
 
     // JavaX Dependency
     implementation(libs.javax.inject)
@@ -55,7 +53,6 @@ dependencies {
     implementation(project(":domain"))
 
     // GMS Dependency
-    implementation(libs.play.services.ads)
     implementation(libs.play.services.location)
 
     // Firebase Dependency

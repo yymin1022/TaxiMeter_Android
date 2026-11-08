@@ -21,8 +21,8 @@ android {
         applicationId = "com.yong.taximeter"
         minSdk = 28
         targetSdk = 37
-        versionCode = 30200011
-        versionName = "3.2.0"
+        versionCode = 30201000
+        versionName = "3.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -100,7 +100,6 @@ dependencies {
     // Room Dependency
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
 
     // In-app browser Dependency
     implementation(libs.androidx.browser)
